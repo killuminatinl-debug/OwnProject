@@ -33,11 +33,11 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    "\$index_url=APP_BASE.'/'; \$mellon_url=APP_BASE.'/mellon/'; \$cdn_url=APP_BASE.'/cdn/'; \$lobby_url=APP_BASE.'/lobby/'; \$domain=\$_SERVER['HTTP_HOST']??'localhost'; \$game_dir=APP_BASE.'/game/s1/';\n".
    "function protocalRemove(\$url){return preg_replace('#^https?://#i','',\$url);} function myErrorHandler(\$c,\$m,\$f,\$l){error_log('[OwnProject] '.\$m.' '.\$f.':'.\$l);} function fatalErrorShutdownHandler(){\$e=error_get_last();if(\$e&&in_array(\$e['type'],[E_ERROR,E_PARSE,E_CORE_ERROR,E_COMPILE_ERROR],true))error_log('[OwnProject] '.\$e['message']);}\n";
   if(file_put_contents(__DIR__.'/config.php',$cfg,LOCK_EX)===false)throw new RuntimeException('config.php schriven mislukt.');
-  $r=$db->query("SHOW TABLES LIKE 'ss1_%'"); while($x=$r->fetch_row())$db->query("TTRUNCATE TABLE ".$x[0]);
+  $r=$db->query("SHOW TABLES LIKE 's1_%'"); while($x=$r->fetch_row())$db->query("TRUNCATE TABLE ".$x[0]);
   $st=$db->prepare("UPDATE global_server_data SET name=?,tag='server1',folder=?,prefix='s1_',speed_world=?,speed_unit=?,start=?,maintenance=0,genmap='0' WHERE sid=1");
-  $folder=$base.'/game/sd';$start=date('Y-m-d H:i:s');$st->bind_param('ssiis',$server,$folder,$speed,$unitSpeed,$start);$st->execute();$st->close();
+  $folder=$base.'/game/s1';$start=date('Y-m-d H:i:s');$st->bind_param('ssiis',$server,$folder,$speed,$unitSpeed,$start);$st->execute();$st->close();
   require __DIR__.'/admin/engine/engine.php'; $engine->server=(object)$engine->database->getServer(1); $engine->world->generateMap();
-  file_put_contents(__DIR__.'/.installed'.date('c'); header('Location: install.php?done=1'); exit;
+  file_put_contents(__DIR__.'/.installed', date('c')); header('Location: install.php?done=1'); exit;
  }catch(Throwable $e){$errors[]=$e->getMessage();}
 }
 ?><!doctype html><html lang="nl"><head><meta charset="utf-8"><title>Kingdoms installatie</title></head><body><div class="box"><h1>Travian Kingdoms installatie</h1><?php foreach($errors as $e):?><div class="err"><?=h($e)?></div><?php endforeach;?><form method="post"><input name="db_host" value="127.0.0.1"><input name="db_user" value="root"><input type="password" name="db_pass"><input name="db_name" value="travian_kingdoms"><input name="admin_user" value="admin"><input type="password" name="admin_pass"><input name="server_name" value="Kingdoms"><input type="number" name="speed_world" min="1" value="1"><input type="number" name="speed_unit" min="1" value="1"><button>Installeren</button></form></div></body></html>
