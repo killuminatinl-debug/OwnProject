@@ -265,7 +265,10 @@ if ($data['action'] == "get") {
                     break;
                 }
             default: {
-                    echo $data['params']['names'][$i];
+                    array_push($return, array(
+                        "name" => $data['params']['names'][$i],
+                        "data" => array()
+                    ));
                     break;
                 }
         }
