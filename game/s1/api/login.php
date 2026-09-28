@@ -78,7 +78,6 @@ if ($msid !== '' && hash_equals(md5($msid), $token)) {
     if ((int)query("SELECT COUNT(*) FROM `" . $engine->server->prefix . "village` WHERE `owner`=?", [$uid])->fetchColumn() === 0) {
         $engine->village->createVillage($uid, $_SESSION['mellon_username']);
     }
-}
 
     setcookie('t5SessionKey', json_encode(array("key" => session_id(), "id" => $uid)), time() + 14400, "/");
     header("Location: ../#msid=" . rawurlencode($msid));
