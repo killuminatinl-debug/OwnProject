@@ -241,6 +241,14 @@ class Account {
         return $r;
     }
 
+    public function getAjax($uid = null) {
+        global $engine;
+        if ($uid === null) {
+            $uid = (int)$engine->session->data->uid;
+        }
+        return $this->getById((int)$uid);
+    }
+
     public function getCPproduce($uid) {
         global $engine;
 
