@@ -22,8 +22,8 @@ class Account {
         //$post['name'] = mysqli_real_escape_string($post['name']);
         //$post['email'] = mysqli_real_escape_string($post['email']);
         $post['pw'] = base64_encode($post['pw']);
-        $sql = "INSERT INTO `global_user` (`username`,`password`,`email`,`timed`) VALUE (?,?,?,?);";
-        $array = array($post['name'], $post['pw'], $post['email'], time());
+        $sql = "INSERT INTO `global_user` (`username`,`password`,`email`,`timed`,`prestige`,`level`) VALUE (?,?,?,?,?,?);";
+        $array = array($post['name'], $post['pw'], $post['email'], time(), 0, 0);
         $q = $engine->sql->prepare($sql);
         if ($q->execute($array)) {
             return true;
