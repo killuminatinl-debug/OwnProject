@@ -207,6 +207,14 @@ class Movement {
         global $engine;
 
         $p = $engine->account->getByVillage($from);
+        if (!$p || (int)$p['uid'] !== (int)$engine->session->data->uid) return false;
+        $available = $engine->unit->getVillageUnit($from);
+        if (!$available) return false;
+        for ($i=1;$i<=11;$i++) {
+            $unit[$i] = max(0,(int)($unit[$i]??0));
+            if ($unit[$i] > (int)($available['u'.$i])) return false;
+        }
+        if (array_sum($unit) <= 0) return false;
         $dist = $engine->world->getDistance($from, $to);
 
         // Calculate speed
