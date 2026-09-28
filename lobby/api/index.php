@@ -4,207 +4,151 @@ include_once __DIR__ . '/../engine/session.php';
 
 $request_body = file_get_contents('php://input');
 $data = json_decode($request_body, true);
-if (!is_array($data)) {
-    $data = [];
-}
+if (!is_array($data)) $data = [];
 header('Content-Type: application/json');
 
-$json = array();
+$json = [];
 $controller = isset($data['controller']) ? (string)$data['controller'] : '';
-$actionName = isset($actionName) ? (string)$actionName : '';
-if (!isset($data['params']) || !is_array($data['params'])) { $data['params'] = []; }
+$actionName = isset($data['action']) ? (string)$data['action'] : '';
+$params = isset($data['params']) && is_array($data['params']) ? $data['params'] : [];
 
-if ($controller == "cache") {
-    if ($actionName == "get") {
-        $json['serialNo'] = 1092;
-        $json['cache'] = [];
-        $json['response'] = [];
+if ($controller === 'cache' && $actionName === 'get') {
+    $json['serialNo'] = 1092;
+    $json['cache'] = [];
+    $json['response'] = [];
+    $names = isset($params['names']) && is_array($params['names']) ? $params['names'] : [];
 
-        for ($i = 0; $i < count($data['params']['names']); $i++) {
-            $action = explode(":", $data['params']['names'][$i]);
-            switch ($action[0]) {
-                case "Collection": {
-                        if ($action[1] == "Gold") {
-                            array_push($json['cache'], [
-                                "name" => join(":", $action),
-                                "data" => [
-                                    "cache" => [],
-                                    "operation" => 1
-                                ],
-                            ]);
-                        }
-                    }
-                    break;
-                case "Session": {
-                        array_push($json['cache'], $engine->session->get());
-                    }
-                    break;
-                case "GameWorld": {
-                        array_push($json['cache'], [
-                            'name' => 'GameWorld:' . $action[1],
-                            'data' => $engine->server->getInfo($action[1])
-                        ]);
-                    }
-                    break;
-                case "Player": {
-                        array_push($json['cache'], $engine->account->get());
-                    }
-                    break;
-                case "Feed": {
-                        array_push($json['cache'], [
-                            "name" => "Feed:" . $action[1] . ":" . $action[2],
-                            "data" => [
-                                "entries" => [
-                                ],
-                            ],
-                        ]);
-                    }
-                    break;
-            }
+    foreach ($names as $name) {
+        $action = explode(':', (string)$name);
+        switch ($action[0]) {
+            case 'Collection':
+                if (($action[1] ?? '') === 'Gold') {
+                    $json['cache'][] = [
+                        'name' => implode(':', $action),
+                        'data' => ['cache' => [], 'operation' => 1]
+                    ];
+                }
+                break;
+            case 'Session':
+                $json['cache'][] = $engine->session->get();
+                break;
+            case 'GameWorld':
+                if (!empty($action[1])) {
+                    $json['cache'][] = [
+                        'name' => 'GameWorld:' . $action[1],
+                        'data' => $engine->server->getInfo($action[1])
+                    ];
+                }
+                break;
+            case 'Player':
+                $json['cache'][] = $engine->account->get();
+                break;
+            case 'Feed':
+                $json['cache'][] = [
+                    'name' => implode(':', $action),
+                    'data' => ['entries' => []]
+                ];
+                break;
         }
     }
-} elseif ($controller == "player") {
-    if ($actionName == "getPrestigeStars") {
+} elseif ($controller === 'player') {
+    if ($actionName === 'getPrestigeStars') {
         $json['serialNo'] = 1032;
-        $json['response'] = array(
-            "level" => 0,
-            "stars" => array(
-                "bronze" => 0,
-                "silver" => 0,
-                "gold" => 0
-            )
-        );
-    } elseif ($actionName == "getAllPrestigeData") {
+        $json['response'] = ['level'=>0,'stars'=>['bronze'=>0,'silver'=>0,'gold'=>0]];
+    } elseif ($actionName === 'getAllPrestigeData') {
         $json['serialNo'] = 1042;
-        $json['response'] = array(
-            "activeGameWorldsPrestige" => null,
-            "currentLevelPrestigePoints" => 0,
-            "finishedGameWorldsPrestige" => null,
-            "globalPrestige" => 0,
-            "level" => 0,
-            "nextLevelPrestigePoints" => 25
-        );
-    } elseif ($actionName == "getLastPlayedGameWorld") {
+        $json['response'] = [
+            'activeGameWorldsPrestige'=>null,
+            'currentLevelPrestigePoints'=>0,
+            'finishedGameWorldsPrestige'=>null,
+            'globalPrestige'=>(int)($engine->session->data->prestige ?? 0),
+            'level'=>(int)($engine->session->data->level ?? 0),
+            'nextLevelPrestigePoints'=>25
+        ];
+    } elseif ($actionName === 'getLastPlayedGameWorld') {
         $json['serialNo'] = 1039;
         $servers = $engine->server->listServer(true);
         $last = !empty($servers) ? $servers[0] : null;
-        $json['response'] = $last ? [
-            "id" => $last['consumersId'],
-            "name" => $last['worldName']
-        ] : null;
-    } elseif ($actionName == "getOtherRegions") {
+        $json['response'] = $last ? ['id'=>$last['consumersId'],'name'=>$last['worldName']] : null;
+    } elseif ($actionName === 'getOtherRegions') {
         $json['serialNo'] = 1040;
-        $json['response'] = array();
-    } elseif ($actionName == "ping") {
+        $json['response'] = [];
+    } elseif ($actionName === 'ping') {
         $json['serialNo'] = 1153;
-        $json['response'] = array();
-    } elseif ($actionName == "getCountries") {
+        $json['response'] = [];
+    } elseif ($actionName === 'getCountries') {
         $json['serialNo'] = 1041;
-        $json['response'] = array(
-            "asia" => array("tr", "th"),
-            "europe" => array("dk", "no", "se", "fi", "fr", "nl", "de", "it", "hu", "en", "gb", "us", "ru", "cz", "pl"),
-            "middle_east" => array("ae")
-        );
-    } elseif ($actionName == "getAccountDetails") {
+        $json['response'] = [
+            'asia'=>['tr','th'],
+            'europe'=>['dk','no','se','fi','fr','nl','de','it','hu','en','gb','us','ru','cz','pl'],
+            'middle_east'=>['ae']
+        ];
+    } elseif ($actionName === 'getAccountDetails') {
         $json['serialNo'] = 1154;
         $json['response'] = [
-            "accountType" => "Account",
-            "duals" => [],
-            "sitters" => [],
-            "email" => (string)($_SESSION['mellon_email'] ?? ''),
-            "facebookId" => null,
-            "googleId" => null,
-            "vkontakteId" => null,
-            "id" => (int)($_SESSION['lobby_uid'] ?? 0),
-            "isActivated" => true,
-            "isInstant" => false,
-            "newEmail" => null,
-            "customerGroup" => [
-                "key" => 3,
-                "name" => "Workers"
-            ],
-            "dwhData" => [
-                "customerGroup" => [
-                    "key" => 3,
-                    "name" => "Workers"
-                ]
-            ],
-            "newsletter" => [
-                [
-                    "newsletterId" => 4,
-                    "newsletterName" => "Travian Games",
-                    "newsletterTerms" => "",
-                    "subscribed" => false,
-                ]
-            ]
+            'accountType'=>'Account',
+            'duals'=>[],'sitters'=>[],
+            'email'=>(string)($_SESSION['lobby_email'] ?? $_SESSION['mellon_email'] ?? ''),
+            'facebookId'=>null,'googleId'=>null,'vkontakteId'=>null,
+            'id'=>(int)($_SESSION['lobby_uid'] ?? 0),
+            'isActivated'=>true,'isInstant'=>false,'newEmail'=>null,
+            'customerGroup'=>['key'=>3,'name'=>'Workers'],
+            'dwhData'=>['customerGroup'=>['key'=>3,'name'=>'Workers']],
+            'newsletter'=>[[
+                'newsletterId'=>4,'newsletterName'=>'Travian Games',
+                'newsletterTerms'=>'','subscribed'=>false
+            ]]
         ];
-    } elseif ($actionName == "getAvatarData") {
+    } elseif ($actionName === 'getAvatarData') {
         $json['serialNo'] = 1043;
-        $json['response'] = [
-            ["id" => (string)($_SESSION['lobby_uid'] ?? 0)]
-        ];
-    } elseif ($actionName == "getAll") {
+        $json['response'] = [['id'=>(string)($_SESSION['lobby_uid'] ?? 0)]];
+    } elseif ($actionName === 'getAll') {
         $json['serialNo'] = 1033;
         $json['response'] = [];
-        $json['event'] = [
-            "name" => "clearCache",
-            "data" => [],
-        ];
+        $json['event'] = ['name'=>'clearCache','data'=>[]];
         $json['cache'] = [
             $engine->account->get(),
             $engine->session->get(),
             $engine->prestige->get(),
             $engine->achv->get(),
             $engine->noti->get(),
-            $engine->avatar->getImage(),
+            $engine->avatar->getImage()
         ];
         $json['cache'] = array_merge($json['cache'], $engine->avatar->getAll());
-    }
-    } elseif ($actionName === "getPrestigeOnWorlds") {
-        $json['serialNo'] = 1200;
-        $json['response'] = [
-            "activeGameWorlds" => [],
-            "finishedGameWorlds" => [],
-            "activeGameWorldsPrestige" => 0,
-            "finishedGameWorldsPrestige" => 0
-        ];
-    } elseif ($actionName === "saveName") {
+    } elseif ($actionName === 'saveName') {
         $uid = (int)($_SESSION['lobby_uid'] ?? 0);
-        $name = trim((string)($data['params']['name'] ?? ''));
+        $name = trim((string)($params['name'] ?? ''));
         if ($uid > 0 && $name !== '') {
-            query("UPDATE global_user SET username=? WHERE uid=?", [$name, $uid]);
+            query('UPDATE global_user SET username=? WHERE uid=?', [$name, $uid]);
             $_SESSION['lobby_username'] = $name;
         }
         $json['response'] = [];
-    } elseif (in_array($actionName, ["savePortrait","switchCountry","logoutAll","abortDeletion"], true)) {
+    } elseif (in_array($actionName, ['savePortrait','switchCountry','logoutAll','abortDeletion'], true)) {
         $json['response'] = [];
-    } elseif ($actionName === "deleteAvatar") {
-        $json['response'] = ["data" => false];
-} elseif ($controller == "sitter" || $controller == "dual" || $controller == "notification" || $controller == "gold") {
+    } elseif ($actionName === 'deleteAvatar') {
+        $json['response'] = ['data'=>false];
+    }
+} elseif (in_array($controller, ['sitter','dual','notification','gold'], true)) {
     $json['serialNo'] = 1201;
     $json['response'] = [];
-} elseif ($controller == "achievements") {
-    if ($actionName == "update") {
-        $json['response'] = [];
-    }
-} elseif ($controller == "gameworld") {
-    if ($actionName == "getPossibleNewGameworlds") {
+} elseif ($controller === 'achievements') {
+    if ($actionName === 'update') $json['response'] = [];
+} elseif ($controller === 'gameworld') {
+    if ($actionName === 'getPossibleNewGameworlds') {
         $json['response'] = [
-            "cluster" => ["en", "gb", "us"],
-            "other" => [],
-            "recommended" => $engine->server->listServer(true)
+            'cluster'=>['en','gb','us'],
+            'other'=>[],
+            'recommended'=>$engine->server->listServer(true)
         ];
         $json['serialNo'] = 1172;
     }
-} elseif ($controller == "login") {
-    if ($actionName == "logout") {
+} elseif ($controller === 'login') {
+    if ($actionName === 'logout') {
         $engine->account->Logout();
         $json['response'] = [];
-        echo json_encode($json);
-        exit();
     }
 }
 
 $json['time'] = time();
-echo json_encode($json);
-exit();
+echo json_encode($json, JSON_UNESCAPED_SLASHES);
+exit;
