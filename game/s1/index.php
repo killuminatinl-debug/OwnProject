@@ -4208,42 +4208,42 @@ header('Access-Control-Allow-Origin: *');
 
         <!-- apple related favicons and settings -->
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="apple-touch-icon" sizes="57x57" href="http://cdn.traviantools.net/game/0.66/layout/favicons/apple-touch-icon-57x57.png?v=2">
-        <link rel="apple-touch-icon" sizes="60x60" href="http://cdn.traviantools.net/game/0.66/layout/favicons/apple-touch-icon-60x60.png?v=2">
-        <link rel="apple-touch-icon" sizes="72x72" href="http://cdn.traviantools.net/game/0.66/layout/favicons/apple-touch-icon-72x72.png?v=2">
-        <link rel="apple-touch-icon" sizes="76x76" href="http://cdn.traviantools.net/game/0.66/layout/favicons/apple-touch-icon-76x76.png?v=2">
-        <link rel="apple-touch-icon" sizes="114x114" href="http://cdn.traviantools.net/game/0.66/layout/favicons/apple-touch-icon-114x114.png?v=2">
-        <link rel="apple-touch-icon" sizes="120x120" href="http://cdn.traviantools.net/game/0.66/layout/favicons/apple-touch-icon-120x120.png?v=2">
-        <link rel="apple-touch-icon" sizes="144x144" href="http://cdn.traviantools.net/game/0.66/layout/favicons/apple-touch-icon-144x144.png?v=2">
-        <link rel="apple-touch-icon" sizes="152x152" href="http://cdn.traviantools.net/game/0.66/layout/favicons/apple-touch-icon-152x152.png?v=2">
-        <link rel="apple-touch-icon" sizes="180x180" href="http://cdn.traviantools.net/game/0.66/layout/favicons/apple-touch-icon-180x180.png?v=2">
-        <link rel="mask-icon" href="http://cdn.traviantools.net/game/0.66/layout/favicons/safari-pinned-tab.svg?v=2" color="#5bbad5">
+        <link rel="apple-touch-icon" sizes="57x57" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-57x57.png?v=2">
+        <link rel="apple-touch-icon" sizes="60x60" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-60x60.png?v=2">
+        <link rel="apple-touch-icon" sizes="72x72" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-72x72.png?v=2">
+        <link rel="apple-touch-icon" sizes="76x76" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-76x76.png?v=2">
+        <link rel="apple-touch-icon" sizes="114x114" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-114x114.png?v=2">
+        <link rel="apple-touch-icon" sizes="120x120" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-120x120.png?v=2">
+        <link rel="apple-touch-icon" sizes="144x144" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-144x144.png?v=2">
+        <link rel="apple-touch-icon" sizes="152x152" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-152x152.png?v=2">
+        <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-180x180.png?v=2">
+        <link rel="mask-icon" href="<?php echo $cdn_url; ?>0.66/layout/favicons/safari-pinned-tab.svg?v=2" color="#5bbad5">
 
         <!-- android related favicons and settings -->
-        <link rel="manifest" href="http://cdn.traviantools.net/game/0.66/layout/favicons/manifest.json?v=2">
+        <link rel="manifest" href="<?php echo $cdn_url; ?>0.66/layout/favicons/manifest.json?v=2">
         <meta name="theme-color" content="#7DA100">
 
         <!-- windows phone related favicons and settings -->
         <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="msapplication-config" content="http://cdn.traviantools.net/game/0.66/layout/favicons/browserconfig.xml?v=2" />
+        <meta name="msapplication-config" content="<?php echo $cdn_url; ?>0.66/layout/favicons/browserconfig.xml?v=2" />
         <meta name="application-name" content="Travian Kingdoms" />
         <meta name="msapplication-TileColor" content="#da532c" />
-        <meta name="msapplication-TileImage" content="http://cdn.traviantools.net/game/0.66/layout/favicons/mstile-144x144.png?v=2" />
+        <meta name="msapplication-TileImage" content="<?php echo $cdn_url; ?>0.66/layout/favicons/mstile-144x144.png?v=2" />
 
         <!-- normal favicons -->
-        <link rel="icon" type="image/x-icon" href="http://cdn.traviantools.net/game/0.66/layout/favicons/favicon.ico?v=2">
-        <link rel="icon" type="image/png" href="http://cdn.traviantools.net/game/0.66/layout/favicons/favicon-32x32.png?v=2" sizes="32x32">
-        <link rel="icon" type="image/png" href="http://cdn.traviantools.net/game/0.66/layout/favicons/favicon-194x194.png?v=2" sizes="194x194">
-        <link rel="icon" type="image/png" href="http://cdn.traviantools.net/game/0.66/layout/favicons/favicon-96x96.png?v=2" sizes="96x96">
-        <link rel="icon" type="image/png" href="http://cdn.traviantools.net/game/0.66/layout/favicons/favicon-16x16.png?v=2" sizes="16x16">
+        <link rel="icon" type="image/x-icon" href="<?php echo $cdn_url; ?>0.66/layout/favicons/favicon.ico?v=2">
+        <link rel="icon" type="image/png" href="<?php echo $cdn_url; ?>0.66/layout/favicons/favicon-32x32.png?v=2" sizes="32x32">
+        <link rel="icon" type="image/png" href="<?php echo $cdn_url; ?>0.66/layout/favicons/favicon-194x194.png?v=2" sizes="194x194">
+        <link rel="icon" type="image/png" href="<?php echo $cdn_url; ?>0.66/layout/favicons/favicon-96x96.png?v=2" sizes="96x96">
+        <link rel="icon" type="image/png" href="<?php echo $cdn_url; ?>0.66/layout/favicons/favicon-16x16.png?v=2" sizes="16x16">
 
         <script>
             isIE8 = false;
         </script>
         <!--[if lte IE 8]>
         <script type="text/javascript">
-                fileLoader.addScript('http://cdn.traviantools.net/game/0.66/layout/css/ie.css');
-                fileLoader.addScript('http://cdn.traviantools.net/game/0.66/js/ie-min.js');
+                fileLoader.addScript('<?php echo $cdn_url; ?>0.66/layout/css/ie.css');
+                fileLoader.addScript('<?php echo $cdn_url; ?>0.66/js/ie-min.js');
                 isIE8 = true;
         </script>
         <![endif]-->
@@ -4268,7 +4268,7 @@ header('Access-Control-Allow-Origin: *');
                 font-family: Verdana, Arial, Helvetica, sans-serif;
                 font-size: 14px;
                 background-color: #9CA55B;
-                background-image: url(http://cdn.traviantools.net/game/0.66/layout/images/illustration/loadingScreen/loading_screen_logo.png);
+                background-image: url(<?php echo $cdn_url; ?>0.66/layout/images/illustration/loadingScreen/loading_screen_logo.png);
                 background-repeat: no-repeat;
                 background-position: center;
             }
@@ -4351,7 +4351,7 @@ header('Access-Control-Allow-Origin: *');
             }
 
             .loadingScreen .centerArea .logo {
-                background-image: url(http://cdn.traviantools.net/game/0.66/layout/images/illustration/loadingScreen/loading_screen_logo.png);
+                background-image: url(<?php echo $cdn_url; ?>0.66/layout/images/illustration/loadingScreen/loading_screen_logo.png);
                 width: 236px;
                 height: 202px;
                 margin: 0 auto;
