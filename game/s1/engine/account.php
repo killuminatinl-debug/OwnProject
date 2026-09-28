@@ -141,34 +141,20 @@ class Account {
 
     public function getById($uid, $field = null) {
         global $engine;
-        $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=? LIMIT 1;", array($uid))->fetch(PDO::FETCH_ASSOC);
-        if (!$p) return null;
-
-        if ($field === null) {
-            return $p;
-        } else {
-            return $p[$field];
-        }
-    }
-
-    public function getProfile($uid = null, $head = true) {
-        global $engine;
-        ($uid === null ) ? $uid = $_SESSION[$engine->server->prefix . 'uid'] : '';
-        $u = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?;", [$uid])->fetch(PDO::FETCH_ASSOC);
-        $r = [
-            "name" => "PlayerProfile:" . $uid,
-            "data" => [
-                "description" => $u['desc'],
-            ]
-        ];
-        return $r;
-    }
-
-    public function getAjax($id = null) {
-        global $engine;
-        ($id === null ) ? $id = $_SESSION[$engine->server->prefix . 'uid'] : '';
-
         $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", array($id))->fetch(PDO::FETCH_ASSOC);
+        if (!$p) {
+            return array(
+                'name' => 'Player:' . $id,
+                'data' => array()
+            );
+        }
+        // Single-world mode has no tutorial gate. Promote older accounts as well so the
+        // Kingdoms client does not hide the normal resource/building controls.
+        if ((int)$p['tutorial'] < 256) {
+            $p['tutorial'] = 256;
+            query("UPDATE `" . $engine->server->prefix . "user` SET `tutorial`=? WHERE `uid`=?", array(256, $id));
+            $_SESSION[$engine->server->prefix . 'tutorial'] = 256;
+        }
         $prestige = $this->getPrestige(null, true);
         $k = ((int)$p['kingdom'] > 0) ? $engine->kingdom->getData($p['kingdom']) : null;
         if (!$k) $k = ['id'=>0,'king'=>0,'tag'=>''];
