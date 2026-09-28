@@ -85,8 +85,8 @@ include_once __DIR__.'/lang/en.php';
                         }
                     },
                     config: {
-                    "backendUrl": "\/api\/index.php",
-                            "redirectAfterLogout": "\/\/www.kingdoms.com\/#logout",
+                    "backendUrl": "<?php echo $base; ?>/lobby/api/index.php",
+                            "redirectAfterLogout": "<?php echo $base; ?>/#logout",
                             "environment": "live",
                             "node": {
                             "host": "<?php echo $lobby_url; ?>",
@@ -178,14 +178,14 @@ include_once __DIR__.'/lang/en.php';
                     "goldTransferNotAllowedCountries": ["pl", "hu", "ru"]
             };
         </script>
-        <link href="/static/css/main.css" rel="stylesheet"> </head>
+        <link href="<?php echo $base; ?>/lobby/static/css/main.css" rel="stylesheet"> </head>
 
     <body>
         <div id="root"></div>
         <div id="mellonModal" class="jqFensterModal">
             <div class="jqFensterModalContent"></div>
         </div>
-        <script type="text/javascript" src="/static/js/vendor.js"></script>
+        <script type="text/javascript" src="<?php echo $base; ?>/lobby/static/js/vendor.js"></script>
         <link rel="stylesheet" href="<?php echo $cdn_url; ?>startpage/live/css/ltr/mellonModal.css?h=21ba5197cdd21b864e49104ba38a3b9d">
         <link rel="stylesheet" href="<?php echo $mellon_url; ?>/tk/fenster-css.css">
         <script src="<?php echo $mellon_url; ?>/tk/fenster-js.js"></script>
@@ -233,7 +233,7 @@ include_once __DIR__.'/lang/en.php';
         </script>
         <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=906554786118185&ev=PageView&noscript=1"/></noscript>
         <!-- End Facebook Pixel Code -->
-        <script type="text/javascript" src="/static/js/main.js"></script>
+        <script type="text/javascript" src="<?php echo $base; ?>/lobby/static/js/main.js"></script>
     </body>
 
 </html>
