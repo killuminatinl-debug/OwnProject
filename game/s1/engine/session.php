@@ -75,11 +75,15 @@ class Session {
                 )->fetch(PDO::FETCH_ASSOC);
 
                 if (!$hasVillage) {
-                    $position = $engine->world->bestPosition();
-                    $newWid = is_array($position) ? (int)$position[0] : (int)$position;
-                    if ($newWid > 0) {
-                        $engine->village->createVillage($u['uid'], $u['username'], $newWid);
-                        $hasVillage = array('wid' => $newWid);
+                    try {
+                        $position = $engine->world->bestPosition();
+                        $newWid = is_array($position) ? (int)$position[0] : (int)$position;
+                        if ($newWid > 0) {
+                            $engine->village->createVillage($u['uid'], $u['username'], $newWid);
+                            $hasVillage = array('wid' => $newWid);
+                        }
+                    } catch (Throwable $bootstrapError) {
+                        error_log('[OwnProject] village bootstrap failed: '.$bootstrapError->getMessage().' in '.$bootstrapError->getFile().':'.$bootstrapError->getLine());
                     }
                 }
 
