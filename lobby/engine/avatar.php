@@ -36,15 +36,16 @@ class Avatar {
         $r = [];
 
         foreach ($servers as $s) {
-            $sdq = query("SELECT * FROM `{$s['prefix']}user` WHERE `email`=?;", [$_SESSION['lobby_email']]);
+            if (empty($s["prefix"]) || empty($_SESSION["lobby_email"])) { continue; }
+            $sdq = query("SELECT * FROM `{$s['prefix']}user` WHERE `email`=? LIMIT 1;", [$_SESSION["lobby_email"]]);
             if ($sdq->rowCount() == 1) {
                 $sd = $sdq->fetch(PDO::FETCH_ASSOC);
                 $avatar = !empty($sd['avatar']) ? $sd['avatar'] : "0";
                 $data = [
                     "avatarId" => $avatar,
                     "userId" => $_SESSION['lobby_uid'],
-                    "spawn" => $sd['spawn'],
-                    "login" => $sd['lastLogin'],
+                    "spawn" => isset($sd["spawn"]) ? $sd["spawn"] : 0,
+                    "login" => isset($sd["lastLogin"]) ? $sd["lastLogin"] : time(),
                     
                 ];
 
