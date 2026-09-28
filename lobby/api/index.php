@@ -1,5 +1,19 @@
 <?php
 
+// API responses must always remain valid JSON; PHP notices/fatal pages must not leak into them.
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+ob_start();
+register_shutdown_function(function () {
+    $e = error_get_last();
+    if ($e && in_array($e['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR), true)) {
+        if (ob_get_level()) { ob_clean(); }
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(array('time'=>time(),'error'=>true,'message'=>'Lobby backend error'), JSON_UNESCAPED_SLASHES);
+    }
+});
+
 include_once __DIR__ . '/../engine/session.php';
 
 $request_body = file_get_contents('php://input');
