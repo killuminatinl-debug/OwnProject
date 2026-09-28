@@ -165,6 +165,11 @@ class Account {
             query("UPDATE `" . $engine->server->prefix . "user` SET `tribe`=? WHERE `uid`=?", array(1, $uid));
             $_SESSION[$engine->server->prefix . 'tribe'] = 1;
         }
+        // Keep the live session object synchronized with repaired player data.
+        if (isset($engine->session->data) && is_object($engine->session->data)) {
+            $engine->session->data->tribe = $tribe;
+            $engine->session->data->tutorial = 256;
+        }
         $prestige = $this->getPrestige(null, true);
         $k = ((int)$p['kingdom'] > 0) ? $engine->kingdom->getData($p['kingdom']) : null;
         if (!$k) $k = ['id'=>0,'king'=>0,'tag'=>''];
