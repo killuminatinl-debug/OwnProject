@@ -2,28 +2,28 @@
     font-family: Roboto;
     font-style: normal;
     font-weight: 300;
-    src: local("Roboto Light"), local("Roboto-Light"), url(/static/media/Roboto-Light-webfont.b2ab4062.woff) format("woff"), url(/static/media/Roboto-Light-webfont.08cf97f4.eot) format("eot"), url(/static/media/Roboto-Light-webfont.e8414797.svg) format("svg"), url(/static/media/Roboto-Light-webfont.7b5fb88f.ttf) format("ttf")
+    src: local("Roboto Light"), local("Roboto-Light"), url(/lobby/static/media/Roboto-Light-webfont.b2ab4062.woff) format("woff"), url(/lobby/static/media/Roboto-Light-webfont.08cf97f4.eot) format("eot"), url(/lobby/static/media/Roboto-Light-webfont.e8414797.svg) format("svg"), url(/lobby/static/media/Roboto-Light-webfont.7b5fb88f.ttf) format("ttf")
 }
 
 @font-face {
     font-family: Roboto;
     font-style: normal;
     font-weight: 400;
-    src: local("Roboto Regular"), local("Roboto-Regular"), url(/static/media/Roboto-Regular-webfont.2e64b1be.woff) format("woff"), url(/static/media/Roboto-Regular-webfont.a28928ed.eot) format("eot"), url(/static/media/Roboto-Regular-webfont.624b3309.svg) format("svg"), url(/static/media/Roboto-Regular-webfont.ac3f799d.ttf) format("ttf")
+    src: local("Roboto Regular"), local("Roboto-Regular"), url(/lobby/static/media/Roboto-Regular-webfont.2e64b1be.woff) format("woff"), url(/lobby/static/media/Roboto-Regular-webfont.a28928ed.eot) format("eot"), url(/lobby/static/media/Roboto-Regular-webfont.624b3309.svg) format("svg"), url(/lobby/static/media/Roboto-Regular-webfont.ac3f799d.ttf) format("ttf")
 }
 
 @font-face {
     font-family: Roboto;
     font-style: normal;
     font-weight: 700;
-    src: local("Roboto Bold"), local("Roboto-Bold"), url(/static/media/Roboto-Bold-webfont.c2233be5.woff) format("woff"), url(/static/media/Roboto-Bold-webfont.261c6193.eot) format("eot"), url(/static/media/Roboto-Bold-webfont.1e776165.svg) format("svg"), url(/static/media/Roboto-Bold-webfont.d329cc8b.ttf) format("ttf")
+    src: local("Roboto Bold"), local("Roboto-Bold"), url(/lobby/static/media/Roboto-Bold-webfont.c2233be5.woff) format("woff"), url(/lobby/static/media/Roboto-Bold-webfont.261c6193.eot) format("eot"), url(/lobby/static/media/Roboto-Bold-webfont.1e776165.svg) format("svg"), url(/lobby/static/media/Roboto-Bold-webfont.d329cc8b.ttf) format("ttf")
 }
 
 @font-face {
     font-family: Roboto;
     font-style: italic;
     font-weight: 300;
-    src: local("Roboto Italic"), local("Roboto-Italic"), url(/static/media/Roboto-Italic-webfont.5bfd3f9d.woff) format("woff"), url(/static/media/Roboto-Italic-webfont.2a891a2f.eot) format("eot"), url(/static/media/Roboto-Italic-webfont.40758158.svg) format("svg"), url(/static/media/Roboto-Italic-webfont.129c5057.ttf) format("ttf")
+    src: local("Roboto Italic"), local("Roboto-Italic"), url(/lobby/static/media/Roboto-Italic-webfont.5bfd3f9d.woff) format("woff"), url(/lobby/static/media/Roboto-Italic-webfont.2a891a2f.eot) format("eot"), url(/lobby/static/media/Roboto-Italic-webfont.40758158.svg) format("svg"), url(/lobby/static/media/Roboto-Italic-webfont.129c5057.ttf) format("ttf")
 }
 
 /*!
@@ -4312,7 +4312,7 @@ button.close {
 }
 
 .flagLarge_ae {
-    background-image: url(/static/media/flag_large_ae.2cf0d4c7.jpg)
+    background-image: url(/lobby/static/media/flag_large_ae.2cf0d4c7.jpg)
 }
 
 .flagLarge_cz {
@@ -4328,19 +4328,19 @@ button.close {
 }
 
 .flagLarge_no {
-    background-image: url(/static/media/flag_large_no.a349ec44.jpg)
+    background-image: url(/lobby/static/media/flag_large_no.a349ec44.jpg)
 }
 
 .flagLarge_se {
-    background-image: url(/static/media/flag_large_se.6f8f1ca9.jpg)
+    background-image: url(/lobby/static/media/flag_large_se.6f8f1ca9.jpg)
 }
 
 .flagLarge_fi {
-    background-image: url(/static/media/flag_large_fi.608b7616.jpg)
+    background-image: url(/lobby/static/media/flag_large_fi.608b7616.jpg)
 }
 
 .flagLarge_en {
-    background-image: url(/static/media/flag_large_en.4c47789a.jpg)
+    background-image: url(/lobby/static/media/flag_large_en.4c47789a.jpg)
 }
 
 .flagLarge_fr {
@@ -4364,7 +4364,7 @@ button.close {
 }
 
 .flagLarge_ru {
-    background-image: url(/static/media/flag_large_ru.b0e76f07.jpg)
+    background-image: url(/lobby/static/media/flag_large_ru.b0e76f07.jpg)
 }
 
 .flagLarge_tr {
@@ -4376,19 +4376,19 @@ button.close {
 }
 
 .flagLarge_us {
-    background-image: url(/static/media/flag_large_us.50de4420.jpg)
+    background-image: url(/lobby/static/media/flag_large_us.50de4420.jpg)
 }
 
 .flagLarge_es {
-    background-image: url(/static/media/flag_large_es.fe60a3d1.jpg)
+    background-image: url(/lobby/static/media/flag_large_es.fe60a3d1.jpg)
 }
 
 .flagLarge_pt {
-    background-image: url(/static/media/flag_large_pt.7300018d.jpg)
+    background-image: url(/lobby/static/media/flag_large_pt.7300018d.jpg)
 }
 
 .flag {
-    background: url(/static/media/flags.8550caa1.png) no-repeat;
+    background: url(/lobby/static/media/flags.8550caa1.png) no-repeat;
     width: 30px;
     height: 20px;
     display: block;
@@ -4731,8 +4731,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type9_medium_illu, .tkIcon.tkIcon-achievements_type36_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -4758,8 +4758,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type7_medium_illu, .tkIcon.tkIcon-achievements_type8_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -4785,8 +4785,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type65_medium_illu, .tkIcon.tkIcon-achievements_type66_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -4812,8 +4812,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type63_medium_illu, .tkIcon.tkIcon-achievements_type64_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -4839,8 +4839,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type61_medium_illu, .tkIcon.tkIcon-achievements_type62_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -4866,8 +4866,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type6_medium_illu, .tkIcon.tkIcon-achievements_type60_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -4893,8 +4893,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type58_medium_illu, .tkIcon.tkIcon-achievements_type59_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -4920,8 +4920,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type1_medium_illu, .tkIcon.tkIcon-achievements_type57_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -4947,8 +4947,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type10_medium_illu, .tkIcon.tkIcon-achievements_type56_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -4974,8 +4974,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type11_medium_illu, .tkIcon.tkIcon-achievements_type55_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5001,8 +5001,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type12_medium_illu, .tkIcon.tkIcon-achievements_type54_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5028,8 +5028,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type13_medium_illu, .tkIcon.tkIcon-achievements_type53_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5055,8 +5055,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type14_medium_illu, .tkIcon.tkIcon-achievements_type52_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5082,8 +5082,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type15_medium_illu, .tkIcon.tkIcon-achievements_type51_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5109,8 +5109,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type16_medium_illu, .tkIcon.tkIcon-achievements_type50_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5136,8 +5136,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type5_medium_illu, .tkIcon.tkIcon-achievements_type17_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5163,8 +5163,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type18_medium_illu, .tkIcon.tkIcon-achievements_type49_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5190,8 +5190,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type19_medium_illu, .tkIcon.tkIcon-achievements_type48_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5217,8 +5217,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type2_medium_illu, .tkIcon.tkIcon-achievements_type47_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5244,8 +5244,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type20_medium_illu, .tkIcon.tkIcon-achievements_type46_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5271,8 +5271,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type21_medium_illu, .tkIcon.tkIcon-achievements_type45_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5298,8 +5298,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type22_medium_illu, .tkIcon.tkIcon-achievements_type44_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5325,8 +5325,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type23_medium_illu, .tkIcon.tkIcon-achievements_type43_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5352,8 +5352,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type24_medium_illu, .tkIcon.tkIcon-achievements_type42_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5379,8 +5379,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type25_medium_illu, .tkIcon.tkIcon-achievements_type41_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5406,8 +5406,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type26_medium_illu, .tkIcon.tkIcon-achievements_type40_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5433,8 +5433,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type4_medium_illu, .tkIcon.tkIcon-achievements_type27_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5460,8 +5460,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type28_medium_illu, .tkIcon.tkIcon-achievements_type39_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5487,8 +5487,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type29_medium_illu, .tkIcon.tkIcon-achievements_type38_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5514,8 +5514,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type3_medium_illu, .tkIcon.tkIcon-achievements_type37_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5541,8 +5541,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type30_medium_illu, .tkIcon.tkIcon-achievements_type35_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5568,8 +5568,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type31_medium_illu, .tkIcon.tkIcon-achievements_type34_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5595,8 +5595,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type32_medium_illu, .tkIcon.tkIcon-achievements_type33_medium_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 29px;
@@ -5622,8 +5622,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_frame0_large_illu, .tkIcon.tkIcon-achievements_frameMystery_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 48px;
@@ -5649,8 +5649,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_frame4_large_illu, .tkIcon.tkIcon-achievements_frame5_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 48px;
@@ -5676,8 +5676,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_frame1_large_illu, .tkIcon.tkIcon-achievements_frame3_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 48px;
@@ -5705,8 +5705,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_frame2_large_illu, .tkIcon.tkIcon-achievements_type51_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat
 }
@@ -5732,8 +5732,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type3_large_illu, .tkIcon.tkIcon-achievements_type37_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -5759,8 +5759,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type29_large_illu, .tkIcon.tkIcon-achievements_type38_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -5786,8 +5786,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type28_large_illu, .tkIcon.tkIcon-achievements_type39_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -5813,8 +5813,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type4_large_illu, .tkIcon.tkIcon-achievements_type27_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -5840,8 +5840,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type26_large_illu, .tkIcon.tkIcon-achievements_type40_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -5867,8 +5867,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type25_large_illu, .tkIcon.tkIcon-achievements_type41_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -5894,8 +5894,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type24_large_illu, .tkIcon.tkIcon-achievements_type42_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -5921,8 +5921,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type23_large_illu, .tkIcon.tkIcon-achievements_type43_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -5948,8 +5948,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type22_large_illu, .tkIcon.tkIcon-achievements_type44_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -5975,8 +5975,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type21_large_illu, .tkIcon.tkIcon-achievements_type45_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6002,8 +6002,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type20_large_illu, .tkIcon.tkIcon-achievements_type46_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6029,8 +6029,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type2_large_illu, .tkIcon.tkIcon-achievements_type47_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6056,8 +6056,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type19_large_illu, .tkIcon.tkIcon-achievements_type48_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6083,8 +6083,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type18_large_illu, .tkIcon.tkIcon-achievements_type49_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6110,8 +6110,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type5_large_illu, .tkIcon.tkIcon-achievements_type17_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6137,8 +6137,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type16_large_illu, .tkIcon.tkIcon-achievements_type50_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6164,8 +6164,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type15_large_illu, .tkIcon.tkIcon-achievements_type32_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6191,8 +6191,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type14_large_illu, .tkIcon.tkIcon-achievements_type52_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6218,8 +6218,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type13_large_illu, .tkIcon.tkIcon-achievements_type53_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6245,8 +6245,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type12_large_illu, .tkIcon.tkIcon-achievements_type54_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6272,8 +6272,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type11_large_illu, .tkIcon.tkIcon-achievements_type55_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6299,8 +6299,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type10_large_illu, .tkIcon.tkIcon-achievements_type56_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6326,8 +6326,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type1_large_illu, .tkIcon.tkIcon-achievements_type57_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6353,8 +6353,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type34_large_illu, .tkIcon.tkIcon-achievements_type58_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6380,8 +6380,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type9_large_illu, .tkIcon.tkIcon-achievements_type59_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6407,8 +6407,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type6_large_illu, .tkIcon.tkIcon-achievements_type31_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6434,8 +6434,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type8_large_illu, .tkIcon.tkIcon-achievements_type60_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6461,8 +6461,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type35_large_illu, .tkIcon.tkIcon-achievements_type61_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6488,8 +6488,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type30_large_illu, .tkIcon.tkIcon-achievements_type62_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6515,8 +6515,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type36_large_illu, .tkIcon.tkIcon-achievements_type63_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6542,8 +6542,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type7_large_illu, .tkIcon.tkIcon-achievements_type64_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6569,8 +6569,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_type33_large_illu, .tkIcon.tkIcon-achievements_type65_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 50px;
@@ -6598,8 +6598,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_frame2_huge_illu, .tkIcon.tkIcon-achievements_type66_large_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat
 }
@@ -6625,8 +6625,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_frame3_huge_illu, .tkIcon.tkIcon-achievements_frame4_huge_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 80px;
@@ -6652,8 +6652,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_frame1_huge_illu, .tkIcon.tkIcon-achievements_frame5_huge_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 80px;
@@ -6679,8 +6679,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-achievements_frame0_huge_illu, .tkIcon.tkIcon-achievements_frameMystery_huge_illu {
-    background-image: url(/static/media/achievements-rtl.8dc77126.png);
-    background-image: url(/static/media/achievements-ltr.3da85e22.png);
+    background-image: url(/lobby/static/media/achievements-rtl.8dc77126.png);
+    background-image: url(/lobby/static/media/achievements-ltr.3da85e22.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 80px;
@@ -6707,8 +6707,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_logout_tiny, .tkIcon.tkIcon-prestige_goldBadge_tiny_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     height: 12px
@@ -6735,8 +6735,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-home_small_flat_white, .tkIcon.tkIcon-prestige_starSilver_small_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     height: 12px
@@ -6763,8 +6763,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-home_small_flat_black, .tkIcon.tkIcon-prestige_starGold_small_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     height: 12px
@@ -6790,8 +6790,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-prestige_starBronze_small_illu, .tkIcon.tkIcon-prestige_starEmpty_small_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 13px;
@@ -6817,8 +6817,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-prestige_bronzeBadge_tiny_illu, .tkIcon.tkIcon-prestige_silverBadge_tiny_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 36px;
@@ -6845,8 +6845,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-game_world_white_16px, .tkIcon.tkIcon-ico_warning_small_flat_white {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px
@@ -6872,8 +6872,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_hammer_gold, .tkIcon.tkIcon-settings_small_flat_white {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -6899,8 +6899,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-action_delete_small_flat_red, .tkIcon.tkIcon-ico_arrow_green_down {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -6918,10 +6918,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_arrow_green_from {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -215px
     /*!rtl:end:ignore*/
@@ -6944,8 +6944,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_arrow_green_to, .tkIcon.tkIcon-ico_attack_small_flat_black {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_attack_small_flat_black {
@@ -6966,10 +6966,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_check {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -263px
     /*!rtl:end:ignore*/
@@ -6985,8 +6985,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_cropDiet_server_black_small, .tkIcon.tkIcon-ico_defend_small_flat_black {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -7004,10 +7004,10 @@ button.close {
 
 .tkIcon.tkIcon-settings_small_flat_black {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -311px
     /*!rtl:end:ignore*/
@@ -7022,10 +7022,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_fight {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -327px
     /*!rtl:end:ignore*/
@@ -7041,8 +7041,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_gameworld_language, .tkIcon.tkIcon-ico_gold_small_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -7068,8 +7068,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-action_delete_small_flat_black, .tkIcon.tkIcon-action_edit_small_flat_black {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -7087,10 +7087,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_hammer {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -407px
     /*!rtl:end:ignore*/
@@ -7105,10 +7105,10 @@ button.close {
 
 .tkIcon.tkIcon-prestige_starSilver_big_illu {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -423px
     /*!rtl:end:ignore*/
@@ -7124,8 +7124,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-action_edit_small_flat_green, .tkIcon.tkIcon-ico_locked_small_flat_white {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -7151,8 +7151,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-action_openExternal_small_flat_black, .tkIcon.tkIcon-prestige_starGold_big_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -7178,8 +7178,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-feature_prestige_small_flat_black, .tkIcon.tkIcon-ico_nightPeace_server_black_small {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -7197,10 +7197,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_player_online_small {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -535px
     /*!rtl:end:ignore*/
@@ -7223,8 +7223,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_player_small, .tkIcon.tkIcon-prestige_starEmpty_big_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-prestige_starEmpty_big_illu {
@@ -7242,10 +7242,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_speed_black_16 {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -583px
     /*!rtl:end:ignore*/
@@ -7260,10 +7260,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_time_small {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -599px
     /*!rtl:end:ignore*/
@@ -7279,8 +7279,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_trade_small_flat_black, .tkIcon.tkIcon-userArea_settings_small_flat_white {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -7306,8 +7306,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-friend_list_small_flat_black, .tkIcon.tkIcon-prestige_starBronze_big_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -7333,8 +7333,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-friend_list_small_flat_white, .tkIcon.tkIcon-news_small_flat_black {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -7360,8 +7360,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-news_small_flat_white, .tkIcon.tkIcon-notification_achievement {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 16px;
@@ -7388,8 +7388,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-game_world_black_16px, .tkIcon.tkIcon-prestige_bronzeBadge_small_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     height: 16px
@@ -7415,8 +7415,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-prestige_goldBadge_small_illu, .tkIcon.tkIcon-prestige_silverBadge_small_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 48px;
@@ -7446,8 +7446,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-action_delete_medium_flat_black, .tkIcon.tkIcon-ico_arrow_to_small {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_arrow_to_small {
@@ -7476,8 +7476,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_info, .tkIcon.tkIcon-ico_info2 {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_info2 {
@@ -7506,8 +7506,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_info3, .tkIcon.tkIcon-ico_info4_dark {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_info4_dark {
@@ -7528,10 +7528,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_info4 {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -949px
     /*!rtl:end:ignore*/
@@ -7547,8 +7547,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-action_delete_medium_flat_red, .tkIcon.tkIcon-ico_arrow_top_big {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 24px;
@@ -7566,10 +7566,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_arrow_up {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -1021px
     /*!rtl:end:ignore*/
@@ -7592,8 +7592,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-home_medium_flat_white, .tkIcon.tkIcon-ico_check_lit {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_check_lit {
@@ -7622,8 +7622,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_checkmark, .tkIcon.tkIcon-wiki_black_24px {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_checkmark {
@@ -7652,8 +7652,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_play, .tkIcon.tkIcon-ico_play_lit {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_play {
@@ -7682,8 +7682,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_communication, .tkIcon.tkIcon-ico_player_online {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_player_online {
@@ -7701,10 +7701,10 @@ button.close {
 
 .tkIcon.tkIcon-friend_list_medium_flat_black {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -1237px
     /*!rtl:end:ignore*/
@@ -7727,8 +7727,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_player, .tkIcon.tkIcon-ico_sitter_add_inactive {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_sitter_add_inactive {
@@ -7746,10 +7746,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_sitter_add_lit {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -1309px
     /*!rtl:end:ignore*/
@@ -7772,8 +7772,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_sitter_add, .tkIcon.tkIcon-ico_sitter_medium {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_sitter_medium {
@@ -7802,8 +7802,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_add, .tkIcon.tkIcon-ico_delete_bright {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_delete_bright {
@@ -7832,8 +7832,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_delete_inactive, .tkIcon.tkIcon-ico_time {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_time {
@@ -7862,8 +7862,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_delete_lit, .tkIcon.tkIcon-ico_verboten {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_verboten {
@@ -7892,8 +7892,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_arrow_down_lit, .tkIcon.tkIcon-ico_delete_medium {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_arrow_down_lit {
@@ -7914,10 +7914,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_wiki {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -1573px
     /*!rtl:end:ignore*/
@@ -7933,8 +7933,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-logout_black_24px, .tkIcon.tkIcon-settings_medium_flat_white {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 24px;
@@ -7952,10 +7952,10 @@ button.close {
 
 .tkIcon.tkIcon-logout_white_24px {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -1645px
     /*!rtl:end:ignore*/
@@ -7970,10 +7970,10 @@ button.close {
 
 .tkIcon.tkIcon-menu_black_24px {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -1669px
     /*!rtl:end:ignore*/
@@ -7989,8 +7989,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_arrow_down_small, .tkIcon.tkIcon-settings_medium_flat_black {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 24px;
@@ -8020,8 +8020,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-friend_list_medium_flat_white, .tkIcon.tkIcon-ico_arrow_down {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-friend_list_medium_flat_white {
@@ -8050,8 +8050,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_gold, .tkIcon.tkIcon-ico_locked_big_flat_white {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_locked_big_flat_white {
@@ -8069,10 +8069,10 @@ button.close {
 
 .tkIcon.tkIcon-home_medium_flat_black {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -1837px
     /*!rtl:end:ignore*/
@@ -8095,8 +8095,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_arrow_to_big, .tkIcon.tkIcon-ico_help {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_help {
@@ -8117,10 +8117,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_info5 {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     height: 25px;
     background-position: 0 -1909px
@@ -8137,8 +8137,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-tribe_gaul_medium_illu, .tkIcon.tkIcon-tribe_teuton_medium_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 30px;
@@ -8168,8 +8168,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_home, .tkIcon.tkIcon-tribe_roman_medium_illu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_home {
@@ -8198,8 +8198,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_delete, .tkIcon.tkIcon-ico_news {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_news {
@@ -8228,8 +8228,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_friends, .tkIcon.tkIcon-ico_menu {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png)
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png)
 }
 
 .tkIcon.tkIcon-ico_friends {
@@ -8247,10 +8247,10 @@ button.close {
 
 .tkIcon.tkIcon-logout_black_36px {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -2184px
     /*!rtl:end:ignore*/
@@ -8265,10 +8265,10 @@ button.close {
 
 .tkIcon.tkIcon-forum_black_36px {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -2220px
     /*!rtl:end:ignore*/
@@ -8285,8 +8285,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-blog_black_36px, .tkIcon.tkIcon-news_black_36px {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 36px
@@ -8304,10 +8304,10 @@ button.close {
 
 .tkIcon.tkIcon-help_black_36px {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -2336px
     /*!rtl:end:ignore*/
@@ -8322,10 +8322,10 @@ button.close {
 
 .tkIcon.tkIcon-wiki_black_36px {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -2378px
     /*!rtl:end:ignore*/
@@ -8343,8 +8343,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-ico_goldsack, .tkIcon.tkIcon-ico_warning_big_flat_red {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat
 }
@@ -8362,10 +8362,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_dual {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -2515px
     /*!rtl:end:ignore*/
@@ -8380,10 +8380,10 @@ button.close {
 
 .tkIcon.tkIcon-ico_sitter {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     /*!rtl:begin:ignore*/
     background-position: 0 -2571px
     /*!rtl:end:ignore*/
@@ -8399,8 +8399,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-prestigeUI_achievement, .tkIcon.tkIcon-prestigeUI_active_gameworld {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat;
     width: 80px;
@@ -8428,8 +8428,8 @@ button.close {
 }
 
 .tkIcon.tkIcon-prestige_cup_big_illu, .tkIcon.tkIcon-prestigeUI_finished_gameworld {
-    background-image: url(/static/media/general-rtl.5d528e60.png);
-    background-image: url(/static/media/general-ltr.dc15ad3b.png);
+    background-image: url(/lobby/static/media/general-rtl.5d528e60.png);
+    background-image: url(/lobby/static/media/general-ltr.dc15ad3b.png);
     display: inline-block;
     background-repeat: no-repeat
 }
@@ -8572,8 +8572,8 @@ button.close {
 .spriteAnimation.low_crop, .spriteAnimation.low_crop_bg {
     width: 300px;
     height: 137px;
-    background-image: url(/static/media/low_crop-rtl.6ca7efcd.png);
-    background-image: url(/static/media/low_crop-ltr.b61b48d9.png);
+    background-image: url(/lobby/static/media/low_crop-rtl.6ca7efcd.png);
+    background-image: url(/lobby/static/media/low_crop-ltr.b61b48d9.png);
     background-repeat: no-repeat
 }
 
@@ -8595,8 +8595,8 @@ button.close {
 .spriteAnimation.night_speed, .spriteAnimation.night_speed_bg {
     width: 300px;
     height: 137px;
-    background-image: url(/static/media/night_speed-rtl.0977ed4b.png);
-    background-image: url(/static/media/night_speed-ltr.00c4ee40.png);
+    background-image: url(/lobby/static/media/night_speed-rtl.0977ed4b.png);
+    background-image: url(/lobby/static/media/night_speed-ltr.00c4ee40.png);
     background-repeat: no-repeat
 }
 
@@ -8609,10 +8609,10 @@ button.close {
 
 .spriteAnimation.night {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/night-rtl.c025e7e5.png);
+    background-image: url(/lobby/static/media/night-rtl.c025e7e5.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/night-ltr.b9ba7f85.png);
+    background-image: url(/lobby/static/media/night-ltr.b9ba7f85.png);
     -webkit-animation: b .9090909s steps(1) infinite;
     animation: b .9090909s steps(1) infinite
 }
@@ -8625,19 +8625,19 @@ button.close {
 
 .spriteAnimation.night_bg {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/night-rtl.c025e7e5.png);
+    background-image: url(/lobby/static/media/night-rtl.c025e7e5.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/night-ltr.b9ba7f85.png);
+    background-image: url(/lobby/static/media/night-ltr.b9ba7f85.png);
     background-position: 0 -1233px
 }
 
 .spriteAnimation.speed {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/speed-rtl.0977ed4b.png);
+    background-image: url(/lobby/static/media/speed-rtl.0977ed4b.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/speed-ltr.00c4ee40.png);
+    background-image: url(/lobby/static/media/speed-ltr.00c4ee40.png);
     -webkit-animation: b .9090909s steps(1) infinite;
     animation: b .9090909s steps(1) infinite
 }
@@ -8650,10 +8650,10 @@ button.close {
 
 .spriteAnimation.speed_bg {
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/speed-rtl.0977ed4b.png);
+    background-image: url(/lobby/static/media/speed-rtl.0977ed4b.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/speed-ltr.00c4ee40.png);
+    background-image: url(/lobby/static/media/speed-ltr.00c4ee40.png);
     background-position: 0 -1233px
 }
 
@@ -8744,8 +8744,8 @@ button.close {
 .spriteAnimation.standard, .spriteAnimation.standard_bg {
     width: 300px;
     height: 137px;
-    background-image: url(/static/media/standard-rtl.a0db7496.png);
-    background-image: url(/static/media/standard-ltr.c83cb2c5.png);
+    background-image: url(/lobby/static/media/standard-rtl.a0db7496.png);
+    background-image: url(/lobby/static/media/standard-ltr.c83cb2c5.png);
     background-repeat: no-repeat
 }
 
@@ -8827,8 +8827,8 @@ button.close {
 .spriteAnimation.testserver, .spriteAnimation.testserver_bg {
     width: 300px;
     height: 137px;
-    background-image: url(/static/media/testserver-rtl.c1145213.png);
-    background-image: url(/static/media/testserver-ltr.2e4a44a7.png);
+    background-image: url(/lobby/static/media/testserver-rtl.c1145213.png);
+    background-image: url(/lobby/static/media/testserver-ltr.2e4a44a7.png);
     background-repeat: no-repeat
 }
 
@@ -8843,10 +8843,10 @@ button.close {
     width: 300px;
     height: 137px;
     /*!rtl:begin:ignore*/
-    background-image: url(/static/media/tutorial-rtl.322c70a3.png);
+    background-image: url(/lobby/static/media/tutorial-rtl.322c70a3.png);
     /*!rtl:end:ignore*/
     /*!rtl:remove*/
-    background-image: url(/static/media/tutorial-ltr.14cfa8d7.png);
+    background-image: url(/lobby/static/media/tutorial-ltr.14cfa8d7.png);
     background-repeat: no-repeat;
     background-position: 0 0
 }
@@ -8890,7 +8890,7 @@ ul.topNavigation li.active, ul.topNavigation li.active:hover {
 }
 
 ul.topNavigation li.active a, ul.topNavigation li:hover a {
-    background: url(/static/media/triangle_navi.cee43470.png) top no-repeat
+    background: url(/lobby/static/media/triangle_navi.cee43470.png) top no-repeat
 }
 
 ul.topNavigation li:hover {
@@ -8943,7 +8943,7 @@ ul.topNavigation li:active a {
     top: 0;
     width: 34px;
     height: 18px;
-    background: url(/static/media/triangle_navi.cee43470.png)
+    background: url(/lobby/static/media/triangle_navi.cee43470.png)
 }
 
 .mobile-menu .mobile-nav {
@@ -10363,7 +10363,7 @@ body {
 }
 
 .progress-bar-striped {
-    background: url(/static/media/progessbar.3cf023d0.png) repeat-x
+    background: url(/lobby/static/media/progessbar.3cf023d0.png) repeat-x
 }
 
 .progress-bar-striped.with-avatar-age {
@@ -10588,7 +10588,7 @@ body {
 .banned-message {
     border: 3px solid #a60000;
     color: #fff;
-    background: #dd3a37 url(/static/media/shifted_stripes_red.30b7e3b9.png) repeat-x;
+    background: #dd3a37 url(/lobby/static/media/shifted_stripes_red.30b7e3b9.png) repeat-x;
     padding: 10px;
     margin-bottom: 10px;
     position: relative
@@ -10596,7 +10596,7 @@ body {
 
 .banned-message:after {
     content: "";
-    background: url(/static/media/shifted_stripes_red.30b7e3b9.png) repeat-x;
+    background: url(/lobby/static/media/shifted_stripes_red.30b7e3b9.png) repeat-x;
     width: 100%;
     height: 9px;
     position: absolute;
@@ -10912,7 +10912,7 @@ ul.game-rules-tooltip-description {
 }
 
 .active-game-world-wrapper .placeholder.server:before, .new-game-world-wrapper .placeholder.server:before {
-    background: url(/static/media/server_placeholder.7b3994e8.png) no-repeat center 30%
+    background: url(/lobby/static/media/server_placeholder.7b3994e8.png) no-repeat center 30%
 }
 
 .active-game-world-wrapper .placeholder.sitter:before, .new-game-world-wrapper .placeholder.sitter:before {
@@ -11320,7 +11320,7 @@ ul.game-rules-tooltip-description {
 }
 
 .content-box .content-box-title:after, .content-box .content-box-title:before {
-    background: url(/static/media/content-box-header.a9d003ae.png) no-repeat 0;
+    background: url(/lobby/static/media/content-box-header.a9d003ae.png) no-repeat 0;
     content: "";
     position: absolute;
     left: -18px;
@@ -12859,7 +12859,7 @@ html[dir=rtl] body div div.popover {
     bottom: 0;
     right: 0;
     left: 0;
-    background: #71a34a url(/static/media/top_image_background_1366_1.be2896df.jpg) no-repeat top;
+    background: #71a34a url(/lobby/static/media/top_image_background_2560_1.0080a541.jpg) no-repeat top;
     background-size: cover
 }
 
@@ -12889,7 +12889,7 @@ html[dir=rtl] body div div.popover {
 
 @media (min-width:1365px) {
     .app {
-        background-image: url(/static/media/top_image_background_2560_1.0080a541.jpg)
+        background-image: url(/lobby/static/media/top_image_background_2560_1.0080a541.jpg)
     }
 
     .app .app-container {
