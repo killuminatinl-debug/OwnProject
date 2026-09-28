@@ -39,7 +39,7 @@ class Server {
             "worldCapacity" => 0,
             "recommended" => (int) $world['recommended'],
             "blacklisted" => 0,
-            "baseUrl" => "",
+            "baseUrl" => rtrim($world['folder'], '/'),
             "daysSinceStart" => round((time() - $world['start']) / 86400),
             "speedGame" => 1,//$world['speed_world'],
             "speedTroops" => 1,//$world['speed_unit'],
