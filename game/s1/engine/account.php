@@ -272,7 +272,9 @@ class Account {
         $uid === null ? $uid = $_SESSION[$engine->server->prefix . 'uid'] : 0;
         $email = $this->getById($uid, 'email');
         $gu = query("SELECT * FROM `global_user` WHERE `email`=?;", [$email])->fetch(PDO::FETCH_ASSOC);
-        $prestige = $gu['prestige'];
+        // A world account can exist without a global-user row on a fresh/local install.
+        // Keep the player cache valid instead of aborting the whole bootstrap request.
+        $prestige = $gu && isset($gu['prestige']) ? (int)$gu['prestige'] : 0;
         $next_prestige = 0;
         foreach ($this->prestige_data as $pr => $s) {
             if ($prestige >= $pr){
