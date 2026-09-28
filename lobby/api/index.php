@@ -8,9 +8,9 @@ register_shutdown_function(function () {
     $e = error_get_last();
     if ($e && in_array($e['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR), true)) {
         if (ob_get_level()) { ob_clean(); }
-        http_response_code(500);
+        http_response_code(200);
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(array('time'=>time(),'error'=>true,'message'=>'Lobby backend error'), JSON_UNESCAPED_SLASHES);
+        echo json_encode(array('time'=>time(),'error'=>array('message'=>'Lobby backend error'),'response'=>array(),'cache'=>array()), JSON_UNESCAPED_SLASHES);
     }
 });
 
@@ -24,9 +24,9 @@ try {
 include_once __DIR__ . '/../engine/session.php';
 } catch (Throwable $e) {
     if (ob_get_level()) ob_clean();
-    http_response_code(500);
+    http_response_code(200);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(array('time'=>time(),'error'=>true,'message'=>'Lobby initialization failed'), JSON_UNESCAPED_SLASHES);
+    echo json_encode(array('time'=>time(),'error'=>array('message'=>'Lobby initialization failed'),'response'=>array(),'cache'=>array()), JSON_UNESCAPED_SLASHES);
     exit;
 }
 
