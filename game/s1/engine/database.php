@@ -9,22 +9,29 @@
 
 class Database {
 
+    private function normalizeServer($s) {
+        if (!$s) return false;
+        if (!isset($s['ww_position']) || !$s['ww_position']) {
+            $s['ww_position'] = array(array(0, 0));
+        } elseif (is_string($s['ww_position'])) {
+            $decoded = json_decode($s['ww_position'], true);
+            $s['ww_position'] = is_array($decoded) ? $decoded : array(array(0, 0));
+        }
+        return $s;
+    }
+
     public function listServer() {
-        global $engine;
-        $sql = "SELECT * FROM `global_server_data`";
-        $q = query($sql, []);
+        $r = array();
+        $q = query("SELECT * FROM `global_server_data` ORDER BY `sid` ASC");
         while ($s = $q->fetch(PDO::FETCH_ASSOC)) {
-            $s['ww_position'] = json_decode($s['ww_position']);
-            $r[] = $s;
+            $r[] = $this->normalizeServer($s);
         }
         return $r;
     }
 
     public function getServer() {
-        global $engine;
-        $s = query("SELECT * FROM `global_server_data` WHERE `tag`=?;", array(SERVER_TAG))->fetch(PDO::FETCH_ASSOC);
-        $s['ww_position'] = json_decode($s['ww_position']);
-        return $s;
+        $s = query("SELECT * FROM `global_server_data` WHERE `tag`=? LIMIT 1", array(SERVER_TAG))->fetch(PDO::FETCH_ASSOC);
+        return $this->normalizeServer($s);
     }
 
     public function msid($email = "abcdefghijklmnopqrstuvwxyz") {
