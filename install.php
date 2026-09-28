@@ -49,7 +49,7 @@ PHP_CONFIG;
   if(file_put_contents(__DIR__.'/config.php',$cfg,LOCK_EX)===false)throw new RuntimeException('config.php schriven mislukt.');
   $r=$db->query("SHOW TABLES LIKE 's1_%'"); while($x=$r->fetch_row())$db->query("TRUNCATE TABLE ".$x[0]);
   $adminEmail=(strpos($admin,'@')!==false)?$admin:$admin.'@localhost';
-  $as=$db->prepare("SELECT uid FROM global_user WHERE email=? OR username=? LIMIT 1"); $as->bind_param('ss',$adminEmail,$admin); $as->execute(); $ar=$as->get_result()->fetch_assoc(); $as->close();
+  $as=$db->prepare("SELECT uid FROM global_user WHERE email=? OR username=? LIMIT 1"); $as->bind_param('ss',$adminEmail,$admin); $as->execute(); $as->bind_result($existingAdminUid); $ar=$as->fetch(); $as->close();
   if(!$ar){$nextUid=(int)$db->query("SELECT COALESCE(MAX(uid),0)+1 n FROM global_user")->fetch_assoc()['n'];$adminHash=base64_encode($adminPass);$adminTimed=time();$adminPrestige=0;$adminLevel=0;$ins=$db->prepare("INSERT INTO global_user (uid,username,password,email,timed,prestige,level) VALUES (?,?,?,?,?,?,?)");$ins->bind_param('isssiii',$nextUid,$admin,$adminHash,$adminEmail,$adminTimed,$adminPrestige,$adminLevel);$ins->execute();$ins->close();}
 
   $st=$db->prepare("UPDATE global_server_data SET name=?,tag='server1',folder=?,prefix='s1_',speed_world=?,speed_unit=?,start=?,maintenance=0,genmap='0' WHERE sid=1");
