@@ -11,11 +11,11 @@ header('Content-Type: application/json');
 
 $json = array();
 $controller = isset($data['controller']) ? (string)$data['controller'] : '';
-$actionName = isset($data['action']) ? (string)$data['action'] : '';
+$actionName = isset($actionName) ? (string)$actionName : '';
 if (!isset($data['params']) || !is_array($data['params'])) { $data['params'] = []; }
 
 if ($controller == "cache") {
-    if ($data['action'] == "get") {
+    if ($actionName == "get") {
         $json['serialNo'] = 1092;
         $json['cache'] = [];
         $json['response'] = [];
@@ -64,7 +64,7 @@ if ($controller == "cache") {
         }
     }
 } elseif ($controller == "player") {
-    if ($data['action'] == "getPrestigeStars") {
+    if ($actionName == "getPrestigeStars") {
         $json['serialNo'] = 1032;
         $json['response'] = array(
             "level" => 0,
@@ -74,7 +74,7 @@ if ($controller == "cache") {
                 "gold" => 0
             )
         );
-    } elseif ($data['action'] == "getAllPrestigeData") {
+    } elseif ($actionName == "getAllPrestigeData") {
         $json['serialNo'] = 1042;
         $json['response'] = array(
             "activeGameWorldsPrestige" => null,
@@ -84,7 +84,7 @@ if ($controller == "cache") {
             "level" => 0,
             "nextLevelPrestigePoints" => 25
         );
-    } elseif ($data['action'] == "getLastPlayedGameWorld") {
+    } elseif ($actionName == "getLastPlayedGameWorld") {
         $json['serialNo'] = 1039;
         $servers = $engine->server->listServer(true);
         $last = !empty($servers) ? $servers[0] : null;
@@ -92,20 +92,20 @@ if ($controller == "cache") {
             "id" => $last['consumersId'],
             "name" => $last['worldName']
         ] : null;
-    } elseif ($data['action'] == "getOtherRegions") {
+    } elseif ($actionName == "getOtherRegions") {
         $json['serialNo'] = 1040;
         $json['response'] = array();
-    } elseif ($data['action'] == "ping") {
+    } elseif ($actionName == "ping") {
         $json['serialNo'] = 1153;
         $json['response'] = array();
-    } elseif ($data['action'] == "getCountries") {
+    } elseif ($actionName == "getCountries") {
         $json['serialNo'] = 1041;
         $json['response'] = array(
             "asia" => array("tr", "th"),
             "europe" => array("dk", "no", "se", "fi", "fr", "nl", "de", "it", "hu", "en", "gb", "us", "ru", "cz", "pl"),
             "middle_east" => array("ae")
         );
-    } elseif ($data['action'] == "getAccountDetails") {
+    } elseif ($actionName == "getAccountDetails") {
         $json['serialNo'] = 1154;
         $json['response'] = [
             "accountType" => "Account",
@@ -138,12 +138,12 @@ if ($controller == "cache") {
                 ]
             ]
         ];
-    } elseif ($data['action'] == "getAvatarData") {
+    } elseif ($actionName == "getAvatarData") {
         $json['serialNo'] = 1043;
         $json['response'] = [
             ["id" => (string)($_SESSION['lobby_uid'] ?? 0)]
         ];
-    } elseif ($data['action'] == "getAll") {
+    } elseif ($actionName == "getAll") {
         $json['serialNo'] = 1033;
         $json['response'] = [];
         $json['event'] = [
@@ -184,11 +184,11 @@ if ($controller == "cache") {
     $json['serialNo'] = 1201;
     $json['response'] = [];
 } elseif ($controller == "achievements") {
-    if ($data['action'] == "update") {
+    if ($actionName == "update") {
         $json['response'] = [];
     }
 } elseif ($controller == "gameworld") {
-    if ($data['action'] == "getPossibleNewGameworlds") {
+    if ($actionName == "getPossibleNewGameworlds") {
         $json['response'] = [
             "cluster" => ["en", "gb", "us"],
             "other" => [],
@@ -197,7 +197,7 @@ if ($controller == "cache") {
         $json['serialNo'] = 1172;
     }
 } elseif ($controller == "login") {
-    if ($data['action'] == "logout") {
+    if ($actionName == "logout") {
         $engine->account->Logout();
         $json['response'] = [];
         echo json_encode($json);
