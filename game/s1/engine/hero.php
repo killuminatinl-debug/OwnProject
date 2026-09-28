@@ -23,6 +23,28 @@ class Hero {
         $id === null ? $id = $_SESSION[$engine->server->prefix . 'uid'] : '';
 
         $hero = query("SELECT * FROM `{$engine->server->prefix}hero` WHERE `owner`=?;", [$id])->fetch(PDO::FETCH_ASSOC);
+        if (!$hero) {
+            $village = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `owner`=? ORDER BY `wid` ASC LIMIT 1;", [$id])->fetch(PDO::FETCH_ASSOC);
+            if ($village) {
+                query("INSERT INTO `{$engine->server->prefix}hero` (`owner`,`village`) VALUES (?,?);", [$id, $village['wid']]);
+                $hero = query("SELECT * FROM `{$engine->server->prefix}hero` WHERE `owner`=?;", [$id])->fetch(PDO::FETCH_ASSOC);
+            }
+        }
+        if (!$hero) {
+            return ['name' => 'Hero:' . $id, 'data' => [
+                'playerId' => $id, 'villageId' => '0', 'destVillageId' => '0', 'status' => 7,
+                'health' => 0, 'lastHealthTime' => time(), 'baseRegenerationRate' => 0,
+                'regenerationRate' => 0, 'fightStrengthPoints' => 0, 'attBonusPoints' => 0,
+                'defBonusPoints' => 0, 'resBonusPoints' => 0, 'resBonusType' => 0,
+                'freePoints' => 0, 'speed' => 0, 'untilTime' => 0, 'bonuses' => [],
+                'maxScrollsPerDay' => 0, 'scrollsUsedToday' => 0, 'waterbucketUsedToday' => 0,
+                'ointmentsUsedToday' => 0, 'adventurePointCardUsedToday' => 0,
+                'resourceChestsUsedToday' => 0, 'cropChestsUsedToday' => 0, 'artworkUsedToday' => 0,
+                'isMoving' => false, 'adventurePoints' => 0, 'adventurePointTime' => 0,
+                'xp' => 0, 'xpThisLevel' => 0, 'xpNextLevel' => 247500000,
+                'level' => 0, 'levelUp' => 0
+            ]];
+        }
         $status = 0;
         if ($hero['dead'] == 1) {
             if ($hero['revive'] != 0) {
