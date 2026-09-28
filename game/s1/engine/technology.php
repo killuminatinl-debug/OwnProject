@@ -53,24 +53,24 @@ class Technology {
 
     public function Research($wid, $type) {
         global $engine;
-        $t = $this->getTech($wid, $type);
-        if ($t >= 0) {
-            $res = ImproveData::get($type, $t + 1);
-            $b = 13;
-        } else {
-            $res = ReseachData::get($type);
-            $b = 22;
-        }
-        $uid = $engine->account->getByVillage($wid, 'uid');
-        $engine->auto->emitEvent($uid, array(
-            "name" => "flashNotification",
-            "data" => "54",
-        ));
-        $start = time();
-        $end = $start + ($res['time'] / $engine->server->speed_world);
-        query("INSERT INTO `" . $engine->server->prefix . "tqueue` (`wid`,`type`,`building`,`start`,`end`) VALUES (?,?,?,?,?)", array($wid, $type, $b, $start, $end));
+        $wid=(int)$wid; $type=(int)$type;
+        $owner=$engine->account->getByVillage($wid);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
+        $t=$this->getTech($wid,$type);
+        if ($t>=0) $res=ImproveData::get($type,$t+1); else $res=ReseachData::get($type);
+        if (!$res) return false;
+        $building=($t>=0)?13:22;
+        if ($engine->building->getTypeLevel($wid,$building)<=0) return false;
+        if (query("SELECT COUNT(*) FROM `".$engine->server->prefix."tqueue` WHERE `wid`=? AND `type`=?",[$wid,$type])->fetchColumn()>0) return false;
         $engine->auto->procRes($wid);
-        query("UPDATE `" . $engine->server->prefix . "village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?", array($res['wood'], $res['clay'], $res['iron'], $res['crop'], $wid));
+        $v=query("SELECT * FROM `".$engine->server->prefix."village` WHERE `wid`=? LIMIT 1",[$wid])->fetch(PDO::FETCH_ASSOC);
+        if (!$v) return false;
+        foreach (array('wood','clay','iron','crop') as $k) if ((float)$v[$k]<(float)$res[$k]) return false;
+        $start=time();
+        $end=$start+max(1,(int)round($res['time']/max(0.0001,(float)$engine->server->speed_world)));
+        query("INSERT INTO `".$engine->server->prefix."tqueue` (`wid`,`type`,`building`,`start`,`end`) VALUES (?,?,?,?,?)",[$wid,$type,$building,$start,$end]);
+        query("UPDATE `".$engine->server->prefix."village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?",[$res['wood'],$res['clay'],$res['iron'],$res['crop'],$wid]);
+        return true;
     }
 
     public function getResearchQueue($wid) {
