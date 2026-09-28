@@ -41,7 +41,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    "define('APP_BASE',".var_export($base,true).");\n".
    "define('ADMIN_USERNAME',".var_export($admin,true).");\n".
    "define('ADMIN_PASSWORD_HASH',".var_export(password_hash($adminPass,PASSWORD_DEFAULT),true).");\n".
-   "\$index_url=APP_BASE.'/'; \$mellon_url=APP_BASE.'/mellon/'; \$cdn_url=APP_BASE.'/cdn/'; \$lobby_url=APP_BASE.'/lobby/'; \$domain=\$_SERVER['HTTP_HOST']??'localhost'; \$game_dir=APP_BASE.'/game/s1/';\n".
+   "\$base=APP_BASE; \$index_url=APP_BASE.'/'; \$mellon_url=APP_BASE.'/mellon/'; \$cdn_url=APP_BASE.'/cdn/'; \$lobby_url=APP_BASE.'/lobby/'; \$domain=\$_SERVER['HTTP_HOST']??'localhost'; \$game_dir=APP_BASE.'/game/s1/';\n".
    "function protocalRemove(\$url){return preg_replace('#^https?://#i','',\$url);} function myErrorHandler(\$c,\$m,\$f,\$l){error_log('[OwnProject] '.\$m.' '.\$f.':'.\$l);} function fatalErrorShutdownHandler(){\$e=error_get_last();if(\$e&&in_array(\$e['type'],[E_ERROR,E_PARSE,E_CORE_ERROR,E_COMPILE_ERROR],true))error_log('[OwnProject] '.\$e['message']);}\n";
   if(file_put_contents(__DIR__.'/config.php',$cfg,LOCK_EX)===false)throw new RuntimeException('config.php schriven mislukt.');
   $r=$db->query("SHOW TABLES LIKE 's1_%'"); while($x=$r->fetch_row())$db->query("TRUNCATE TABLE ".$x[0]);
