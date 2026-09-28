@@ -5,7 +5,13 @@ include_once __DIR__ . '/../engine/session.php';
 $request_body = file_get_contents('php://input');
 $data = json_decode($request_body, true);
 if (!is_array($data)) $data = [];
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
+
+set_exception_handler(function ($e) {
+    http_response_code(500);
+    echo json_encode(['time'=>time(),'error'=>true,'message'=>'Lobby backend error'], JSON_UNESCAPED_SLASHES);
+    exit;
+});
 
 $json = [];
 $controller = isset($data['controller']) ? (string)$data['controller'] : '';
@@ -150,5 +156,7 @@ if ($controller === 'cache' && $actionName === 'get') {
 }
 
 $json['time'] = time();
-echo json_encode($json, JSON_UNESCAPED_SLASHES);
+$encoded = json_encode($json, JSON_UNESCAPED_SLASHES);
+if ($encoded === false) { $encoded = json_encode(['time'=>time(),'response'=>[]], JSON_UNESCAPED_SLASHES); }
+echo $encoded;
 exit;
