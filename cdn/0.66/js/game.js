@@ -21503,6 +21503,7 @@ function Ya() {
     }
   };
   this.Ca = function() {
+    if (window.config && config.audioDisabled) { return; }
     for(var a = 0;a < this.ya.length;a++) {
       this.A[this.ya[a].key] = new Xa(this.path + this.ya[a].name, this.volume, this.loop, this.yh, this.ya[a].simultaneousPlay)
     }
@@ -21570,8 +21571,9 @@ function Ua(a) {
   this.ya = [{key:"village", name:b}, {key:"resources", name:c}, {key:"map", name:"T5AS_strategic"}];
   this.loop = !0;
   this.play = function(a) {
+    if (window.config && config.audioDisabled) { return; }
     this.wa = void 0 === a ? Travian.rootScope.page : a;
-    this.P || (this.A[this.wa].play(), this.P = !0)
+    this.P || (this.A[this.wa] && this.A[this.wa].play(), this.P = !0)
   };
   this.pause = function() {
     this.P = !1;
