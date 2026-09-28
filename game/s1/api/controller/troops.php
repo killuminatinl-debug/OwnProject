@@ -11,6 +11,11 @@ if ($data['action'] == "getMarkers") {
     }
     echo json_encode($return);
 } elseif ($data['action'] == "checkTarget") {
+    $owner = $engine->account->getByVillage($data['params']['villageId']);
+    if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
+        echo json_encode(array("response"=>array("error"=>"NOT_OWNER"),"serialNo"=>$engine->session->serialNo(),"time"=>round(microtime(true)*1000)));
+        exit;
+    }
     $r = $engine->unit->checkTarget($data['params']['destVillageId'], $data['params']['villageId'], $data['params']['movementType'], $data['params']['heroPresent'], $data['params']['redeployHero'], true);
     echo json_encode([
         "response" => $r,
@@ -21,6 +26,11 @@ if ($data['action'] == "getMarkers") {
     if ($engine->session->data->quest == 1) {
         
     } else {
+        $owner = $engine->account->getByVillage($data['params']['villageId']);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
+            echo json_encode(array("response"=>array("error"=>"NOT_OWNER"),"serialNo"=>$engine->session->serialNo(),"time"=>round(microtime(true)*1000)));
+            exit;
+        }
         $engine->move->send($data['params']['villageId'], $data['params']['destVillageId'], $data['params']['movementType'], $data['params']['spyMission'], $data['params']['redeployHero'], $data['params']['units']);
         echo json_encode([
             "response" => [],
