@@ -5,83 +5,42 @@ class Account {
     public function get() {
         $uid = (int)($_SESSION['lobby_uid'] ?? 0);
         $username = (string)($_SESSION['lobby_username'] ?? '');
-        return [
-            "name" => "Player:" . $uid,
-            "data" => [
-                "playerId" => $uid,
-                "avatarName" => $username,
-                "userAccountIdentifier" => $uid,
-                "isInstantAccount" => 0,
-                "isActivated" => $uid > 0
-            ]
-        ];
+        return ["name"=>"Player:".$uid,"data"=>[
+            "playerId"=>$uid,"avatarName"=>$username,"userAccountIdentifier"=>$uid,
+            "isInstantAccount"=>0,"isActivated"=>$uid>0
+        ]];
     }
 
     public function Signup($post) {
         global $engine;
-        //$post['name'] = mysqli_real_escape_string($post['name']);
-        //$post['email'] = mysqli_real_escape_string($post['email']);
-        $post['pw'] = base64_encode($post['pw']);
-        $sql = "INSERT INTO `global_user` (`username`,`password`,`email`,`timed`,`prestige`,`level`) VALUE (?,?,?,?,?,?);";
-        $array = array($post['name'], $post['pw'], $post['email'], time(), 0, 0);
-        $q = $engine->sql->prepare($sql);
-        if ($q->execute($array)) {
-            return true;
-        } else {
-            return false;
-        }
+        $q=$engine->sql->prepare("INSERT INTO global_user (username,password,email,timed,prestige,level) VALUES (?,?,?,?,?,?)");
+        return $q->execute([$post['name'],base64_encode($post['pw']),$post['email'],time(),0,0]);
     }
 
     public function Login($token) {
-        global $engine, $index_url, $domain, $lobby_url;
-
-        $q = query("SELECT * FROM `global_msid` WHERE `token`=? AND `ip`=?;", array($token, $_SERVER['REMOTE_ADDR']));
-        $n = $q->rowCount();
-        if ($n == 1) {
-            $t = $q->fetch();
-            $u = query("SELECT * FROM `global_user` WHERE `email`=?;", array($t['email']))->fetch();
-            if (!$u) {
-                header("Location: " . $index_url);
-                exit;
-            }
-
-            $engine->session->data = (object) $u;
-            $_SESSION['lobby_uid'] = $u['uid'];
-            $_SESSION['lobby_username'] = $u['username'];
-            $_SESSION['lobby_email'] = $u['email'];
-
-            $_SESSION['mellon_uid'] = $u['uid'];
-            $_SESSION['mellon_username'] = $u['username'];
-            $_SESSION['mellon_email'] = $u['email'];
-            $token = $engine->database->msid($u['email']);
-            $_SESSION['mellon_msid'] = $token;
-
-            setcookie("gl5SessionKey", json_encode(array(
-                "key" => $t['token'],
-                "id" => $_SESSION['lobby_uid'],
-                    )), time() + 1209600, "/", '.' . $domain);
-            setcookie("gl5SessionKey", json_encode(array(
-                "key" => $t['token'],
-                "id" => $_SESSION['lobby_uid'],
-                    )), time() + 1209600, "/", "", false, true);
-            setcookie("gl5PlayerId", (string)$_SESSION['lobby_uid'], time() + 1209600, "/", $domain, false, true);
-            header("Location: ../?g_msid=" . md5($t['token']) . "&gl5SessionKey=" . $t['token']);
-            return true;
-        } else {
-            header("Location: " . $index_url);
-            return false;
-        }
+        global $index_url,$lobby_url;
+        $t=query("SELECT * FROM global_msid WHERE token=? LIMIT 1",[$token])->fetch(PDO::FETCH_ASSOC);
+        if(!$t){header("Location: ".$index_url);exit;}
+        $u=query("SELECT * FROM global_user WHERE email=? LIMIT 1",[$t['email']])->fetch(PDO::FETCH_ASSOC);
+        if(!$u){header("Location: ".$index_url);exit;}
+        $GLOBALS['engine']->session->data=(object)$u;
+        $_SESSION['lobby_uid']=(int)$u['uid'];
+        $_SESSION['lobby_username']=$u['username'];
+        $_SESSION['lobby_email']=$u['email'];
+        $_SESSION['mellon_uid']=(int)$u['uid'];
+        $_SESSION['mellon_username']=$u['username'];
+        $_SESSION['mellon_email']=$u['email'];
+        $_SESSION['mellon_msid']=$t['token'];
+        $secure=!empty($_SERVER['HTTPS'])&&$_SERVER['HTTPS']!=='off';
+        $cookie=json_encode(["key"=>$t['token'],"id"=>(int)$u['uid']);
+        setcookie("gl5SessionKey",$cookie,time()+1209600,"/","",$secure,true);
+        setcookie("gl5PlayerId",(string)$u['uid'],time()+1209600,"/","",$secure,true);
+        header("Location: ".$lobby_url."?g_msid=".rawurlencode(md5($t['token']))."&gl5SessionKey=".rawurlencode($t['token']));
+        exit;
     }
 
     public function Logout() {
-        global $engine;
-        unset($_SESSION['lobby_uid']);
-        unset($_SESSION['lobby_username']);
-        unset($_SESSION['lobby_email']);
-        unset($_SESSION['mellon_uid']);
-        unset($_SESSION['mellon_username']);
-        unset($_SESSION['mellon_email']);
-        unset($_SESSION['mellon_msid']);
+        unset($_SESSION['lobby_uid'],$_SESSION['lobby_username'],$_SESSION['lobby_email']);
+        unset($_SESSION['mellon_uid'],$_SESSION['mellon_username'],$_SESSION['mellon_email'],$_SESSION['mellon_msid']);
     }
-
 }
