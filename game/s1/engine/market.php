@@ -84,18 +84,19 @@ class Market {
         }
     }
 
-    public function createOffer($wid, $offerAmount = 1, $offerType = 1, $searchAmount = 1, $searchType = 2, $onlyKingdom = false, $maxtime = 0) {
+    public function createOffer($wid,$offerAmount=1,$offerType=1,$searchAmount=1,$searchType=2,$onlyKingdom=false,$maxtime=0) {
         global $engine;
+        $wid=(int)$wid; $offerAmount=(int)$offerAmount; $searchAmount=(int)$searchAmount; $offerType=(int)$offerType; $searchType=(int)$searchType;
+        $owner=$engine->account->getByVillage($wid);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid || $offerAmount<=0 || $searchAmount<=0 || !in_array($offerType,[1,2,3,4],true) || !in_array($searchType,[1,2,3,4],true)) return false;
         $engine->auto->procRes($wid);
-        if ($offerType == 1)
-            query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-? WHERE `wid`=?", [$offerAmount, $wid]);
-        elseif ($offerType == 2)
-            query("UPDATE `{$engine->server->prefix}village` SET `clay`=`clay`-? WHERE `wid`=?", [$offerAmount, $wid]);
-        elseif ($offerType == 3)
-            query("UPDATE `{$engine->server->prefix}village` SET `iron`=`iron`-? WHERE `wid`=?", [$offerAmount, $wid]);
-        elseif ($offerType == 4)
-            query("UPDATE `{$engine->server->prefix}village` SET `crop`=`crop`-? WHERE `wid`=?", [$offerAmount, $wid]);
-        query("INSERT INTO `{$engine->server->prefix}market` (`wid`,`gtype`,`gamt`,`wtype`,`wamt`,`maxtime`,`kingdom`,`merchant`) VALUES (?,?,?,?,?,?,?,?);", [$wid, $offerType, $offerAmount, $searchType, $searchAmount, $maxtime, $onlyKingdom ? 1 : 0, 1]);
+        $v=query("SELECT * FROM `".$engine->server->prefix."village` WHERE `wid`=?",[$wid])->fetch(PDO::FETCH_ASSOC);
+        if (!$v) return false;
+        $col=[1=>'wood',2=>'clay',3=>'iron',4=>'crop'][$offerType];
+        if ((float)$v[$col]<$offerAmount) return false;
+        query("UPDATE `".$engine->server->prefix."village` SET `".$col."`=`".$col."`-? WHERE `wid`=?",[$offerAmount,$wid]);
+        query("INSERT INTO `".$engine->server->prefix."market` (`wid`,`gtype`,`gamt`,`wtype`,`wamt`,`maxtime`,`kingdom`,`merchant`) VALUES (?,?,?,?,?,?,?,?)",[$wid,$offerType,$offerAmount,$searchType,$searchAmount,(int)$maxtime,$onlyKingdom?1:0,1]);
+        return true;
     }
 
     public function cancelOffer($id) {
@@ -130,39 +131,22 @@ class Market {
         ];
     }
 
-    public function send($from, $to, $recurrences, $res) {
+    public function send($from,$to,$recurrences,$res) {
         global $engine;
-
-        $tid = $engine->unit->createUnit($from, [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0, 11 => 0]);
-
-        $owner = $engine->account->getByVillage($from);
-        $duration = $engine->world->getDuration(($owner['tribe'] == 1) ? 16 : ($owner['tribe'] == 2) ? 24 : 12, $from, $to);
-        $start = time();
-        $end = $start + $duration;
-        $p = $engine->account->getByVillage($from, 'uid');
-
-        $params = array($from, $p, $to, 7, 0, 0, $start, $end, $tid, 1, json_encode($res));
-        query("INSERT INTO `" . $engine->server->prefix . "troop_move` (`from`,`owner`,`to`,`type`,`spy`,`redeployHero`,`start`,`end`,`unit`,`merchant`,`data`) VALUES (?,?,?,?,?,?,?,?,?,?,?);", $params);
-
-        // Decrease resources from village
+        $from=(int)$from; $to=(int)$to;
+        $owner=$engine->account->getByVillage($from);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
+        $amount=array(1=>max(0,(int)($res[1]??0)),2=>max(0,(int)($res[2]??0)),3=>max(0,(int)($res[3]??0)),4=>max(0,(int)($res[4]??0)));
+        if (($amount[1]+$amount[2]+$amount[3]+$amount[4])<=0) return false;
         $engine->auto->procRes($from);
-        query("UPDATE `" . $engine->server->prefix . "village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?", array($res[1], $res[2], $res[3], $res[4], $from));
-        $engine->auto->emitCache($p, $engine->village->get($from));
-
-        // Send data to source
-        $us = $engine->account->getByVillage($from, 'uid');
-        $engine->auto->emitCache($us, $engine->move->get($from));
-
-        //Send data to target
-        $ut = $engine->account->getByVillage($to, 'uid');
-        $engine->auto->emitCache($ut, $engine->move->get($to));
-
-        //Send flash notification
-        $engine->auto->emitEvent($us, array(
-            "name" => "flashNotification",
-            "data" => "50",
-        ));
-
+        $v=query("SELECT * FROM `".$engine->server->prefix."village` WHERE `wid`=?",[$from])->fetch(PDO::FETCH_ASSOC);
+        if (!$v || (float)$v['wood']<$amount[1] || (float)$v['clay']<$amount[2] || (float)$v['iron']<$amount[3] || (float)$v['crop']<$amount[4]) return false;
+        $tid=$engine->unit->createUnit($from,[1=>0,2=>0,3=>0,4=>0,5=>0,6=>0,7=>0,8=>0,9=>0,10=>0,11=>0]);
+        $speed=($owner['tribe']==1)?16:(($owner['tribe']==2)?24:12);
+        $duration=$engine->world->getDuration($speed,$from,$to); $start=time(); $end=$start+$duration;
+        $p=$owner['uid'];
+        query("INSERT INTO `".$engine->server->prefix."troop_move` (`from`,`owner`,`to`,`type`,`spy`,`redeployHero`,`start`,`end`,`unit`,`merchant`,`data`) VALUES (?,?,?,?,?,?,?,?,?,?,?)",[$from,$p,$to,7,0,0,$start,$end,$tid,1,json_encode($amount)]);
+        query("UPDATE `".$engine->server->prefix."village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?",[$amount[1],$amount[2],$amount[3],$amount[4],$from]);
         return $tid;
     }
 
