@@ -128,7 +128,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
                 $gameUid=$uid;
                 $q=$db->prepare("INSERT INTO s1_user (uid,username,email,tribe,kingdom,gold,silver,cp,avatar,serial,`desc`,protection,tutorial,quest,master,online,spawn,plus,resBonus,cropBonus,starterPack,autoExtend,lastLogin,attp,defp) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 $vals=array($gameUid,$admin,$adminEmail,1,0,250,0,0,$avatarId,0,'','0',0,'0',0,time(),'0','0','0','0','0',0,(string)time(),0,0);
-                $q->bind_param('issiiisidissiiisssssissii',...$vals);
+                $q->bind_param('issiisidsissisiisssssisii',...$vals);
                 if(!$q->execute()) throw new RuntimeException('Admin speler aanmaken mislukt: '.$q->error);
                 $q->close();
             }
