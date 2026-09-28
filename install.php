@@ -45,6 +45,22 @@ $GLOBALS['db']=null;
 function db(){if($GLOBALS['db'] instanceof PDO)return $GLOBALS['db'];$GLOBALS['db']=new PDO('mysql:host='.SQL_HOST.';dbname='.SQL_DATB.';charset=utf8mb4',SQL_USER,SQL_PASS,[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,PDO::ATTR_EMULATE_PREPARES=>false]);$GLOBALS['db']->exec("SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO'");return $GLOBALS['db'];}
 
 PHP_CONFIG;
+  // Persist the exact database settings entered in the installer.
+  $cfg = str_replace(
+      array(
+          "define('SQL_HOST','127.0.0.1');",
+          "define('SQL_USER','root');",
+          "define('SQL_PASS','');",
+          "define('SQL_DATB','travian_kingdoms');"
+      ),
+      array(
+          "define('SQL_HOST'," . var_export($host, true) . ");",
+          "define('SQL_USER'," . var_export($user, true) . ");",
+          "define('SQL_PASS'," . var_export($pass, true) . ");",
+          "define('SQL_DATB'," . var_export($name, true) . ");"
+      ),
+      $cfg
+  );
   if(file_put_contents(__DIR__.'/config.php',$cfg,LOCK_EX)===false)throw new RuntimeException('config.php schriven mislukt.');
   $r=$db->query("SHOW TABLES LIKE 's1_%'"); while($x=$r->fetch_row())$db->query("TRUNCATE TABLE ".$x[0]);
   $adminEmail=(strpos($admin,'@')!==false)?$admin:$admin.'@localhost';
