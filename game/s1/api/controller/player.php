@@ -10,8 +10,10 @@ if ($data['action'] == "ping") {
 } elseif ($data['action'] == "chooseTribe") {
     if ($_SESSION[$engine->server->prefix . 'tutorial'] != 1) {
         query("UPDATE `" . $engine->server->prefix . "user` SET `tribe`=? WHERE `uid`=?;", array($data['params']['tribeId'], $_SESSION[$engine->server->prefix . 'uid']));
-        query("UPDATE `" . $engine->server->prefix . "user` SET `tutorial`=? WHERE `uid`=?;", array(1, $_SESSION[$engine->server->prefix . 'uid']));
-        $_SESSION[$engine->server->prefix . 'tutorial'] = 1;
+        query("UPDATE `" . $engine->server->prefix . "user` SET `tutorial`=? WHERE `uid`=?;", array(256, $_SESSION[$engine->server->prefix . 'uid']));
+        // The local single-world build does not require the original tutorial gate.
+        // Mark the account as tutorial-complete so all normal game actions are immediately available.
+        $_SESSION[$engine->server->prefix . 'tutorial'] = 256;
         $_SESSION[$engine->server->prefix . 'tribe'] = $data['params']['tribeId'];
 
         $vid = - 10000 - $_SESSION[$engine->server->prefix . 'uid'];
