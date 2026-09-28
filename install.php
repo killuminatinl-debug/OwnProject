@@ -127,8 +127,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
             if(!$hasGameUser){
                 $gameUid=$uid;
                 $q=$db->prepare("INSERT INTO s1_user (uid,username,email,tribe,kingdom,gold,silver,cp,avatar,serial,`desc`,protection,tutorial,quest,master,online,spawn,plus,resBonus,cropBonus,starterPack,autoExtend,lastLogin,attp,defp) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                $vals=array($gameUid,$admin,$adminEmail,1,0,250,0,0,$avatarId,0,'','0',0,'0',0,time(),'0','0','0','0','0',0,(string)time(),0,0);
-                $q->bind_param('issiisidsissisiisssssisii',...$vals);
+                if (!$q) throw new RuntimeException('Admin speler statement mislukt: '.$db->error);
+                $v1=(string)$gameUid; $v2=$admin; $v3=$adminEmail; $v4='1'; $v5='0'; $v6='250'; $v7='0'; $v8='0'; $v9=(string)$avatarId; $v10='0'; $v11=''; $v12='0'; $v13='0'; $v14='0'; $v15='0'; $v16=(string)time(); $v17='0'; $v18='0'; $v19='0'; $v20='0'; $v21='0'; $v22='0'; $v23=(string)time(); $v24='0'; $v25='0';
+                $q->bind_param('sssssssssssssssssssssssss',$v1,$v2,$v3,$v4,$v5,$v6,$v7,$v8,$v9,$v10,$v11,$v12,$v13,$v14,$v15,$v16,$v17,$v18,$v19,$v20,$v21,$v22,$v23,$v24,$v25);
                 if(!$q->execute()) throw new RuntimeException('Admin speler aanmaken mislukt: '.$q->error);
                 $q->close();
             }
