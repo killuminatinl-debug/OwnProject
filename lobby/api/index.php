@@ -145,9 +145,9 @@ if ($controller === 'cache' && $actionName === 'get') {
             query('UPDATE global_user SET username=? WHERE uid=?', [$name, $uid]);
             $_SESSION['lobby_username'] = $name;
         }
-        $json['response'] = [];
+        $json['response'] = ['data'=>true];
     } elseif (in_array($actionName, ['savePortrait','switchCountry','logoutAll','abortDeletion'], true)) {
-        $json['response'] = [];
+        $json['response'] = ['data'=>true];
     } elseif ($actionName === 'deleteAvatar') {
         $json['response'] = ['data'=>false];
     }
