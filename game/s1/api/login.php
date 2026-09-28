@@ -24,7 +24,7 @@ if ($msid !== '' && hash_equals(md5($msid), $token)) {
         $_SESSION[$engine->server->prefix . 'avatar'] = $aid;
 
         $uid = (int)query("SELECT COALESCE(MAX(`uid`),100) + 1 FROM `" . $engine->server->prefix . "user`")->fetchColumn();
-        query("INSERT INTO `" . $engine->server->prefix . "user` (`uid`,`email`,`gold`,`silver`,`avatar`,`lastLogin`) VALUES (?,?,?,?,?,?);", array($uid, $_SESSION['mellon_email'], $engine->account->start_gold, 0, $aid, time()));
+        query("INSERT INTO `" . $engine->server->prefix . "user` (`uid`,`username`,`email`,`gold`,`silver`,`avatar`,`lastLogin`,`tribe`,`tutorial`) VALUES (?,?,?,?,?,?,?,?,?);", array($uid, $_SESSION['mellon_username'], $_SESSION['mellon_email'], $engine->account->start_gold, 0, $aid, time(), 1, 0));
         $_SESSION[$engine->server->prefix . 'uid'] = $uid;
         $_SESSION[$engine->server->prefix . 'tribe'] = 1;
         $_SESSION[$engine->server->prefix . 'gold'] = $engine->account->start_gold;
