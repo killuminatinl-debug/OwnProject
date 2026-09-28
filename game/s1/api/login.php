@@ -72,3 +72,8 @@ if ($msid !== '' && hash_equals(md5($msid), $token)) {
 setcookie('t5SessionKey', (json_encode(array("key" => session_id(), "id" => $uid))), time() + 14400, "/");
 header("Location: ../#msid=" . rawurlencode($msid));
     exit;
+} else {
+    header("Location: " . $lobby_url);
+    exit;
+}
+
