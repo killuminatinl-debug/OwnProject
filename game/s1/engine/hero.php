@@ -184,7 +184,7 @@ class Hero {
                      `use_scroll`,`use_waterbucket`,`use_ointments`,`use_advcard`,`use_reschest`,
                      `use_cropchest`,`use_artwork`)
                     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
-                    [\$_SESSION[$engine->server->prefix . 'uid'],\$_COOKIE['village'],0,0,0,7,0,0,0,100,320,0,0,0,0,0,0,microtime(true),0,0,time()+3600,'','',0,0,0,0,0,0,0,0,0]);
+                    [$_SESSION[$engine->server->prefix . 'uid'],$_COOKIE['village'],0,0,0,7,0,0,0,100,320,0,0,0,0,0,0,microtime(true),0,0,time()+3600,'','',0,0,0,0,0,0,0,0,0]);
         }
     }
 
