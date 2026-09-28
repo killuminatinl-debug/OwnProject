@@ -4,11 +4,11 @@
         <meta charset="utf-8">
         <title>Mellon</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="/min?g=core-styles" media="screen" rel="stylesheet" type="text/css">
-        <link href="/min?g=styles" media="screen" rel="stylesheet" type="text/css">
+        <link href="<?php echo $base; ?>/mellon/min?g=core-styles" media="screen" rel="stylesheet" type="text/css">
+        <link href="<?php echo $base; ?>/mellon/min?g=styles" media="screen" rel="stylesheet" type="text/css">
 
-        <script type="text/javascript" src="/min?g=core-scripts"></script>
-        <script type="text/javascript" src="/min?g=scripts"></script>
+        <script type="text/javascript" src="<?php echo $base; ?>/mellon/min?g=core-scripts"></script>
+        <script type="text/javascript" src="<?php echo $base; ?>/mellon/min?g=scripts"></script>
         <script type="text/javascript">
             //<!--
             $(function () {
@@ -45,7 +45,7 @@
             $(function () {
                 setTimeout(function () {
                     if (!window.bridgePresenceCheckSkip && (!window.parent || !window.parent.bridge)) {
-                        window.location.href = 'http://www.kingdoms.com/com?msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid';
+                        window.location.href = '<?php echo $lobby_url; ?>api/login.php?token=<?php echo md5($_SESSION['mellon_msid']); ?>&msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid';
                     }
                 }, 4000);
             });
@@ -83,7 +83,7 @@
 
     <body class="mellon-dialog c-authentication-login ltr">
         <div class="container">
-            <form action="/authentication/login/applicationDomain/www.kingdoms.com/applicationPath/&#x25;2Fcom&#x25;2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid" method="POST" name="login" class="form-horizontal tk-sign-process" id="login">
+            <form action="<?php echo $base; ?>/authentication/login/applicationDomain/www.kingdoms.com/applicationPath/&#x25;2Fcom&#x25;2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid" method="POST" name="login" class="form-horizontal tk-sign-process" id="login">
                 <fieldset class="social-login">
                     <legend>Login with</legend>
                 </fieldset>
@@ -101,12 +101,12 @@
             </form>
             <div class="login-extra">
                 <div class="login-extra-reset-password left">
-                    <a href="/authentication/password-reset-request/applicationDomain/www.kingdoms.com/applicationPath/%2Fcom%2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid">
+                    <a href="<?php echo $base; ?>/authentication/password-reset-request/applicationDomain/www.kingdoms.com/applicationPath/%2Fcom%2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid">
                         Forgot password        </a>
                 </div>
                 <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                 <div class="login-extra-create-account right">
-                    New player?        <a href="/registration/index/applicationDomain/www.kingdoms.com/applicationPath/%2Fcom%2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid">
+                    New player?        <a href="<?php echo $base; ?>/registration/index/applicationDomain/www.kingdoms.com/applicationPath/%2Fcom%2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid">
                         Sign up        </a>
                 </div>
             </div>
