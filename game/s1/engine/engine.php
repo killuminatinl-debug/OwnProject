@@ -95,6 +95,48 @@ if (!isset($ignoreLoad) || $ignoreLoad !== true) {
         header("Location: " . $mellon_url . "authentication/login/");
         exit;
     }
+    // Single-world bootstrap: every logged-in account must have a valid tribe, kingdom and playable village.
+    // This also repairs older/incomplete local accounts before the Kingdoms client requests its caches.
+    $uid = (int)($engine->session->data->uid ?? 0);
+    if ($uid > 0) {
+        $player = query("SELECT * FROM `{$engine->server->prefix}user` WHERE `uid`=? LIMIT 1", [$uid])->fetch(PDO::FETCH_ASSOC);
+        if ($player) {
+            $tribe = (int)($player['tribe'] ?? 0);
+            if ($tribe < 1 || $tribe > 7) {
+                $tribe = 1;
+                query("UPDATE `{$engine->server->prefix}user` SET `tribe`=? WHERE `uid`=?", [$tribe, $uid]);
+                $player['tribe'] = $tribe;
+            }
+            $engine->session->data->tribe = $tribe;
+            $_SESSION[$engine->server->prefix . 'tribe'] = $tribe;
+            if ((int)($player['tutorial'] ?? 0) < 256) {
+                query("UPDATE `{$engine->server->prefix}user` SET `tutorial`=256 WHERE `uid`=?", [$uid]);
+                $player['tutorial'] = 256;
+                $_SESSION[$engine->server->prefix . 'tutorial'] = 256;
+            }
+            $hasVillage = (int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}village` WHERE `owner`=?", [$uid])->fetchColumn();
+            if ($hasVillage === 0) {
+                $engine->village->createVillage($uid, $player['username'] ?? $_SESSION[$engine->server->prefix . 'username']);
+            }
+            // Repair incomplete villages produced by older installer revisions.
+            $vrow = query("SELECT `wid` FROM `{$engine->server->prefix}village` WHERE `owner`=? ORDER BY `wid` ASC LIMIT 1", [$uid])->fetch(PDO::FETCH_ASSOC);
+            if ($vrow) {
+                $wid = (int)$vrow['wid'];
+                for ($loc = 1; $loc <= 40; $loc++) {
+                    $exists = (int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", [$wid, $loc])->fetchColumn();
+                    if ($exists === 0) {
+                        $type = 0; $level = 0; $rubble = 0;
+                        if ($loc <= 18) { $type = 4; $level = 1; }
+                        if ($loc === 27) { $type = 15; $level = 1; }
+                        $engine->building->createBuilding($wid, $loc, $type, $level, $rubble);
+                    }
+                }
+                query("UPDATE `{$engine->server->prefix}field` SET `level`=1,`rubble`=0 WHERE `wid`=? AND `location` BETWEEN 1 AND 18 AND `level`<1", [$wid]);
+                query("UPDATE `{$engine->server->prefix}field` SET `type`=15,`level`=1,`rubble`=0 WHERE `wid`=? AND `location`=27 AND (`type`=0 OR `level`<1)", [$wid]);
+                setcookie('village', (string)$wid, 0, '/');
+            }
+        }
+    }
     $engine->auto->tick();
     $engine->village->LoadData();
 }
