@@ -20,18 +20,28 @@ if ($msid !== '' && hash_equals(md5($msid), $token)) {
 
     //$id = $engine->account->FPLogin();
     if (query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `email`=?;", array($_SESSION['mellon_email']))->rowCount() == 0) {
-        query("INSERT INTO `global_avatar` (`email`) VALUES (?);", array($_SESSION['mellon_email']));
+        query("INSERT INTO `global_avatar` (`email`,`gender`,`hairColor`,`beard`,`ear`,`eye`,`eyebrow`,`hair`,`mouth`,`nose`) VALUES (?,?,?,?,?,?,?,?,?,?);", array($_SESSION['mellon_email'],0,0,0,0,0,0,0,0,0));
         $aid = $engine->sql->lastInsertId();
         $_SESSION[$engine->server->prefix . 'avatar'] = $aid;
 
         $uid = (int)query("SELECT COALESCE(MAX(`uid`),100) + 1 FROM `" . $engine->server->prefix . "user`")->fetchColumn();
-        query("INSERT INTO `" . $engine->server->prefix . "user` (`uid`,`username`,`email`,`gold`,`silver`,`avatar`,`lastLogin`,`tribe`,`tutorial`) VALUES (?,?,?,?,?,?,?,?,?);", array($uid, $_SESSION['mellon_username'], $_SESSION['mellon_email'], $engine->account->start_gold, 0, $aid, time(), 1, 0));
+        query("INSERT INTO `" . $engine->server->prefix . "user`
+            (`uid`,`username`,`email`,`tribe`,`kingdom`,`gold`,`silver`,`cp`,`avatar`,`serial`,`desc`,`tutorial`,`quest`,`online`,`lastLogin`,`attp`,`defp`)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+            array($uid, $_SESSION['mellon_username'], $_SESSION['mellon_email'], 1, 0,
+                $engine->account->start_gold, 0, 0, $aid, 0, '', 0, '0', 1, time(), 0, 0));
         $_SESSION[$engine->server->prefix . 'uid'] = $uid;
         $_SESSION[$engine->server->prefix . 'tribe'] = 1;
         $_SESSION[$engine->server->prefix . 'gold'] = $engine->account->start_gold;
         $_SESSION[$engine->server->prefix . 'silver'] = 0;
         $_SESSION[$engine->server->prefix . 'tutorial'] = 0;
-        query("INSERT INTO `" . $engine->server->prefix . "setting` (`email`,`lang`,`uid`) VALUES (?,?,?);", array($_SESSION['mellon_email'], 'en', $uid));
+        query("INSERT INTO `" . $engine->server->prefix . "setting`
+            (`uid`,`attacksFilter`,`disableAnimations`,`HelpNotifications`,`TabNotifications`,
+             `extendedSimulator`,`lang`,`mapFilter`,`musicVolume`,`muteAll`,`notpadsVisible`,
+             `onlineStatusFilter`,`premiumConfirmation`,`soundVolume`,`timeFormat`,`timeZone`,
+             `uiSoundVolume`,`WelcomeScreen`,`email`)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+            array($uid,'2','0','0','1','0','en','-1','0','0','0','0','2','0','0','1','50',0,$_SESSION['mellon_email']));
         /* First login: create a real playable avatar, kingdom and village. */
         $kid = $engine->kingdom->create(substr(preg_replace('/[^A-Za-z0-9]/', '', $_SESSION['mellon_username']), 0, 12) ?: 'Kingdom');
         query("UPDATE `" . $engine->server->prefix . "user` SET `tribe`=1, `kingdom`=? WHERE `uid`=?", [$kid, $uid]);
