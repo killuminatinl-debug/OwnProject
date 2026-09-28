@@ -15,6 +15,11 @@ if ($data['action'] == "getAllianceInformation") {
         "time" => round(microtime(true) * 1000),
     ));
 } elseif ($data['action'] == "updateName") {
+    $owner = $engine->account->getByVillage($data['params']['villageId']);
+    if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
+        echo json_encode(array("response"=>array("error"=>"NOT_OWNER"),"serialNo"=>$engine->session->serialNo(),"time"=>round(microtime(true)*1000)));
+        exit;
+    }
     query("UPDATE `" . $engine->server->prefix . "village` SET `vname`=? WHERE `wid`=?;", array($data['params']['villageName'], $data['params']['villageId']));
     $engine->auto->emitEvent([
         "name" => "mapChanged",
@@ -57,6 +62,11 @@ if ($data['action'] == "getAllianceInformation") {
         "time" => round(microtime(true) * 1000),
     ));
 } elseif ($data['action'] == "upgradeToTown") {
+    $owner = $engine->account->getByVillage($data['params']['villageId']);
+    if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
+        echo json_encode(array("response"=>array("error"=>"NOT_OWNER"),"serialNo"=>$engine->session->serialNo(),"time"=>round(microtime(true)*1000)));
+        exit;
+    }
     $engine->village->up2Town($data['params']['villageId']);
     echo json_encode(array(
         "response" => [],
