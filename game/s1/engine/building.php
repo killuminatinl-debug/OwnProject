@@ -196,10 +196,9 @@ class Building {
          * 2 = ขยะ
          */
         if ($status == 1) {
-            // Empty construction slots start at level 0; the first purchase is level 1.
-            $level = 0;
+            // Construction-slot preview uses level 1 so the client receives valid level-1 costs.
+            $level = 1;
         } elseif ($status == 2) {
-            $level = 0;
             $max = 0;
         }
         if ($level == 0 && $location > 18 && $location != 41) {
