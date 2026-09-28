@@ -80,10 +80,12 @@ if ($data['controller'] == "cache") {
         );
     } elseif ($data['action'] == "getLastPlayedGameWorld") {
         $json['serialNo'] = 1039;
-        $json['response'] = array(
-            "id" => 412,
-            "name" => "COM3"
-        );
+        $servers = $engine->server->listServer(true);
+        $last = !empty($servers) ? $servers[0] : null;
+        $json['response'] = $last ? [
+            "id" => $last['consumersId'],
+            "name" => $last['worldName']
+        ] : null;
     } elseif ($data['action'] == "getOtherRegions") {
         $json['serialNo'] = 1040;
         $json['response'] = array();
