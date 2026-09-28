@@ -143,16 +143,27 @@ class Village {
 
         $data = query("SELECT * FROM `" . $engine->server->prefix . "village` WHERE `owner`=?;", array($uid))->fetchAll();
 
-        if (!isset($_COOKIE['village'])) {
+        // Always point the client at a village owned by the current player.
+        // A stale cookie from another test account otherwise leaves the Kingdoms UI
+        // without a valid Village/Building cache even though the account has a village.
+        $selected = isset($_COOKIE['village']) ? (int)$_COOKIE['village'] : 0;
+        $validSelected = false;
+        foreach ($data as $row) {
+            if ((int)$row['wid'] === $selected) { $validSelected = true; break; }
+        }
+        if (!$validSelected) {
             if (count($data) > 0) {
-                setcookie("village", $data[0]['wid'], 0, "/");
-                $_COOKIE['village'] = $data[0]['wid'];
+                $selected = (int)$data[0]['wid'];
+                setcookie("village", (string)$selected, 0, "/");
+                $_COOKIE['village'] = $selected;
             } else {
-                setcookie("village", 0, 0, "/");
+                $selected = 0;
+                setcookie("village", "0", 0, "/");
                 $_COOKIE['village'] = 0;
             }
         }
 
+        $this->select = $selected;
         $this->data = $data;
         for ($i = 0; $i < count($this->data); $i += 1) {
             $wid = (int)$this->data[$i]['wid'];
