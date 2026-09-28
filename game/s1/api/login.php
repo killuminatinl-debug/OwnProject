@@ -64,7 +64,7 @@ if ($msid !== '' && hash_equals(md5($msid), $token)) {
        have a tribe, kingdom and at least one village before the game loads. */
     $player = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", [$uid])->fetch(PDO::FETCH_ASSOC);
     if (!$player) {
-        header("Location: " . $lobby_url);
+        header("Location: " . $mellon_url . "authentication/login/");
         exit;
     }
     if ((int)$player['tribe'] < 1) {
@@ -84,7 +84,7 @@ if ($msid !== '' && hash_equals(md5($msid), $token)) {
     header("Location: ../#msid=" . rawurlencode($msid));
     exit;
 } else {
-    header("Location: " . $lobby_url);
+    header("Location: " . $mellon_url . "authentication/login/");
     exit;
 }
 
