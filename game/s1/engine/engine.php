@@ -90,10 +90,12 @@ define('TB_PREFIX', $engine->server->tag);
 
 if (!isset($ignoreLoad)) {
     $engine->session->checkLogin();
+    $engine->auto->tick();
     $engine->village->LoadData();
 } else {
     if ($ignoreLoad !== true) {
         $engine->session->checkLogin();
+        $engine->auto->tick();
         $engine->village->LoadData();
     }
 }
