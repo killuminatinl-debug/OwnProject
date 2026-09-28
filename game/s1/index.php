@@ -23,7 +23,7 @@ header('Access-Control-Allow-Origin: *');
                 "direction": "ltr",
                 "version": "0.66.9",
                 "urlGameRules": "http:\/\/www.kingdoms.com\/X\/rules",
-                "liveUrl": "\/api\/",
+                "liveUrl": "<?php echo $base; ?>/game/s1/api/",
                 "SERVER_ENV": "live",
                 "node": {
                     "host": "<?php echo $domain; ?>",
