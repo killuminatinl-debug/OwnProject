@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 session_start();
+@set_time_limit(0);
+@ini_set('memory_limit','512M');
 error_reporting(E_ALL);
 ini_set('display_errors','1');
 
@@ -34,6 +36,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
             $db=new mysqli($host,$user,$pass);
             if($db->connect_errno)throw new RuntimeException('MySQL verbinding mislukt: '.$db->connect_error);
             $db->set_charset('utf8mb4');
+            $db->query("SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO'");
 
             if(!$db->query("CREATE DATABASE IF NOT EXISTS ".$name." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"))
                 throw new RuntimeException('Database aanmaken mislukt: '.$db->error);
