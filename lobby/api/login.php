@@ -1,8 +1,12 @@
 <?php
-include_once dirname(__FILE__).'/../engine/session.php';
+include_once dirname(__FILE__) . '/../engine/session.php';
 
-if($_GET['token']==md5($_GET['msid'])){
-    $engine->account->Login($_GET['msid']);
-}else{
-    header("Location: ".$index_url);
+$token = isset($_GET['token']) ? (string)$_GET['token'] : '';
+$msid = isset($_GET['msid']) ? (string)$_GET['msid'] : '';
+
+if ($msid !== '' && $token !== '' && hash_equals(md5($msid), $token)) {
+    $engine->account->Login($msid);
+} else {
+    header("Location: " . $index_url);
+    exit;
 }
