@@ -11,7 +11,7 @@ if ($_GET['token'] == md5($_GET['msid'])) {
     $_SESSION['mellon_uid'] = $mellon['uid'];
     $_SESSION['mellon_username'] = $mellon['username'];
     $_SESSION['mellon_email'] = $mellon['email'];
-    $_SESSION['mellon_msid'] = $_GET['token'];
+    $_SESSION['mellon_msid'] = $_GET['msid'];
 
 
     //$id = $engine->account->FPLogin();
@@ -20,8 +20,7 @@ if ($_GET['token'] == md5($_GET['msid'])) {
         $aid = $engine->sql->lastInsertId();
         $_SESSION[$engine->server->prefix . 'avatar'] = $aid;
 
-        $numUser = query("SELECT * FROM `" . $engine->server->prefix . "user`")->rowCount();
-        $uid = $numUser + 101;
+        $uid = (int)query("SELECT COALESCE(MAX(`uid`),100) + 1 FROM `" . $engine->server->prefix . "user`")->fetchColumn();
         query("INSERT INTO `" . $engine->server->prefix . "user` (`uid`,`email`,`gold`,`silver`,`avatar`,`lastLogin`) VALUES (?,?,?,?,?,?);", array($uid, $_SESSION['mellon_email'], $engine->account->start_gold, 0, $aid, time()));
         $_SESSION[$engine->server->prefix . 'uid'] = $uid;
         $_SESSION[$engine->server->prefix . 'tribe'] = 1;
