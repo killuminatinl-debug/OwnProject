@@ -614,22 +614,13 @@ class Building {
         $hasPalaceAnywhere = 0; //$this->hasPalaceAnywhere();
         $hasWW = 0;
 
+        // A fresh village must always be able to start with a Main Building.
         if ($mainbuilding == 0 && !$this->inQueue($wid, 15) && $id != 32 && $id != 33) {
-
             $b = $this->makeDetail(0, $wid, $id, 15, 0, array(
-                'requiredBuildings' => array(
-                    array(
-                        'buildingType' => 15,
-                        'currentLevel' => $mainbuilding,
-                        'requiredLevel' => 1,
-                        'valid' => ($mainbuilding >= 1)
-                    )
-                )), true, 1);
-            if ($mainbuilding >= 1) {
-                $buildable[count($buildable)] = $b;
-            } else {
-                $notBuildable[count($notBuildable)] = $b;
-            }
+                'requiredBuildings' => array(),
+                'canBuild' => true
+            ), true, 1);
+            $buildable[count($buildable)] = $b;
         }
         if ((($cranny == 0 && !$this->inQueue($wid, 23)) || $cranny == 10) && $mainbuilding >= 1 && $id != 32 && $id != 33) {
             if ($cranny == 10) {
