@@ -442,7 +442,22 @@ class Village {
         !isset($option['settled']) ? $option['settled'] = time() : '';
         !isset($option['expandedfrom']) ? $option['expandedfrom'] = $wid : '';
 
-        if (query("INSERT INTO `" . $engine->server->prefix . "village` (`wid`,`vname`,`owner`,`pop`,`maxstore`,`maxcrop`,`capitel`) VALUE (?,?,?,?,?,?,?);", array($wid, ($name != null ? $name : (($username == null || $username == "") ? "New Village" : $username . "'s village")), $uid, ($pop == null ? 1 : $pop), $engine->server->multiple_storage * $engine->server->base_storage, $engine->server->multiple_storage * $engine->server->base_storage, 1))) {
+        if (query("INSERT INTO `" . $engine->server->prefix . "village`
+                (`wid`,`vname`,`owner`,`pop`,`wood`,`clay`,`iron`,`pwood`,`pclay`,`piron`,
+                 `maxstore`,`maxcrop`,`crop`,`pcrop`,`cp`,`settler`,`settler_used`,`capitel`,`town`,
+                 `lastupdate`,`settled`,`expandedfrom`,`natar`,`area`)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+                array(
+                    $wid,
+                    ($name != null ? $name : (($username == null || $username == "") ? "New Village" : $username . "'s village")),
+                    $uid,
+                    ($pop == null ? 1 : $pop),
+                    750, 750, 750, 0, 0, 0,
+                    $engine->server->multiple_storage * $engine->server->base_storage,
+                    $engine->server->multiple_storage * $engine->server->base_storage,
+                    750, 0, 0, 0, 0, 1, 0,
+                    microtime(true), 0, 0, 0, -1
+                ))) {
             $engine->unit->setUnit($wid, 1, 0);
             query("INSERT INTO `" . $engine->server->prefix . "tdata` (`wid`) VALUES (?);", array($wid));
             return true;
