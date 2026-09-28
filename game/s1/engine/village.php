@@ -503,6 +503,10 @@ class Village {
         $engine->building->createBuilding($wid, 39, 0, 0, 0);
         $engine->building->createBuilding($wid, 40, 0, 0, 0);
 
+        // Starter villages must not carry rubble markers from the legacy generator.
+        query("UPDATE `{$engine->server->prefix}field` SET `rubble`=0 WHERE `wid`=? AND `location` BETWEEN 1 AND 18", [$wid]);
+        query("UPDATE `{$engine->server->prefix}field` SET `type`=15, `level`=1, `rubble`=0 WHERE `wid`=? AND `location`=27", [$wid]);
+
         !isset($option['settled']) ? $option['settled'] = time() : '';
         !isset($option['expandedfrom']) ? $option['expandedfrom'] = $wid : '';
 
