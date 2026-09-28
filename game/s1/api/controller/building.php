@@ -134,8 +134,6 @@ if ($data['action'] == "getBuildingList") {
         "serialNo" => $engine->session->serialNo(),
         "time" => round(microtime(true) * 1000),
     ));
-    "locationId";
-    "villageId";
 } elseif ($data['action'] == "researchUnit") {
     $engine->tech->Research($data['params']['villageId'], $data['params']['unitType']);
     echo json_encode(array(
