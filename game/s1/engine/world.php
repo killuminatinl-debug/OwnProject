@@ -108,14 +108,21 @@ class World {
         $wdata = query($q)->fetchAll(PDO::FETCH_ASSOC);
         $wid = 0;
         $wwr = $this->getWWTile();
-        while ($wid == 0) {
-            foreach ($wdata as $w) {
-                if (!in_array($w['id'], $wwr)) {
-                    $wid = $w['id'];
-                    break;
-                }
+        foreach ($wdata as $w) {
+            if (!in_array($w['id'], $wwr)) {
+                $wid = (int)$w['id'];
+                break;
             }
         }
+
+        // If the selected sector is exhausted, search every empty 4-4-4-6 tile.
+        if ($wid === 0) {
+            $fallback = query("SELECT id FROM `{$engine->server->prefix}world` WHERE fieldtype='4446' AND id NOT IN (SELECT wid FROM `{$engine->server->prefix}village`) ORDER BY RAND() LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+            if ($fallback) {
+                $wid = (int)$fallback['id'];
+            }
+        }
+
         return [$wid, $q];
     }
 
