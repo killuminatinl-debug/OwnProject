@@ -48,7 +48,7 @@ header('Access-Control-Allow-Origin: *');
             config['useTemplateCache'] = true;
             config['templates'] = "<?php echo $cdn_url . $apiversion; ?>/templates.php?h=f0a52b0f5c732fabeb39a519cec38941";
             config['direction'] = "ltr";
-            config['mellon']['styles'] = 'https://cdn.traviantools.net/startpage/live/css/ltr/mellonDialogue.css?h=6a3fd7150227b2bb2132320d9122417f';
+            config['mellon']['styles'] = '<?php echo $mellon_url; ?>tk/fenster-css.css';
 
             window['zargetData'] = {
                 "gold": 0,
@@ -67,7 +67,7 @@ header('Access-Control-Allow-Origin: *');
                 var scriptTag = document.createElement('script');
                 scriptTag.type = 'text/javascript';
                 scriptTag.async = true;
-                scriptTag.src = protocol + '//cdn.zarget.com/103640/170906.js';
+                scriptTag.src = '';
                 var s = document.getElementsByTagName('script')[0];
                 s.parentNode.insertBefore(scriptTag, s);
             })();
@@ -4444,7 +4444,7 @@ header('Access-Control-Allow-Origin: *');
             );
         </script>
 
-    </head>
+    <script>window.OwnProjectTick=function(){fetch('<?php echo $game_dir; ?>api/tick.php',{credentials:'same-origin',cache:'no-store'}).catch(function(){})};setInterval(window.OwnProjectTick,5000);window.OwnProjectTick();</script></head>
 
     <body class="env-live">
         <svg>
