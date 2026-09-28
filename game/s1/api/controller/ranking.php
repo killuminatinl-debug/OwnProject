@@ -17,9 +17,9 @@ if ($data['action'] == "getWorldStats") {
         "serialNo" => $engine->session->serialNo(),
         "time" => round(microtime(true) * 1000),
         "response" => [
-            'top10Attacker' => [],
-            'top10Defender' => [],
-            'top10Climber' => [],
+            'top10Attacker' => $engine->ranking->getRanking(array('rankingType'=>'ranking_Player','rankingSubtype'=>'offPoints','start'=>0,'end'=>10)),
+            'top10Defender' => $engine->ranking->getRanking(array('rankingType'=>'ranking_Player','rankingSubtype'=>'deffPoints','start'=>0,'end'=>10)),
+            'top10Climber' => $engine->ranking->getRanking(array('rankingType'=>'ranking_Player','rankingSubtype'=>'population','start'=>0,'end'=>10)),
         ],
     ));
 } elseif ($data['action'] == "getRankAndCount") {
