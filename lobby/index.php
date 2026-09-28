@@ -11,8 +11,24 @@ if (($engine->session->data === null || empty($engine->session->data->islogin)) 
     $engine->account->Login($bootstrapToken);
 }
 
+if (isset($_GET['g_msid']) && isset($_GET['gl5SessionKey'])) {
+    $hash = (string)$_GET['g_msid'];
+    $token = (string)$_GET['gl5SessionKey'];
+
+    if ($token !== '' && hash_equals(md5($token), $hash)) {
+        // The original Kingdoms frontend expects the real session token in
+        // the URL hash. The PHP session is already established by Mellon.
+        header('Location: ' . $lobby_url . '#msid=' . rawurlencode($token), true, 302);
+        exit;
+    }
+
+    header('Location: ' . $index_url, true, 302);
+    exit;
+}
+
 if (!$engine->session->data || empty($engine->session->data->islogin)) {
-    header("Location: " . $index_url); exit;
+    header('Location: ' . $index_url . '#logout', true, 302);
+    exit;
 }
 
 include_once __DIR__.'/lang/en.php';
