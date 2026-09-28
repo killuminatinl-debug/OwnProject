@@ -19,10 +19,11 @@ class Session {
     public function get() {
         global $engine;
 
+        $msid = $_SESSION['mellon_msid'] ?? session_id();
         return [
-            "name" => "Session:" . $_SESSION['mellon_msid'],
+            "name" => "Session:" . $msid,
             "data" => [
-                "sessionId" => $_SESSION['mellon_msid'],
+                "sessionId" => $msid,
                 "type" => 0,
                 "country" => "en"
             ]
@@ -34,6 +35,10 @@ class Session {
         if (isset($_SESSION['lobby_uid'])) {
             if ($_SESSION['lobby_uid'] != "" && $_SESSION['lobby_uid'] != null) {
                 $u = query("SELECT * FROM `global_user` WHERE `uid`='" . $_SESSION['lobby_uid'] . "';")->fetch(PDO::FETCH_ASSOC);
+                if (!$u) {
+                    unset($_SESSION['lobby_uid']);
+                    return $this->checkLogin();
+                }
                 $u['islogin'] = true;
                 $this->data = (object) $u;
                 $_SESSION['lobby_uid'] = $u['uid'];
