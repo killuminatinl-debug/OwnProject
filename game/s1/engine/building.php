@@ -443,7 +443,7 @@ class Building {
         if ($type<=0) return false;
 
         // Do not allow a second construction on the same slot.
-        $existingQueue = query("SELECT COUNT(*) FROM \`{$engine->server->prefix}building\` WHERE \`wid\`=? AND \`location\`=? AND \`queue\`<>4", [$wid, $location])->fetchColumn();
+        $existingQueue = query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=? AND `queue`<>4", [$wid, $location])->fetchColumn();
         if ((int)$existingQueue > 0) return false;
 
         // A normal building/resource field may only be upgraded while below its maximum level.
@@ -657,12 +657,12 @@ class Building {
         // Existing fields/buildings must expose their next upgrade to the Kingdoms client.
         // The original build list mostly describes empty slots; without this block the UI has
         // nothing to send when a player clicks an already occupied field/building.
-        $currentField = query("SELECT * FROM \`{$engine->server->prefix}field\` WHERE \`wid\`=? AND \`location\`=? LIMIT 1", [$wid, $id])->fetch(PDO::FETCH_ASSOC);
+        $currentField = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1", [$wid, $id])->fetch(PDO::FETCH_ASSOC);
         if ($currentField && (int)$currentField['type'] > 0 && (int)$currentField['rubble'] === 0) {
             $currentType = (int)$currentField['type'];
             $currentLevel = max(0, (int)$currentField['level']);
             $maxLevel = $this->getMax($wid, $currentType);
-            $queuedHere = query("SELECT COUNT(*) FROM \`{$engine->server->prefix}building\` WHERE \`wid\`=? AND \`location\`=? AND \`queue\`<>4", [$wid, $id])->fetchColumn();
+            $queuedHere = query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=? AND `queue`<>4", [$wid, $id])->fetchColumn();
             if ((int)$queuedHere === 0 && $currentLevel < $maxLevel) {
                 $upgrade = BuildingData::get($currentType, $currentLevel + 1);
                 if ($upgrade) {
