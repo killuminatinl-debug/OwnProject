@@ -316,6 +316,10 @@ $type = $i + (10 * ($unitDef['tribeId'] - 1));
 
         // Calc Factor
         $winner = ($totalAP > $totalDP);
+        if ($totalAP <= 0 && $totalDP <= 0) { $result[1]=1; $result[2]=1; }
+        elseif ($totalAP <= 0) { $result[1]=1; $result[2]=0; }
+        elseif ($totalDP <= 0) { $result[1]=0; $result[2]=1; }
+        else {
         $result[1] = ($winner) ? pow((($totalDP * $moralbonus) / $totalAP), $Mfactor) : 1;
         // Attacker
         $result[1] = ($winner) ? pow((($totalDP * $moralbonus) / $totalAP), $Mfactor) : 1;
@@ -323,6 +327,7 @@ $type = $i + (10 * ($unitDef['tribeId'] - 1));
         // Defender
         $result[2] = (!$winner) ? pow(($totalAP / ($totalDP * $moralbonus)), $Mfactor) : 1;
         $result[2] = round($result[2], 8);
+        }
         $result[1] = max(0, min(1, $result[1]));
         $result[2] = max(0, min(1, $result[2]));
 
