@@ -441,6 +441,16 @@ class Building {
         if ($type===0) $type=(int)$field['type'];
         if ($location===32) $type=16; elseif ($location===33) $type=30+(int)$owner['tribe'];
         if ($type<=0) return false;
+
+        // Do not allow a second construction on the same slot.
+        $existingQueue = query("SELECT COUNT(*) FROM \`{$engine->server->prefix}building\` WHERE \`wid\`=? AND \`location\`=? AND \`queue\`<>4", [$wid, $location])->fetchColumn();
+        if ((int)$existingQueue > 0) return false;
+
+        // A normal building/resource field may only be upgraded while below its maximum level.
+        $currentLevel = max(0, (int)$field['level']);
+        $maxLevel = $this->getMax($wid, $type);
+        if ((int)$field['rubble'] === 0 && $currentLevel >= $maxLevel) return false;
+
         if ((int)$field['rubble']===1 && $type!==31 && $type!==32 && $type!==33) {
             $request=BuildingData::get($type,0); if (!$request) return false;
             $start=time(); $duration=max(1,(int)$request['time']);
@@ -453,7 +463,6 @@ class Building {
         $effect=(float)$this->BuildingEffect(15,$this->getTypeLevel($wid,15)); if ($effect<=0) $effect=100;
         $duration=max(1,(int)round(($request['time']*($effect/100))/$speed));
         $start=time(); $time=$start+$duration;
-        if ((int)$owner['tutorial']<256) { $duration=1; $time=$start+1; }
         $engine->auto->procRes($wid);
         $v=query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=? LIMIT 1",[$wid])->fetch(PDO::FETCH_ASSOC);
         if (!$v) return false;
