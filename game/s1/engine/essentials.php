@@ -1,5 +1,6 @@
 <?php
 
+if (!function_exists('query')) {
 function query($sql, $array = array()) {
     global $engine;
     $q = $engine->sql->prepare($sql);
@@ -7,6 +8,8 @@ function query($sql, $array = array()) {
     $engine->error->sql = $engine->sql->errorInfo();
     return $q;
 }
+}
+
 
 function l($type, $var, $option = null, $returnf = false) {
     global $engine;
