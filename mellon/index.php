@@ -40,7 +40,7 @@ if ($page->getURI(0) == "authentication") {
     }
 } elseif ($page->getURI(0) == "account") {
     if ($page->getURI(1) == "welcome") {
-        header("Location: " . APP_BASE . "/page/redirect/forward/" . rawurlencode(APP_BASE . "/lobby/api/login.php?token=" . $_SESSION['mellon_msid']) . "?msid=" . rawurlencode($_SESSION['mellon_msid']) . "&msname=msid");
+        header("Location: " . $lobby_url . "api/login.php?token=" . md5($_SESSION['mellon_msid']) . "&msid=" . rawurlencode($_SESSION['mellon_msid']) . "&msname=msid");
     } elseif ($page->getURI(1) == "logout") {
         include_once dirname(__FILE__) . '/template/logout.php';
     }
