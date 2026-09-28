@@ -174,7 +174,11 @@ class Village {
     public function createVillage($uid, $username = null, $wid = null, $name = null, $pop = null, $option = []) {
         global $engine;
         if ($wid === null) {
-            $wid = $engine->world->bestPosition();
+            $position = $engine->world->bestPosition();
+            $wid = is_array($position) ? (int)$position[0] : (int)$position;
+        }
+        if ((int)$wid <= 0) {
+            throw new RuntimeException('No free starting village position is available.');
         }
         $wdata = $engine->world->getMapDetail($wid);
         if ($wid < 0) {
