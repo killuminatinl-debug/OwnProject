@@ -457,88 +457,50 @@ class Unit {
     public function getStay($wid, $head = true) {
         global $engine;
 
-        $r = array();
-        $stays = query("SELECT * FROM `{$engine->server->prefix}troop_stay` WHERE `wid`=?;", array($wid))->fetchAll();
-
+        $rows = [];
+        $stays = query("SELECT * FROM `{$engine->server->prefix}troop_stay` WHERE `wid`=?", [(int)$wid])->fetchAll(PDO::FETCH_ASSOC);
         foreach ($stays as $stay) {
-            $u = query("SELECT * FROM `{$engine->server->prefix}units` WHERE `id`=?;", array($stay['unit']))->fetch();
-            $v = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=?;", array($u['wid']))->fetch();
-            $p = $engine->account->getById($stay['owner']);
-            $w = $engine->world->getMapDetail($u['wid']);
-
-            if (isset($w['isOasis'])) {
-                if ($w['isOasis'] == true) {
-                    $vid = $u['wid'];
-                    $vname = "Oasis (" . $engine->world->id2xy($vid)[0] . "|" . $engine->world->id2xy($vid)[1] . ")";
-                } else {
-                    $vid = $v['wid'];
-                    $vname = $v['vname'];
-                }
-                if ($stay['owner'] == 4) {
-                    $uid = 0;
-                    $username = null;
-                } else {
-                    $uid = $p['uid'];
-                    $username = $p['username'];
-                }
-            } else {
-                $vid = $v['wid'];
-                $vname = $v['vname'];
-                $uid = $p['uid'];
-                $username = $p['username'];
-            }
-
-            $vl = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=?;", array($stay['wid']))->fetch();
-            $pl = $engine->account->getByVillage($stay['wid']);
-
+            $u = query("SELECT * FROM `{$engine->server->prefix}units` WHERE `id`=? LIMIT 1", [(int)$stay['unit']])->fetch(PDO::FETCH_ASSOC);
+            if (!$u) continue;
+            $v = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=? LIMIT 1", [(int)$u['wid']])->fetch(PDO::FETCH_ASSOC);
+            if (!$v) continue;
+            $p = $engine->account->getById((int)$stay['owner']);
+            if (!is_array($p) || empty($p['data'])) continue;
+            $pd = $p['data'];
+            $tribe = (int)($pd['tribeId'] ?? 1);
+            if ($tribe < 1 || $tribe > 7) $tribe = 1;
+            $pl = $engine->account->getByVillage((int)$stay['wid']);
+            $plUid = $pl ? (int)$pl['uid'] : (int)$stay['owner'];
+            $plName = $pl ? (string)$pl['username'] : (string)($pd['name'] ?? '');
+            $xy = $engine->world->id2xy((int)$u['wid']);
+            $map = $engine->world->getMapDetail((int)$u['wid']);
+            $isOasis = is_array($map) && !empty($map['isOasis']);
+            $vname = $isOasis ? "Oasis (" . $xy[0] . "|" . $xy[1] . ")" : (string)$v['vname'];
+            $units = [];
+            for ($i=1; $i<=11; $i++) $units[$i] = (int)($u['u'.$i] ?? 0);
             $supply = 0;
-            for ($i = 1; $i <= 10; $i++) {
-                $supply += $u['u' . $i] * UnitData::get($i + (($p['tribe'] - 1) * 10), 'pop');
+            for ($i=1; $i<=10; $i++) {
+                if ($units[$i] <= 0) continue;
+                $pop = UnitData::get($i + (($tribe - 1) * 10), 'pop');
+                if ($pop !== null && $pop !== false) $supply += $units[$i] * (float)$pop;
             }
-            $status = ($wid == $u['wid']) ? "home" : "support";
-            $troop = [
-                "name" => "Troops:" . $u['id'],
-                "data" => array(
-                    "troopId" => $u['id'],
-                    "tribeId" => $p['tribe'],
-                    "capacity" => 715,
-                    "filter" => "",
-                    "playerId" => $uid,
-                    "playerName" => $username,
-                    "villageId" => $vid,
-                    "villageName" => $vname,
-                    "villageIdSupply" => $stay['wid'],
-                    "playerIdLocation" => $pl['uid'],
-                    "playerNameLocation" => $pl['username'],
-                    "villageIdLocation" => $stay['wid'],
-                    "villageNameLocation" => $vl['vname'],
-                    "status" => $status,
-                    "supplyTroops" => $supply,
-                    "units" => array(
-                        1 => $u['u1'],
-                        2 => $u['u2'],
-                        3 => $u['u3'],
-                        4 => $u['u4'],
-                        5 => $u['u5'],
-                        6 => $u['u6'],
-                        7 => $u['u7'],
-                        8 => $u['u8'],
-                        9 => $u['u9'],
-                        10 => $u['u10'],
-                        11 => $u['u11'],
-                    ),
-                )
+            $rows[] = [
+                'name' => 'Troops:' . (int)$u['id'],
+                'data' => [
+                    'troopId' => (int)$u['id'], 'tribeId' => $tribe, 'capacity' => 715, 'filter' => '',
+                    'playerId' => (int)($pd['playerId'] ?? $stay['owner']), 'playerName' => (string)($pd['name'] ?? ''),
+                    'villageId' => (int)$u['wid'], 'villageName' => $vname,
+                    'villageIdSupply' => (int)$stay['wid'], 'playerIdLocation' => $plUid,
+                    'playerNameLocation' => $plName, 'villageIdLocation' => (int)$stay['wid'],
+                    'villageNameLocation' => (string)$v['vname'], 'status' => ((int)$wid === (int)$u['wid']) ? 'home' : 'support',
+                    'supplyTroops' => $supply, 'units' => $units,
+                ]
             ];
-            array_push($r, $head ? $troop : $troop['data']);
         }
-        $r = array(
-            "name" => "Collection:Troops:stationary:" . $wid,
-            "data" => array(
-                "operation" => 1,
-                "cache" => $r,
-            )
-        );
-        return $head ? $r : $r['data']['cache'];
+        return [
+            'name' => 'Collection:Troops:stationary:' . (int)$wid,
+            'data' => ['operation' => 1, 'cache' => $rows]
+        ];
     }
 
     public function createUnit($owner, $units) {
