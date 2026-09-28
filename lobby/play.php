@@ -15,6 +15,14 @@ if (!$world || empty($world['folder'])) {
     echo 'No game world configured.';
     exit;
 }
-$msid = $engine->database->msid($_SESSION['lobby_email']);
+$email = (string)($_SESSION['mellon_email'] ?? $_SESSION['lobby_email'] ?? '');
+$msid = (string)($_SESSION['mellon_msid'] ?? '');
+if ($msid === '' && $email !== '') {
+    $msid = (string)$engine->database->msid($email);
+}
+if ($msid === '') {
+    header('Location: ' . $index_url . 'authentication/login/');
+    exit;
+}
 header('Location: ' . rtrim($world['folder'],'/') . '/api/login.php?token=' . rawurlencode(md5($msid)) . '&msid=' . rawurlencode($msid) . '&msname=msid');
 exit;
