@@ -20,7 +20,7 @@ class Database {
         $token = hash('crc32b', $token);
         $token = $token . hash('crc32', $token);
 
-        $q = query("SELECT * FROM `global_msid` WHERE `email`=? AND `ip`=?", array($email, $_SERVER['REMOTE_ADDR']));
+        $q = query("SELECT * FROM `global_msid` WHERE `email`=? ORDER BY uid DESC LIMIT 1", array($email));
         if ($q->rowCount() == 1) {
             $t = $q->fetch(PDO::FETCH_ASSOC);
             $token = $t['token'];
