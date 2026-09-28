@@ -98,13 +98,11 @@ class Account {
     public function Login($username) {
         global $engine;
         $q = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `username`=?;", array($username));
-        $n = $q->rowCount($q);
+        $n = $q->rowCount();
         $us = $q->fetch();
         if ($n == 1) {
             $q2 = query("SELECT * FROM `global_user` WHERE `username`=?;", array($us['username']));
             $u = $q2->fetch(PDO::FETCH_ASSOC);
-            $u2 = $q->fetch(PDO::FETCH_ASSOC);
-            array_push($u2, $u);
             $engine->session->data = (object) $us;
             $_SESSION[$engine->server->prefix . 'uid'] = $u['uid'];
             $_SESSION[$engine->server->prefix . 'username'] = $u['username'];
@@ -124,7 +122,7 @@ class Account {
         query("UPDATE `" . $engine->server->prefix . "user` SET `" . $field . "`=? WHERE `uid`=?;", array($value, $user));
 
         $q = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?;", array($user));
-        $n = $q->rowCount($q);
+        $n = $q->rowCount();
         $us = $q->fetch(PDO::FETCH_ASSOC);
         if ($n == 1) {
             $q2 = query("SELECT * FROM `global_user` WHERE `uid`=?;", array($us['username']));
