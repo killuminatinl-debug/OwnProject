@@ -126,7 +126,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
             $q->bind_param('s',$adminEmail); $q->execute(); $q->bind_result($gameUid); $hasGameUser=$q->fetch(); $q->close();
             if(!$hasGameUser){
                 $gameUid=$uid;
-                $q=$db->prepare("INSERT INTO s1_user (uid,username,email,tribe,kingdom,gold,silver,cp,avatar,serial,description,protection,tutorial,quest,master,online,spawn,plus,resBonus,cropBonus,starterPack,autoExtend,lastLogin,attp,defp) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                $q=$db->prepare("INSERT INTO s1_user (uid,username,email,tribe,kingdom,gold,silver,cp,avatar,serial,`desc`,protection,tutorial,quest,master,online,spawn,plus,resBonus,cropBonus,starterPack,autoExtend,lastLogin,attp,defp) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 $vals=array($gameUid,$admin,$adminEmail,1,0,250,0,0,$avatarId,0,'','0',0,'0',0,time(),'0','0','0','0','0',0,(string)time(),0,0);
                 $q->bind_param('issiiisidissiiisssssissii',...$vals);
                 if(!$q->execute()) throw new RuntimeException('Admin speler aanmaken mislukt: '.$q->error);
