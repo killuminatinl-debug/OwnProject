@@ -4,6 +4,9 @@ include_once __DIR__ . '/../engine/session.php';
 
 $request_body = file_get_contents('php://input');
 $data = json_decode($request_body, true);
+if (!is_array($data)) {
+    $data = [];
+}
 header('Content-Type: application/json');
 
 $json = array();
@@ -109,7 +112,7 @@ if ($data['controller'] == "cache") {
             "facebookId" => null,
             "googleId" => null,
             "vkontakteId" => null,
-            "id" => 52219,
+            "id" => (int)($_SESSION['lobby_uid'] ?? 0),
             "isActivated" => true,
             "isInstant" => false,
             "newEmail" => null,
@@ -135,7 +138,7 @@ if ($data['controller'] == "cache") {
     } elseif ($data['action'] == "getAvatarData") {
         $json['serialNo'] = 1043;
         $json['response'] = [
-            ["id" => "1533802"]
+            ["id" => (string)($_SESSION['lobby_uid'] ?? 0)]
         ];
     } elseif ($data['action'] == "getAll") {
         $json['serialNo'] = 1033;
