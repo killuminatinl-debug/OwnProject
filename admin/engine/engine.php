@@ -7,6 +7,7 @@
  * Copy Rigth © Phumin Chanthalert.
  */
 @session_start();
+if (!defined('KINGDOMS_ADMIN_BOOTSTRAP')) define('KINGDOMS_ADMIN_BOOTSTRAP', true);
 date_default_timezone_set('Asia/Bangkok');
 define('PREFIX', 'admin_');
 include_once(dirname(__FILE__) . "/../../config.php");
