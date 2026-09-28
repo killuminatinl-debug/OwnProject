@@ -39,7 +39,7 @@ class Avatar {
             $sdq = query("SELECT * FROM `{$s['prefix']}user` WHERE `email`=?;", [$_SESSION['lobby_email']]);
             if ($sdq->rowCount() == 1) {
                 $sd = $sdq->fetch(PDO::FETCH_ASSOC);
-                $avatar = "3416714";
+                $avatar = !empty($sd['avatar']) ? $sd['avatar'] : "0";
                 $data = [
                     "avatarId" => $avatar,
                     "userId" => $_SESSION['lobby_uid'],
@@ -57,7 +57,7 @@ class Avatar {
                         "avatarIdentifier" => $avatar,
                         "avatarName" => $sd['username'],
                         'accountName' => $sd['username'],
-                        "worldName" => "COM3",
+                        "worldName" => $s['sid'],
                         "country" => "en",
                         "accountName" => $sd['username'],
                         "isBanned" => false,
