@@ -3,37 +3,42 @@ include_once dirname(__FILE__) . '/../engine/engine.php';
 $request_body = file_get_contents('php://input');
 $data = json_decode($request_body, true);
 header('Content-Type: application/json');
+ob_start();
 
-if ($data['controller'] == "login") {
+$controller = isset($controller) ? (string)$controller : '';
+$action = isset($action) ? (string)$action : '';
+if (!isset($data['params']) || !is_array($data['params'])) { $data['params'] = []; }
+
+if ($controller == "login") {
     include_once dirname(__FILE__) . '/controller/login.php';
-} elseif ($data['controller'] == "cache") {
+} elseif ($controller == "cache") {
     include_once dirname(__FILE__) . '/controller/cache.php';
-} elseif ($data['controller'] == "troops") {
+} elseif ($controller == "troops") {
     include_once dirname(__FILE__) . '/controller/troops.php';
-} elseif ($data['controller'] == "village") {
+} elseif ($controller == "village") {
     include_once dirname(__FILE__) . '/controller/village.php';
-} elseif ($data['controller'] == "map") {
+} elseif ($controller == "map") {
     include_once dirname(__FILE__) . '/controller/map.php';
-} elseif ($data['controller'] == "player") {
+} elseif ($controller == "player") {
     include_once dirname(__FILE__) . '/controller/player.php';
-} elseif ($data['controller'] == "quest") {
+} elseif ($controller == "quest") {
     include_once dirname(__FILE__) . '/controller/quest.php';
-} elseif ($data['controller'] == "building") {
+} elseif ($controller == "building") {
     include_once dirname(__FILE__) . '/controller/building.php';
-} elseif ($data['controller'] == "premiumFeature") {
+} elseif ($controller == "premiumFeature") {
     include_once dirname(__FILE__) . '/controller/premiumFeature.php';
-} elseif ($data['controller'] == "hero") {
+} elseif ($controller == "hero") {
     include_once dirname(__FILE__) . '/controller/hero.php';
-} elseif ($data['controller'] == "ranking") {
+} elseif ($controller == "ranking") {
     include_once dirname(__FILE__) . '/controller/ranking.php';
-} elseif ($data['controller'] == "payment") {
+} elseif ($controller == "payment") {
     include_once dirname(__FILE__) . '/controller/payment.php';
-} elseif ($data['controller'] == "reports") {
+} elseif ($controller == "reports") {
     include_once dirname(__FILE__) . '/controller/report.php';
-} elseif ($data['controller'] == "trade") {
+} elseif ($controller == "trade") {
     include_once dirname(__FILE__) . '/controller/trade.php';
-} elseif ($data['controller'] == "kingdom") {
+} elseif ($controller == "kingdom") {
     include_once dirname(__FILE__) . '/controller/kingdom.php';
-} elseif ($data['controller'] == "auctions") {
+} elseif ($controller == "auctions") {
     include_once dirname(__FILE__) . '/controller/auction.php';
 }
