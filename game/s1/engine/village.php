@@ -184,9 +184,9 @@ class Village {
             // resource fields must start at level 1 or production remains 0.
             query(
                 "UPDATE `{$engine->server->prefix}field`
-                 SET `level`=1
+                 SET `level`=1, `rubble`=0
                  WHERE `wid`=? AND `location` BETWEEN 1 AND 18
-                   AND `type` BETWEEN 1 AND 4 AND `level`<1",
+                   AND `type` BETWEEN 1 AND 4",
                 [$wid]
             );
 
