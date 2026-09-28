@@ -26,7 +26,14 @@ class Hero {
         if (!$hero) {
             $village = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `owner`=? ORDER BY `wid` ASC LIMIT 1;", [$id])->fetch(PDO::FETCH_ASSOC);
             if ($village) {
-                query("INSERT INTO `{$engine->server->prefix}hero` (`owner`,`village`) VALUES (?,?);", [$id, $village['wid']]);
+                query("INSERT INTO `{$engine->server->prefix}hero`
+                    (`owner`,`village`,`move`,`level`,`levelUp`,`speed`,`point`,`xp`,`dead`,`health`,
+                     `power`,`itempower`,`atkBonus`,`defBonus`,`resBonus`,`resType`,`regen`,`lastupdate`,
+                     `advPoint`,`useAdvPoint`,`advNext`,`advShort`,`advLong`,`revive`,`max_scroll`,
+                     `use_scroll`,`use_waterbucket`,`use_ointments`,`use_advcard`,`use_reschest`,
+                     `use_cropchest`,`use_artwork`)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+                    [$id,$village['wid'],0,0,0,7,0,0,0,100,320,0,0,0,0,0,0,microtime(true),0,0,time()+3600,'','',0,0,0,0,0,0,0,0,0]);
                 $hero = query("SELECT * FROM `{$engine->server->prefix}hero` WHERE `owner`=?;", [$id])->fetch(PDO::FETCH_ASSOC);
             }
         }
@@ -170,7 +177,14 @@ class Hero {
         global $engine;
         $hero = query("SELECT * FROM `{$engine->server->prefix}hero` WHERE `owner`=?;", [$_SESSION[$engine->server->prefix . 'uid']])->rowCount();
         if ($hero < 1) {
-            query("INSERT INTO `{$engine->server->prefix}hero` (`owner`,`village`) VALUES (?,?);", [$_SESSION[$engine->server->prefix . 'uid'], $_COOKIE['village']]);
+            query("INSERT INTO `{$engine->server->prefix}hero`
+                    (`owner`,`village`,`move`,`level`,`levelUp`,`speed`,`point`,`xp`,`dead`,`health`,
+                     `power`,`itempower`,`atkBonus`,`defBonus`,`resBonus`,`resType`,`regen`,`lastupdate`,
+                     `advPoint`,`useAdvPoint`,`advNext`,`advShort`,`advLong`,`revive`,`max_scroll`,
+                     `use_scroll`,`use_waterbucket`,`use_ointments`,`use_advcard`,`use_reschest`,
+                     `use_cropchest`,`use_artwork`)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+                    [\$_SESSION[$engine->server->prefix . 'uid'],\$_COOKIE['village'],0,0,0,7,0,0,0,100,320,0,0,0,0,0,0,microtime(true),0,0,time()+3600,'','',0,0,0,0,0,0,0,0,0]);
         }
     }
 
