@@ -3,8 +3,10 @@ include_once __DIR__ . '/config.php';
 
 @session_start();
 
-if (!empty($_SESSION['lobby_uid'])) {
-    header('Location: ' . $lobby_url, true, 302);
+/* One-world installation: skip the lobby for normal players. */
+if (!empty($_SESSION['mellon_msid'])) {
+    $msid = (string)$_SESSION['mellon_msid'];
+    header('Location: ' . $game_dir . 'api/login.php?token=' . rawurlencode(md5($msid)) . '&msid=' . rawurlencode($msid), true, 302);
     exit;
 }
 
