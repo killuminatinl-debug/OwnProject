@@ -155,6 +155,16 @@ class Account {
             query("UPDATE `" . $engine->server->prefix . "user` SET `tutorial`=? WHERE `uid`=?", array(256, $uid));
             $_SESSION[$engine->server->prefix . 'tutorial'] = 256;
         }
+        // The original client requires a concrete tribe before it constructs Troops.
+        // Old/local accounts may have NULL/0 here, which otherwise causes the Angular
+        // bootstrap to abort with "cannot set tribeId" and hides the whole game UI.
+        $tribe = (int)($p['tribe'] ?? 0);
+        if ($tribe < 1 || $tribe > 7) {
+            $tribe = 1;
+            $p['tribe'] = 1;
+            query("UPDATE `" . $engine->server->prefix . "user` SET `tribe`=? WHERE `uid`=?", array(1, $uid));
+            $_SESSION[$engine->server->prefix . 'tribe'] = 1;
+        }
         $prestige = $this->getPrestige(null, true);
         $k = ((int)$p['kingdom'] > 0) ? $engine->kingdom->getData($p['kingdom']) : null;
         if (!$k) $k = ['id'=>0,'king'=>0,'tag'=>''];
