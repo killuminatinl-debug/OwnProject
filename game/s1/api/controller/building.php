@@ -7,37 +7,39 @@ if ($data['action'] == "getBuildingList") {
         "time" => round(microtime(true) * 1000),
     ));
 } elseif ($data['action'] == "upgrade") {
-    $wid = (int)$data['params']['villageId'];
-    $location = (int)$data['params']['locationId'];
-    $type = (int)$data['params']['buildingType'];
+    $wid=(int)($data['params']['villageId']??0);
+    $location=(int)($data['params']['locationId']??0);
+    $type=(int)($data['params']['buildingType']??0);
+    $started=false;
+    $error=null;
 
-    $owner = $engine->account->getByVillage($wid);
-    if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
-        echo json_encode(array(
-            "response" => array("error" => "NOT_OWNER"),
-            "serialNo" => $engine->session->serialNo(),
-            "time" => round(microtime(true) * 1000),
-        ));
-        exit;
+    try {
+        $owner=$engine->account->getByVillage($wid);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
+            $error="NOT_OWNER";
+        } else {
+            $started=$engine->building->StartBuild($location,$type,$wid);
+            if (!$started) $error="BUILD_NOT_STARTED";
+        }
+
+        $cache=array(
+            $engine->building->getBuilding(array('wid'=>$wid,'location'=>$location)),
+            $engine->building->getBuildings($wid),
+            $engine->village->get($wid),
+            $engine->building->getQueue($wid)
+        );
+    } catch (Throwable $e) {
+        $cache=array();
+        $error="BUILD_ERROR";
+        error_log("[OwnProject] upgrade failed: ".$e->getMessage()." in ".$e->getFile().":".$e->getLine());
     }
 
-    $started = $engine->building->StartBuild($location, $type, $wid);
-    $cache = array(
-        $engine->building->getBuilding(array(
-            'wid' => $wid,
-            'location' => $location,
-        )),
-        $engine->building->getBuildings($wid),
-        $engine->village->get($wid),
-        $engine->building->getQueue($wid),
-    );
-
     echo json_encode(array(
-        "cache" => $cache,
-        "response" => $started ? array() : array("error" => "BUILD_NOT_STARTED"),
-        "serialNo" => $engine->session->serialNo(),
-        "time" => round(microtime(true) * 1000),
-    ));
+        "cache"=>$cache,
+        "response"=>$error===null?array():array("error"=>$error),
+        "serialNo"=>$engine->session->serialNo(),
+        "time"=>round(microtime(true)*1000)
+    ), JSON_INVALID_UTF8_SUBSTITUTE);
 } elseif ($data['action'] == "useMasterBuilder") {
     isset($data['params']['count']) ? $count = $data['params']['count'] : $count = 1;
     for($i=0;$i<$count;$i++){
