@@ -131,7 +131,12 @@ class World {
         $p = [];
         $k = [];
 
-        $player = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", [$_SESSION[$engine->server->prefix . 'uid']])->fetch(PDO::FETCH_ASSOC);
+        $uid = isset($_SESSION[$engine->server->prefix . 'uid']) ? (int)$_SESSION[$engine->server->prefix . 'uid'] : 0;
+        $player = $uid > 0 ? query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", [$uid])->fetch(PDO::FETCH_ASSOC) : false;
+
+        if (!$player) {
+            return ['region' => [], 'player' => [], 'kingdom' => []];
+        }
 
         if ($id != "") {
             for ($x = 0; $x < 7; $x++) {
