@@ -96,6 +96,9 @@ if ($controller === 'cache' && $actionName === 'get') {
     } elseif ($actionName === 'ping') {
         $json['serialNo'] = 1153;
         $json['response'] = [];
+    } elseif ($actionName === 'getPrestigeOnWorlds') {
+        $json['serialNo'] = 1044;
+        $json['response'] = [];
     } elseif ($actionName === 'getCountries') {
         $json['serialNo'] = 1041;
         $json['response'] = [
@@ -152,7 +155,7 @@ if ($controller === 'cache' && $actionName === 'get') {
     $json['serialNo'] = 1201;
     $json['response'] = [];
 } elseif ($controller === 'achievements') {
-    if ($actionName === 'update') $json['response'] = [];
+    $json['response'] = ['data'=>true];
 } elseif ($controller === 'gameworld') {
     if ($actionName === 'getPossibleNewGameworlds') {
         $json['response'] = [
@@ -167,6 +170,10 @@ if ($controller === 'cache' && $actionName === 'get') {
         $engine->account->Logout();
         $json['response'] = [];
     }
+}
+
+if (!isset($json['response'])) {
+    $json['response'] = [];
 }
 
 $json['time'] = time();
