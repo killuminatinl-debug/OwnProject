@@ -4485,7 +4485,7 @@ header('Access-Control-Allow-Origin: *');
                 </div>
                 <div class="action loadingGame">LOADING</div>
                 <div class="avatarOnGameworld">
-                    phoomin009 on <?php echo $engine->server->name;?> </div>
+                    <?php echo htmlspecialchars($engine->session->data->username ?? '', ENT_QUOTES, 'UTF-8'); ?> on <?php echo htmlspecialchars($engine->server->name ?? 'Kingdoms', ENT_QUOTES, 'UTF-8');?> </div>
                 <hr />
                 <div class="randomText backToLobby">
                     <translate>LoadingScreen.Action.Logout.RandomText</translate>
