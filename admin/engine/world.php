@@ -62,7 +62,7 @@ class World {
                     } elseif ($rand < 820) {
                         $fieldtype = "4536";
                     } else {
-                        $fieldstype = "4446";
+                        $fieldtype = "4446";
                     }
                     $image = rand(0, 31);
                     $this->setField($this->xy2id($x, $y), $image, $fieldtype, 0);
