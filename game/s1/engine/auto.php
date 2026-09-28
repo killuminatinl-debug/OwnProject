@@ -530,8 +530,6 @@ class Auto {
 
         $this->freeSilver();
 
-        echo "Work (" . time() . ")...\n";
-
         if ($engine->auto->last['pong'] + 120 < time()) {
             $engine->auto->last['pong'] = time();
 
