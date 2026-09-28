@@ -33,7 +33,7 @@
                     return;
                 }
                 var bridge = window.parent.bridge;
-                bridge.setCookie("msid", "ji9hmqge85c2nv59plhdlrnhd0", {});
+                bridge.setCookie("msid", "<?php echo htmlspecialchars($_SESSION['mellon_msid'] ?? '', ENT_QUOTES, 'UTF-8'); ?>", {});
             });
             //-->
         </script>
@@ -43,7 +43,7 @@
             $(function () {
                 setTimeout(function () {
                     if (!window.bridgePresenceCheckSkip && (!window.parent || !window.parent.bridge)) {
-                        window.location.href = 'http://www.kingdoms.com/com?msid=ji9hmqge85c2nv59plhdlrnhd0&msname=msid';
+                        window.location.href = '<?php echo $lobby_url; ?>api/login.php?token=<?php echo md5($_SESSION['mellon_msid'] ?? ''); ?>&msid=<?php echo rawurlencode($_SESSION['mellon_msid'] ?? ''); ?>&msname=msid';
                     }
                 }, 4000);
             });
@@ -116,7 +116,7 @@
             //-->
         </script>        <script>
             $(document).ready(function () {
-                $.fn.ajaxValidation.defaults.url = "/ajax/form-validate?msid=ji9hmqge85c2nv59plhdlrnhd0&msname=msid";
+                $.fn.ajaxValidation.defaults.url = "<?php echo $base; ?>/ajax/form-validate?msid=<?php echo rawurlencode($_SESSION['mellon_msid'] ?? ''); ?>&msname=msid";
             });
         </script>
     </head>
@@ -124,7 +124,7 @@
     <body class="mellon-dialog c-registration-index ltr">
         <div class="container">
 
-            <form action="&#x2F;registration&#x2F;index&#x2F;applicationDomain&#x2F;www.kingdoms.com&#x2F;applicationPath&#x2F;&#x25;2Fcom&#x25;2F&#x2F;applicationInGame&#x2F;0&#x2F;applicationId&#x2F;travian-ks&#x2F;applicationCountryId&#x2F;en&#x2F;applicationInstanceId&#x2F;portal-en&#x2F;applicationLanguageId&#x2F;en_US&#x2F;applicationCookieEnabled&#x2F;1&#x3F;msid&#x3D;ji9hmqge85c2nv59plhdlrnhd0&amp;msname&#x3D;msid" method="POST" name="account" class="form-horizontal&#x20;tk-sign-process" id="account"><fieldset class="social-login">
+            <form action="<?php echo $base; ?>/registration/index/applicationDomain/www.kingdoms.com&#x2F;applicationPath&#x2F;&#x25;2Fcom&#x25;2F&#x2F;applicationInGame&#x2F;0&#x2F;applicationId&#x2F;travian-ks&#x2F;applicationCountryId&#x2F;en&#x2F;applicationInstanceId&#x2F;portal-en&#x2F;applicationLanguageId&#x2F;en_US&#x2F;applicationCookieEnabled&#x2F;1&#x3F;msid&#x3D;ji9hmqge85c2nv59plhdlrnhd0&amp;msname&#x3D;msid" method="POST" name="account" class="form-horizontal&#x20;tk-sign-process" id="account"><fieldset class="social-login">
                     <legend>Sign up</legend>
                 </fieldset><div class="form-group form-group-type-text">
                     <label>or</label>
