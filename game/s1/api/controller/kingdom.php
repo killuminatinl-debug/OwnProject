@@ -2,6 +2,11 @@
 
 if ($data['action'] == "startCoronationCeremony") {
 
+    $owner = $engine->account->getByVillage($data['params']['villageId']);
+    if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
+        echo json_encode(array("response"=>array("error"=>"NOT_OWNER"),"serialNo"=>$engine->session->serialNo(),"time"=>round(microtime(true)*1000)));
+        exit;
+    }
     $kid = $engine->kingdom->create($data['params']['tag']);
 
     echo json_encode(array(
