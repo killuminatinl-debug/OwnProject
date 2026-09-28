@@ -19,6 +19,7 @@ class Session {
             $msid = query("SELECT * FROM `global_msid` WHERE `token`=?;", [$_SESSION['mellon_msid']])->fetch(PDO::FETCH_ASSOC);
             if ($msid) {
                 $u = query("SELECT * FROM `global_user` WHERE `email`=?;", [$msid['email']])->fetch(PDO::FETCH_ASSOC);
+                if (!$u) return false;
                 $u['islogin'] = true;
                 $this->data = (object) $u;
                 $_SESSION['mellon_uid'] = $u['uid'];
@@ -30,7 +31,8 @@ class Session {
             }
         }elseif (isset($_SESSION['mellon_username'])) {
             if ($_SESSION['mellon_username'] != "" && $_SESSION['mellon_username'] != null) {
-                $u = query("SELECT * FROM `global_user` WHERE `username`='" . $_SESSION['mellon_username'] . "';")->fetch(PDO::FETCH_ASSOC);
+                $u = query("SELECT * FROM `global_user` WHERE `username`=?;", [$_SESSION['mellon_username']])->fetch(PDO::FETCH_ASSOC);
+                if (!$u) return false;
                 $u['islogin'] = true;
                 $this->data = (object) $u;
                 $_SESSION['mellon_uid'] = $u['uid'];
