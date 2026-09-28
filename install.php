@@ -1,80 +1,143 @@
 <?php
 declare(strict_types=1);
 session_start();
-/*
- * Installation state is deliberately checked before processing POST.
- * A completed installer must never redirect back into itself.
- */
-if (is_file(__DIR__.'/.installed')) {
-    if (isset($_GET['done'])) {
-        header('Location: ./');
-        exit;
-    }
-    http_response_code(403);
-    exit('Already installed. Open the game at ./');
-}
-$errors=[];
+error_reporting(E_ALL);
+ini_set('display_errors','1');
+
+$errors=array();
 function h($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');}
+
+if(is_file(__DIR__.'/.installed')){
+    header('Location: /');
+    exit;
+}
+
 if($_SERVER['REQUEST_METHOD']==='POST'){
- $host=trim($_POST['db_host']??'127.0.0.1'); $user=trim($_POST['db_user']??'root'); $pass=(string)($_POST['db_pass']??'');
- $name=preg_replace('/[^a-zA-Z0-9_]/','',$_POST['db_name']??'travian_kingdoms');
- $admin=trim($_POST['admin_user']??'admin'); $adminPass=(string)($_POST['admin_pass']??'');
- $server=trim($_POST['server_name']??'Kingdoms'); $speed=max(1,(int)($_POST['speed_world']??1)); $unitSpeed=max(1,(int)($_POST['speed_unit']??1));
- if(strlen($adminPass)<8)$errors[]='Admin wachtwoord moet minimaal 8 tekens zijn.';
- if(!extension_loaded('mysqli'))$errors[]='MySQLi ontbreekt.';
- if(!$errors)try{
-  $db=new mysqli($host,$user,$pass); if($db->connect_errno)throw new RuntimeException($db->connect_error); $db->set_charset('utf8mb4');
-  if(!$db->query("CREATE DATABASE IF NOT EXISTS ".$name." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"))throw new RuntimeException($db->error);
-  $db->select_db($name); $sql=file_get_contents(__DIR__.'/travian5.sql');
-  if(!$sql)throw new RuntimeException('travian5.sql ontbreekt.');
-  if(!$db->multi_query($sql))throw new RuntimeException('SQL import: '.$db->error);
-  while($db->more_results()&&$db->next_result()){if($db->errno)throw new RuntimeException($db->error);}
-  // The supported deployment is the web document root (htdocs on XAMPP).
-  // Keep application URLs root-relative so the same build also works on normal hosting.
-  $base='';
-  $cfg=<<<'PHP_CONFIG'
-<?php
-ini_set('display_errors','1'); error_reporting(E_ALL);
-define('SQL_HOST','127.0.0.1'); define('SQL_USER','root'); define('SQL_PASS',''); define('SQL_DATB','travian_kingdoms'); define('LANGUAGE','en');
-$base=''; define('APP_BASE',$base); $index_url='/'; $mellon_url='/mellon/'; $cdn_url='/cdn/'; $lobby_url='/lobby/'; $domain=$_SERVER['HTTP_HOST']??'localhost'; $game_dir='/game/s1/';
-function protocalRemove($url){return preg_replace('#^https?://#i','',$url);}
-function myErrorHandler($c,$m,$f,$l){error_log('[OwnProject] '.$m.' '.$f.':'.$l);}
-function fatalErrorShutdownHandler(){ $e=error_get_last(); if($e&&in_array($e['type'],[E_ERROR,E_PARSE,E_CORE_ERROR,E_COMPILE_ERROR],true))error_log('[OwnProject] '.$e['message'].' '.$e['file'].':'.$e['line']);}
-set_error_handler('myErrorHandler'); register_shutdown_function('fatalErrorShutdownHandler');
-$GLOBALS['db']=null;
-function db(){if($GLOBALS['db'] instanceof PDO)return $GLOBALS['db'];$GLOBALS['db']=new PDO('mysql:host='.SQL_HOST.';dbname='.SQL_DATB.';charset=utf8mb4',SQL_USER,SQL_PASS,[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,PDO::ATTR_EMULATE_PREPARES=>false]);$GLOBALS['db']->exec("SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO'");return $GLOBALS['db'];}
+    $host=trim($_POST['db_host']??'127.0.0.1');
+    $user=trim($_POST['db_user']??'root');
+    $pass=(string)($_POST['db_pass']??'');
+    $name=preg_replace('/[^A-Za-z0-9_]/','',$_POST['db_name']??'travian_kingdoms');
+    $admin=trim($_POST['admin_user']??'admin');
+    $adminPass=(string)($_POST['admin_pass']??'');
+    $serverName=trim($_POST['server_name']??'Kingdoms');
+    $speedWorld=max(1,(int)($_POST['speed_world']??1));
+    $speedUnit=max(1,(int)($_POST['speed_unit']??1));
 
-PHP_CONFIG;
-  // Persist the exact database settings entered in the installer.
-  $cfg = str_replace(
-      array(
-          "define('SQL_HOST','127.0.0.1');",
-          "define('SQL_USER','root');",
-          "define('SQL_PASS','');",
-          "define('SQL_DATB','travian_kingdoms');"
-      ),
-      array(
-          "define('SQL_HOST'," . var_export($host, true) . ");",
-          "define('SQL_USER'," . var_export($user, true) . ");",
-          "define('SQL_PASS'," . var_export($pass, true) . ");",
-          "define('SQL_DATB'," . var_export($name, true) . ");"
-      ),
-      $cfg
-  );
-  if(file_put_contents(__DIR__.'/config.php',$cfg,LOCK_EX)===false)throw new RuntimeException('config.php schriven mislukt.');
-  $r=$db->query("SHOW TABLES LIKE 's1_%'"); while($x=$r->fetch_row())$db->query("TRUNCATE TABLE ".$x[0]);
-  $adminEmail=(strpos($admin,'@')!==false)?$admin:$admin.'@localhost';
-  $as=$db->prepare("SELECT uid FROM global_user WHERE email=? OR username=? LIMIT 1"); $as->bind_param('ss',$adminEmail,$admin); $as->execute(); $as->bind_result($existingAdminUid); $ar=$as->fetch(); $as->close();
-  if(!$ar){$nextUid=(int)$db->query("SELECT COALESCE(MAX(uid),0)+1 n FROM global_user")->fetch_assoc()['n'];$adminHash=base64_encode($adminPass);$adminTimed=time();$adminPrestige=0;$adminLevel=0;$ins=$db->prepare("INSERT INTO global_user (uid,username,password,email,timed,prestige,level) VALUES (?,?,?,?,?,?,?)");$ins->bind_param('isssiii',$nextUid,$admin,$adminHash,$adminEmail,$adminTimed,$adminPrestige,$adminLevel);$ins->execute();$ins->close();}else{$adminHash=base64_encode($adminPass);$up=$db->prepare("UPDATE global_user SET username=?,password=?,email=? WHERE uid=?");$up->bind_param('sssi',$admin,$adminHash,$adminEmail,$existingAdminUid);$up->execute();$up->close();}
+    if($name==='')$errors[]='Ongeldige databasenaam.';
+    if($admin==='')$errors[]='Vul een adminnaam in.';
+    if(strlen($adminPass)<8)$errors[]='Admin wachtwoord moet minimaal 8 tekens zijn.';
+    if(!extension_loaded('mysqli'))$errors[]='PHP MySQLi ontbreekt.';
+    if(!extension_loaded('pdo_mysql'))$errors[]='PHP PDO MySQL ontbreekt.';
 
-  $st=$db->prepare("UPDATE global_server_data SET name=?,tag='server1',folder=?,prefix='s1_',speed_world=?,speed_unit=?,start=?,maintenance=0,genmap='0' WHERE sid=1");
-  $folder='/game/s1';$start=date('Y-m-d H:i:s');$st->bind_param('ssiis',$server,$folder,$speed,$unitSpeed,$start);$st->execute();$st->close();
-  require __DIR__.'/admin/engine/engine.php'; $engine->server=(object)$engine->database->getServer(1); $engine->world->generateMap();
-  if (file_put_contents(__DIR__.'/.installed', date('c'), LOCK_EX) === false) {
-    throw new RuntimeException('Kan installatiestatus niet opslaan.');
+    if(!$errors){
+        try{
+            $db=new mysqli($host,$user,$pass);
+            if($db->connect_errno)throw new RuntimeException('MySQL verbinding mislukt: '.$db->connect_error);
+            $db->set_charset('utf8mb4');
+
+            if(!$db->query("CREATE DATABASE IF NOT EXISTS ".$name." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"))
+                throw new RuntimeException('Database aanmaken mislukt: '.$db->error);
+            if(!$db->select_db($name))throw new RuntimeException('Database selecteren mislukt: '.$db->error);
+
+            $sql=file_get_contents(__DIR__.'/travian5.sql');
+            if($sql===false||trim($sql)==='')throw new RuntimeException('travian5.sql ontbreekt of is leeg.');
+            if(!$db->multi_query($sql))throw new RuntimeException('SQL import mislukt: '.$db->error);
+            do{
+                if($db->errno)throw new RuntimeException('SQL import mislukt: '.$db->error);
+                if($result=$db->store_result())$result->free();
+            }while($db->more_results()&&$db->next_result());
+
+            $db->query("SET FOREIGN_KEY_CHECKS=0");
+            $tables=$db->query("SHOW TABLES LIKE 's1_%'");
+            if($tables){
+                while($row=$tables->fetch_row())$db->query("TRUNCATE TABLE ".$row[0]);
+                $tables->free();
+            }
+            $db->query("SET FOREIGN_KEY_CHECKS=1");
+
+            $cfg="<?php\n";
+            $cfg.="ini_set('display_errors','1'); error_reporting(E_ALL);\n";
+            $cfg.="define('SQL_HOST',".var_export($host,true).");\n";
+            $cfg.="define('SQL_USER',".var_export($user,true).");\n";
+            $cfg.="define('SQL_PASS',".var_export($pass,true).");\n";
+            $cfg.="define('SQL_DATB',".var_export($name,true).");\n";
+            $cfg.="define('LANGUAGE','en');\n";
+            $cfg.="\$base=''; define('APP_BASE','');\n";
+            $cfg.="\$index_url='/'; \$mellon_url='/mellon/'; \$cdn_url='/cdn/'; \$lobby_url='/lobby/'; \$game_dir='/game/s1/';\n";
+            $cfg.="\$domain=isset(\$_SERVER['HTTP_HOST'])?preg_replace('/:\\d+$/','',\$_SERVER['HTTP_HOST']):'localhost';\n";
+            $cfg.="function protocalRemove(\$url){return preg_replace('#^https?://#i','',\$url);}\n";
+            $cfg.="\$GLOBALS['db']=null;\n";
+            $cfg.="function db(){if(\$GLOBALS['db'] instanceof PDO)return \$GLOBALS['db'];\$GLOBALS['db']=new PDO('mysql:host='.SQL_HOST.';dbname='.SQL_DATB.';charset=utf8mb4',SQL_USER,SQL_PASS,array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,PDO::ATTR_EMULATE_PREPARES=>false));return \$GLOBALS['db'];}\n";
+            $cfg.="?>\n";
+            if(file_put_contents(__DIR__.'/config.php',$cfg,LOCK_EX)===false)throw new RuntimeException('config.php schrijven mislukt.');
+
+            $adminEmail=strpos($admin,'@')!==false?$admin:$admin.'@localhost';
+            $adminPassword=base64_encode($adminPass);
+
+            $q=$db->prepare("SELECT uid FROM global_user WHERE username=? OR email=? LIMIT 1");
+            $q->bind_param('ss',$admin,$adminEmail);$q->execute();$q->bind_result($uid);$exists=$q->fetch();$q->close();
+
+            if($exists){
+                $uid=(int)$uid;$now=time();
+                $q=$db->prepare("UPDATE global_user SET username=?,password=?,email=?,timed=?,prestige=0,level=0 WHERE uid=?");
+                $q->bind_param('sssii',$admin,$adminPassword,$adminEmail,$now,$uid);
+            }else{
+                $r=$db->query("SELECT COALESCE(MAX(uid),0)+1 AS n FROM global_user");
+                $uid=(int)$r->fetch_assoc()['n'];$r->free();$now=time();$prestige=0;$level=0;
+                $q=$db->prepare("INSERT INTO global_user (uid,username,password,email,timed,prestige,level) VALUES (?,?,?,?,?,?,?)");
+                $q->bind_param('isssiii',$uid,$admin,$adminPassword,$adminEmail,$now,$prestige,$level);
+            }
+            if(!$q->execute())throw new RuntimeException('Admin aanmaken/bijwerken mislukt: '.$q->error);
+            $q->close();
+
+            $folder='/game/s1';$start=date('Y-m-d H:i:s');
+            $q=$db->prepare("UPDATE global_server_data SET name=?,tag='server1',folder=?,prefix='s1_',speed_world=?,speed_unit=?,start=?,maintenance=0,genmap='0' WHERE sid=1");
+            $q->bind_param('ssiis',$serverName,$folder,$speedWorld,$speedUnit,$start);
+            if(!$q->execute())throw new RuntimeException('Serverinstellingen opslaan mislukt: '.$q->error);
+            $q->close();
+
+            $db->query("DELETE FROM s1_world");
+            $q=$db->prepare("INSERT INTO s1_world (id,x,y,fieldtype,oasistype,image,bonus) VALUES (?,?,?,?,?,?,?)");
+            if(!$q)throw new RuntimeException('Wereldtabel voorbereiden mislukt: '.$db->error);
+            $types=array('3339','3447','3456','4347','4356','4437','4446','4536','5346','5436');
+            $max=70;
+            for($x=-$max;$x<=$max;$x++){
+                for($y=-$max;$y<=$max;$y++){
+                    if(($x*$x+$y*$y)>($max*$max))continue;
+                    $id=($x+16384)+32768*($y+16384);
+                    $field=$types[array_rand($types)];$oasistype=0;$image=random_int(0,31);$bonus=0;
+                    $q->bind_param('iiisiii',$id,$x,$y,$field,$oasistype,$image,$bonus);
+                    if(!$q->execute())throw new RuntimeException('Wereldgeneratie mislukt: '.$q->error);
+                }
+            }
+            $q->close();
+            $db->query("UPDATE global_server_data SET genmap='2' WHERE sid=1");
+
+            file_put_contents(__DIR__.'/.installed',date('c').' uid='.$uid,LOCK_EX);
+            session_regenerate_id(true);
+            $_SESSION['install_admin_uid']=$uid;
+            header('Location: /mellon/authentication/login/',true,302);
+            exit;
+        }catch(Throwable $e){
+            $errors[]=$e->getMessage();
+        }
+    }
 }
-header('Location: ./', true, 302);
-exit;
- }catch(Throwable $e){$errors[]=$e->getMessage();}
-}
-?><!doctype html><html lang="nl"><head><meta charset="utf-8"><title>Kingdoms installatie</title></head><body><div class="box"><h1>Travian Kingdoms installatie</h1><?php foreach($errors as $e):?><div class="err"><?=h($e)?></div><?php endforeach;?><form method="post"><input name="db_host" value="127.0.0.1"><input name="db_user" value="root"><input type="password" name="db_pass"><input name="db_name" value="travian_kingdoms"><input name="admin_user" value="admin"><input type="password" name="admin_pass"><input name="server_name" value="Kingdoms"><input type="number" name="speed_world" min="1" value="1"><input type="number" name="speed_unit" min="1" value="1"><button>Installeren</button></form></div></body></html>
+?>
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Travian Kingdoms installatie</title>
+<style>body{font-family:Arial;background:#eee;margin:0;padding:40px}.box{max-width:620px;margin:auto;background:#fff;padding:30px;border-radius:8px}input{display:block;width:100%;box-sizing:border-box;margin:7px 0 14px;padding:10px}.err{background:#fee;border:1px solid #d88;padding:10px;margin:8px 0}button{padding:12px 24px}</style>
+</head><body><div class="box"><h1>Travian Kingdoms installatie</h1>
+<?php foreach($errors as $e):?><div class="err"><?=h($e)?></div><?php endforeach;?>
+<form method="post" action="/install.php">
+<label>Database host</label><input name="db_host" value="<?=h($_POST['db_host']??'127.0.0.1')?>">
+<label>Database gebruiker</label><input name="db_user" value="<?=h($_POST['db_user']??'root')?>">
+<label>Database wachtwoord</label><input type="password" name="db_pass">
+<label>Database naam</label><input name="db_name" value="<?=h($_POST['db_name']??'travian_kingdoms')?>">
+<label>Admin gebruikersnaam</label><input name="admin_user" value="<?=h($_POST['admin_user']??'admin')?>">
+<label>Admin wachtwoord</label><input type="password" name="admin_pass" minlength="8" required>
+<label>Servernaam</label><input name="server_name" value="<?=h($_POST['server_name']??'Kingdoms')?>">
+<label>Wereldsnelheid</label><input type="number" name="speed_world" min="1" value="<?=h($_POST['speed_world']??1)?>">
+<label>Troepensnelheid</label><input type="number" name="speed_unit" min="1" value="<?=h($_POST['speed_unit']??1)?>">
+<button type="submit">Installeren</button></form></div></body></html>
