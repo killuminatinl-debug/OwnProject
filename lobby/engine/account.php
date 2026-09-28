@@ -75,6 +75,7 @@ class Account
             exit;
         }
 
+        $u['islogin'] = true;
         $engine->session->data = (object)$u;
 
         $_SESSION['lobby_uid'] = (int)$u['uid'];
