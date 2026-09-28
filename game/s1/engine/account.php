@@ -369,7 +369,7 @@ class Account {
         unset($_SESSION[$engine->server->prefix . 'uid']);
         unset($_SESSION[$engine->server->prefix . 'username']);
         unset($_COOKIE[$engine->server->prefix . 'vselect']);
-        header("Location: ../../?lobby");
+        header("Location: " . $mellon_url . "authentication/login/");
         exit();
     }
 
