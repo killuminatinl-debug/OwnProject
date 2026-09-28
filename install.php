@@ -1,7 +1,18 @@
 <?php
 declare(strict_types=1);
 session_start();
-if (is_file(__DIR__.'/.installed')) { http_response_code(403); exit('Already installed. Remove .installed only if you intentionally reinstall.'); }
+/*
+ * Installation state is deliberately checked before processing POST.
+ * A completed installer must never redirect back into itself.
+ */
+if (is_file(__DIR__.'/.installed')) {
+    if (isset($_GET['done'])) {
+        header('Location: ./');
+        exit;
+    }
+    http_response_code(403);
+    exit('Already installed. Open the game at ./');
+}
 $errors=[];
 function h($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');}
 if($_SERVER['REQUEST_METHOD']==='POST'){
@@ -37,7 +48,11 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   $st=$db->prepare("UPDATE global_server_data SET name=?,tag='server1',folder=?,prefix='s1_',speed_world=?,speed_unit=?,start=?,maintenance=0,genmap='0' WHERE sid=1");
   $folder=$base.'/game/s1';$start=date('Y-m-d H:i:s');$st->bind_param('ssiis',$server,$folder,$speed,$unitSpeed,$start);$st->execute();$st->close();
   require __DIR__.'/admin/engine/engine.php'; $engine->server=(object)$engine->database->getServer(1); $engine->world->generateMap();
-  file_put_contents(__DIR__.'/.installed', date('c')); header('Location: install.php?done=1'); exit;
+  if (file_put_contents(__DIR__.'/.installed', date('c'), LOCK_EX) === false) {
+    throw new RuntimeException('Kan installatiestatus niet opslaan.');
+}
+header('Location: ./', true, 302);
+exit;
  }catch(Throwable $e){$errors[]=$e->getMessage();}
 }
 ?><!doctype html><html lang="nl"><head><meta charset="utf-8"><title>Kingdoms installatie</title></head><body><div class="box"><h1>Travian Kingdoms installatie</h1><?php foreach($errors as $e):?><div class="err"><?=h($e)?></div><?php endforeach;?><form method="post"><input name="db_host" value="127.0.0.1"><input name="db_user" value="root"><input type="password" name="db_pass"><input name="db_name" value="travian_kingdoms"><input name="admin_user" value="admin"><input type="password" name="admin_pass"><input name="server_name" value="Kingdoms"><input type="number" name="speed_world" min="1" value="1"><input type="number" name="speed_unit" min="1" value="1"><button>Installeren</button></form></div></body></html>
