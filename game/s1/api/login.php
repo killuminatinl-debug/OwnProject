@@ -9,7 +9,7 @@ if ($msid !== '' && hash_equals(md5($msid), $token)) {
     $uid = 0;
     $mellon = $engine->database->getmsid($msid);
     if ($mellon === false) {
-        header("Location: " . $lobby_url);
+        header("Location: " . $mellon_url . "authentication/login/");
         exit;
     }
     $_SESSION['mellon_uid'] = $mellon['uid'];
@@ -24,7 +24,7 @@ if ($msid !== '' && hash_equals(md5($msid), $token)) {
         $aid = $engine->sql->lastInsertId();
         $_SESSION[$engine->server->prefix . 'avatar'] = $aid;
 
-        $uid = (int)query("SELECT COALESCE(MAX(`uid`),100) + 1 FROM `" . $engine->server->prefix . "user`")->fetchColumn();
+        $uid = (int)$mellon['uid'];
         query("INSERT INTO `" . $engine->server->prefix . "user`
             (`uid`,`username`,`email`,`tribe`,`kingdom`,`gold`,`silver`,`cp`,`avatar`,`serial`,`desc`,`tutorial`,`quest`,`online`,`lastLogin`,`attp`,`defp`)
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
