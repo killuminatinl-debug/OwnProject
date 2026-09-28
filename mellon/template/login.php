@@ -76,7 +76,7 @@
         </script>
         <script>
             $(document).ready(function () {
-                $.fn.ajaxValidation.defaults.url = "/ajax/form-validate?msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid";
+                $.fn.ajaxValidation.defaults.url = "<?php echo $base; ?>/ajax/form-validate?msid=<?php echo rawurlencode($_SESSION['mellon_msid'] ?? ''); ?>&msname=msid";
             });
         </script>
     </head>
