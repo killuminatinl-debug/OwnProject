@@ -170,7 +170,7 @@ include_once __DIR__.'/lang/en.php';
                     "prestige": true,
                     "achievements": true,
                     "disableByTutorial": false,
-                    "cdnPrefix": "https:\/\/cdn.traviantools.net\/lobby\/live\/",
+                    "cdnPrefix": "<?php echo $cdn_url; ?>lobby/live/",
                     "goldTransferNotAllowedCountries": ["pl", "hu", "ru"]
             };
         </script>
@@ -198,7 +198,7 @@ include_once __DIR__.'/lang/en.php';
             a.async = 1;
             a.src = g;
             m.parentNode.insertBefore(a, m)
-            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+            })(window, document, 'script', '', 'ga');
             ga('create', 'UA-83432822-1', 'auto');
             ga('set', 'userId', 52219);
             ga('require', 'linkid');
@@ -223,7 +223,7 @@ include_once __DIR__.'/lang/en.php';
             s = b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t, s)
             }(window,
-                    document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+                    document, 'script', '');
             fbq('init', '906554786118185');
             fbq('track', "PageView");
         </script>
