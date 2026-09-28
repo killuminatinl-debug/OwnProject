@@ -7,8 +7,8 @@ class Ranking {
         $r = array(
             "players" => array(
                 "registered" => query("SELECT * FROM `" . $engine->server->prefix . "user`")->rowCount(),
-                "active" => 0,
-                "online" => 0,
+                "active" => query("SELECT COUNT(*) FROM `" . $engine->server->prefix . "user` WHERE `tutorial`>=256")->fetchColumn(),
+                "online" => query("SELECT COUNT(*) FROM `" . $engine->server->prefix . "user` WHERE `online`=1")->fetchColumn(),
             ),
             "kingdoms" => array(
                 "kings" => 0,
@@ -21,7 +21,7 @@ class Ranking {
                 "3" => query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `tribe`=?", array(3))->rowCount(),
             ),
             "world" => array(
-                "startTime" => time(),
+                "startTime" => (int)$engine->server->start,
                 "speed" => $engine->server->speed_world,
                 "speedTroops" => $engine->server->speed_unit,
             ),
