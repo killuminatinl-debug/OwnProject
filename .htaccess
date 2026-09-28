@@ -1,5 +1,5 @@
 Options -Indexes
 RewriteEngine On
-RewriteRule ^$ lobby/ [L]
+RewriteRule ^$ mellon/authentication/login/ [L]
 RewriteRule ^static/(.*)$ lobby/static/$1 [L]
 RewriteRule ^tk/(.*)$ mellon/tk/$1 [L]
