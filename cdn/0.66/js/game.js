@@ -23891,6 +23891,7 @@ Travian.Service.SocketService = function(a, c, b, g, m, l) {
     R.ud() && (N || f ? M.emit(b, c, g) : T || p())
   }
   function r() {
+    if (window.config && config.nodeDisabled) { return; }
     B = u = 0;
     null == M ? (D = (new Date).getTime(), M = io.connect(window.location.protocol + "//" + config.node.host + ":" + config.node.port + "/", {path:"/" + O, transports:["polling", "websocket", "flashsocket"]}), M.Ef && (M.connect(), e("Used old socket. Try to connect with that one")), M.Ef || (null == P && (!1 == F && "undefined" != typeof GlobalLoadingScreenManager) && (P = window.setTimeout(function() {
       GlobalLoadingScreenManager.achieveStep("socket_connect")
