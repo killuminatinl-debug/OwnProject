@@ -63,9 +63,8 @@ class Account {
             setcookie("gl5SessionKey", json_encode(array(
                 "key" => $t['token'],
                 "id" => $_SESSION['lobby_uid'],
-                    )), time() + 1209600, "/", protocalRemove($lobby_url));
-            setcookie("gl5PlayerId", 4, time() + 1209600, "/", '.' . $domain);
-            setcookie("gl5PlayerId", 4, time() + 1209600, "/", protocalRemove($lobby_url));
+                    )), time() + 1209600, "/", "", false, true);
+            setcookie("gl5PlayerId", (string)$_SESSION['lobby_uid'], time() + 1209600, "/", $domain, false, true);
             header("Location: ../?g_msid=" . md5($t['token']) . "&gl5SessionKey=" . $t['token']);
             return true;
         } else {
