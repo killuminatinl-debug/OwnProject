@@ -124,7 +124,7 @@
     <body class="mellon-dialog c-registration-index ltr">
         <div class="container">
 
-            <form action="<?php echo $base; ?>/registration/index/applicationDomain/www.kingdoms.com&#x2F;applicationPath&#x2F;&#x25;2Fcom&#x25;2F&#x2F;applicationInGame&#x2F;0&#x2F;applicationId&#x2F;travian-ks&#x2F;applicationCountryId&#x2F;en&#x2F;applicationInstanceId&#x2F;portal-en&#x2F;applicationLanguageId&#x2F;en_US&#x2F;applicationCookieEnabled&#x2F;1&#x3F;msid&#x3D;ji9hmqge85c2nv59plhdlrnhd0&amp;msname&#x3D;msid" method="POST" name="account" class="form-horizontal&#x20;tk-sign-process" id="account"><fieldset class="social-login">
+            <form action="<?php echo $base; ?>/registration/index/applicationDomain/www.kingdoms.com&#x2F;applicationPath&#x2F;&#x25;2Fcom&#x25;2F&#x2F;applicationInGame&#x2F;0&#x2F;applicationId&#x2F;travian-ks&#x2F;applicationCountryId&#x2F;en&#x2F;applicationInstanceId&#x2F;portal-en&#x2F;applicationLanguageId&#x2F;en_US&#x2F;applicationCookieEnabled&#x2F;1&#x3F;msid&#x3D;<?php echo rawurlencode($_SESSION['mellon_msid'] ?? ''); ?>&amp;msname&#x3D;msid" method="POST" name="account" class="form-horizontal&#x20;tk-sign-process" id="account"><fieldset class="social-login">
                     <legend>Sign up</legend>
                 </fieldset><div class="form-group form-group-type-text">
                     <label>or</label>
@@ -142,7 +142,7 @@
                 <div class="form-group form-group-type-checkbox">
                     <label>
                         <input type="checkbox" name="termsAccepted" data-placement="top" value="1">				<i></i>
-                        By signing up, I agree to <a target="_blank" class="tracking" data-trackingEventName="mellon.registration.click_on_tnc" href="http://agb.traviangames.com/terms-en.pdf">Travian's Terms and Conditions</a> and <a target="_blank"  class="tracking" data-trackingEventName="mellon.registration.click_on_privacy" href="http://agb.traviangames.com/privacy-en.pdf">Privacy Policy</a>.            </label>
+                        By signing up, I agree to <a target="_blank" class="tracking" data-trackingEventName="mellon.registration.click_on_tnc" href="#">Travian's Terms and Conditions</a> and <a target="_blank"  class="tracking" data-trackingEventName="mellon.registration.click_on_privacy" href="#">Privacy Policy</a>.            </label>
 
                 </div>
                 <div class="form-group form-group-type-submit">
@@ -153,7 +153,7 @@
             <div class="login-extra">
                 <div class="login-extra-login">
                     <span>Already registered?</span>
-                    <a href="<?php echo $base; ?>/authentication/login/applicationDomain/www.kingdoms.com/applicationPath/%2Fcom%2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=ji9hmqge85c2nv59plhdlrnhd0&msname=msid">
+                    <a href="<?php echo $base; ?>/authentication/login/applicationDomain/www.kingdoms.com/applicationPath/%2Fcom%2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=<?php echo rawurlencode($_SESSION['mellon_msid'] ?? ''); ?>&msname=msid">
                         Log in</a>
                 </div>
             </div>
