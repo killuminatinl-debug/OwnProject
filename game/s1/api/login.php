@@ -29,12 +29,12 @@ if ($msid !== '' && hash_equals(md5($msid), $token)) {
             (`uid`,`username`,`email`,`tribe`,`kingdom`,`gold`,`silver`,`cp`,`avatar`,`serial`,`desc`,`tutorial`,`quest`,`online`,`lastLogin`,`attp`,`defp`)
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
             array($uid, $_SESSION['mellon_username'], $_SESSION['mellon_email'], 1, 0,
-                $engine->account->start_gold, 0, 0, $aid, 0, '', 0, '0', 1, time(), 0, 0));
+                $engine->account->start_gold, 0, 0, $aid, 0, '', 256, '0', 1, time(), 0, 0));
         $_SESSION[$engine->server->prefix . 'uid'] = $uid;
         $_SESSION[$engine->server->prefix . 'tribe'] = 1;
         $_SESSION[$engine->server->prefix . 'gold'] = $engine->account->start_gold;
         $_SESSION[$engine->server->prefix . 'silver'] = 0;
-        $_SESSION[$engine->server->prefix . 'tutorial'] = 0;
+        $_SESSION[$engine->server->prefix . 'tutorial'] = 256;
         query("INSERT INTO `" . $engine->server->prefix . "setting`
             (`uid`,`attacksFilter`,`disableAnimations`,`HelpNotifications`,`TabNotifications`,
              `extendedSimulator`,`lang`,`mapFilter`,`musicVolume`,`muteAll`,`notpadsVisible`,
@@ -66,6 +66,11 @@ if ($msid !== '' && hash_equals(md5($msid), $token)) {
     if (!$player) {
         header("Location: " . $mellon_url . "authentication/login/");
         exit;
+    }
+    if ((int)$player['tutorial'] < 256) {
+        query("UPDATE `" . $engine->server->prefix . "user` SET `tutorial`=256 WHERE `uid`=?", [$uid]);
+        $player['tutorial'] = 256;
+        $_SESSION[$engine->server->prefix . 'tutorial'] = 256;
     }
     if ((int)$player['tribe'] < 1) {
         query("UPDATE `" . $engine->server->prefix . "user` SET `tribe`=1 WHERE `uid`=?", [$uid]);
