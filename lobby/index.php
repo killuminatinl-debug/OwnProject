@@ -7,9 +7,13 @@ if (isset($_GET['g_msid'])) {
         header("Location: ../");
     }
 }
-if (!$engine->session->data->islogin) {
-    header("Location: " . $index_url . "#logout");
-}
+/* Do not redirect an unauthenticated lobby request back to /.
+ * The old flow was:
+ *   / -> /lobby/ -> /#logout -> /lobby/ -> ...
+ * which produces ERR_TOO_MANY_REDIRECTS on a fresh XAMPP install.
+ * The lobby is the public entry point; the frontend can handle login
+ * through Mellon without a server-side redirect loop.
+ */
 
 include_once __DIR__.'/lang/en.php';
 ?>
