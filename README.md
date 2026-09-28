@@ -340,3 +340,20 @@ If you found bug please use [Issues](https://github.com/phoomin2012/travian-king
 Use **watch** button if you want to know about activities.<br>
 If you **like** this project, please give **star**.<br>
 ***THANKS***
+
+
+# OwnProject PHP 7.4 build
+
+This fork keeps the original Travian Kingdoms 0.66.8 frontend/backend as the base and adds a normal PHP-hosting installation path.
+
+## Quick install
+1. Put the repository in XAMPP htdocs or on normal PHP hosting.
+2. Open /install.php.
+3. Enter MySQL/MariaDB credentials and choose the world/admin settings.
+4. The installer imports travian5.sql, clears the game-world tables, generates a fresh map and creates a protected admin login.
+5. Open / for the lobby.
+
+## Hosting mode
+The old project required a permanent PHP process plus Node.js services. The new web mode exposes a timestamp engine at game/s1/api/tick.php and calls it from the game page. Buildings, research, troops, movements, resources and other timestamp-based processes therefore catch up when players use the game, without cronjobs or a permanent Node.js process.
+
+The original archived project was explicitly unfinished and documented Node.js/service requirements; this repository is being converted incrementally rather than replacing the existing game UI with a generic rewrite.
