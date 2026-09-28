@@ -313,6 +313,9 @@ class Building {
     public function cancelBuild($id) {
         global $engine;
         $b = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `id`=?", [$id])->fetch(PDO::FETCH_ASSOC);
+        if (!$b) return false;
+        $owner = $engine->account->getByVillage($b['wid']);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
         $f = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", [$b['wid'], $b['location']])->fetch(PDO::FETCH_ASSOC);
         if ($b['paid'] == 1) {
             $request = BuildingData::get($b['type'], $f['level'] + 1);
@@ -561,7 +564,9 @@ class Building {
 
     public function destroy($params) {
         global $engine;
-        $wid = $params['villageId'];
+        $wid = (int)$params['villageId'];
+        $owner = $engine->account->getByVillage($wid);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
         $location = $params['locationId'];
         $field = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?;", array($wid, $location))->fetch(PDO::FETCH_ASSOC);
         $type = $field['type'];
@@ -578,6 +583,9 @@ class Building {
         global $engine;
 
         $bq = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `id`=?", array($bid))->fetch(PDO::FETCH_ASSOC);
+        if (!$bq) return false;
+        $owner = $engine->account->getByVillage($bq['wid']);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
         $f = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", array($bq['wid'], $bq['location']))->fetch(PDO::FETCH_ASSOC);
 
         $request = BuildingData::get($bq['type'], $bq['level']);
