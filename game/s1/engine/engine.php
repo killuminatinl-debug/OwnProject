@@ -88,14 +88,11 @@ $engine->sql->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $engine->server = (object) $engine->database->getServer();
 define('TB_PREFIX', $engine->server->tag);
 
-if (!isset($ignoreLoad)) {
-    $engine->session->checkLogin();
+if (!isset($ignoreLoad) || $ignoreLoad !== true) {
+    if (!$engine->session->checkLogin()) {
+        header("Location: " . $lobby_url);
+        exit;
+    }
     $engine->auto->tick();
     $engine->village->LoadData();
-} else {
-    if ($ignoreLoad !== true) {
-        $engine->session->checkLogin();
-        $engine->auto->tick();
-        $engine->village->LoadData();
-    }
 }
