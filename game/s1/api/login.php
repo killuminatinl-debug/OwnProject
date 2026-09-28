@@ -6,6 +6,7 @@ $msid = isset($_GET['msid']) ? (string)$_GET['msid'] : '';
 $token = isset($_GET['token']) ? (string)$_GET['token'] : '';
 if ($msid !== '' && hash_equals(md5($msid), $token)) {
     $id = 0;
+    $uid = 0;
     $mellon = $engine->database->getmsid($msid);
     if ($mellon === false) {
         header("Location: " . $lobby_url);
@@ -69,8 +70,8 @@ if ($msid !== '' && hash_equals(md5($msid), $token)) {
     }
 }
 
-setcookie('t5SessionKey', (json_encode(array("key" => session_id(), "id" => $uid))), time() + 14400, "/");
-header("Location: ../#msid=" . rawurlencode($msid));
+    setcookie('t5SessionKey', json_encode(array("key" => session_id(), "id" => $uid)), time() + 14400, "/");
+    header("Location: ../#msid=" . rawurlencode($msid));
     exit;
 } else {
     header("Location: " . $lobby_url);
