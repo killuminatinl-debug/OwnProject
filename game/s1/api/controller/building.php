@@ -7,7 +7,21 @@ if ($data['action'] == "getBuildingList") {
         "time" => round(microtime(true) * 1000),
     ));
 } elseif ($data['action'] == "upgrade") {
-    $engine->building->StartBuild($data['params']['locationId'], $data['params']['buildingType'], $data['params']['villageId']);
+    $wid = (int)$data['params']['villageId'];
+    $location = (int)$data['params']['locationId'];
+    $type = (int)$data['params']['buildingType'];
+
+    $owner = $engine->account->getByVillage($wid);
+    if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
+        echo json_encode(array(
+            "response" => array("error" => "NOT_OWNER"),
+            "serialNo" => $engine->session->serialNo(),
+            "time" => round(microtime(true) * 1000),
+        ));
+        exit;
+    }
+
+    $started = $engine->building->StartBuild($location, $type, $wid);
     echo json_encode(array(
         "cache" => [
             $engine->building->getBuilding(array(
