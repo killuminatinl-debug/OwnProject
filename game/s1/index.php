@@ -11,7 +11,7 @@ header('Access-Control-Allow-Origin: *');
         <title ng-bind-template="{{webPageTitle}}">Travian Kingdoms</title>
 
         <meta name="HandheldFriendly" content="true" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
 
         <!--<meta name="viewport" content="target-densitydpi=device-dpi"/>-->
@@ -376,7 +376,7 @@ header('Access-Control-Allow-Origin: *');
             // and run those after config is there
             var onConfigLoaded = [];
             var $ = null
-            fileLoader.addScript('<?php echo $cdn_url . $apiversion; ?>/js/game.js?h=96e1935d5532767d0989693a822df40e', function () {
+            fileLoader.addScript('<?php echo $cdn_url . $apiversion; ?>/js/game.js?h=853ae1028190c609b30f402052566eb556d8edd5', function () {
                 //put all game design related config here
                 Travian.Globals = {};
                 Travian.Config = {};
@@ -4349,7 +4349,7 @@ header('Access-Control-Allow-Origin: *');
             }
 
             .loadingScreen .centerArea .logo {
-                background-image: url(<?php echo $cdn_url; ?>0.66/layout/images/illustration/loadingScreen/loading_screen_logo.png);
+                background-image: none;
                 width: 236px;
                 height: 202px;
                 margin: 0 auto;
