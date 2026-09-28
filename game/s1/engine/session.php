@@ -28,7 +28,27 @@ class Session {
 
     public function checkLogin() {
         global $engine;
-        if (isset($_SESSION[$engine->server->prefix . 'uid'])) {
+
+        // Recover the game-world session from the lobby account when the
+        // browser lost the world-specific cookie/session.
+        $key = $engine->server->prefix . 'uid';
+        if (!isset($_SESSION[$key]) || $_SESSION[$key] === '') {
+            $globalUid = (int)($_SESSION['mellon_uid'] ?? $_SESSION['lobby_uid'] ?? 0);
+            if ($globalUid > 0) {
+                $candidate = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=? LIMIT 1", array($globalUid))->fetch(PDO::FETCH_ASSOC);
+                if (!$candidate) {
+                    $email = (string)($_SESSION['mellon_email'] ?? $_SESSION['lobby_email'] ?? '');
+                    if ($email !== '') {
+                        $candidate = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `email`=? LIMIT 1", array($email))->fetch(PDO::FETCH_ASSOC);
+                    }
+                }
+                if ($candidate) {
+                    $_SESSION[$key] = $candidate['uid'];
+                }
+            }
+        }
+
+        if (isset($_SESSION[$key])) {
             if ($_SESSION[$engine->server->prefix . 'uid'] != "") {
                 $u = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?;", array($_SESSION[$engine->server->prefix . 'uid']))->fetch(PDO::FETCH_ASSOC);
                 if (!$u) {
@@ -56,7 +76,7 @@ class Session {
             $uid = $_SESSION[$engine->server->prefix . 'uid'];
         }
         $u = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?;", array($uid))->fetch();
-        $_SESSION[$engine->server->prefix . 'serial'] = $u['serial'] + 1;
+        $_SESSION[$engine->server->prefix . 'serial'] = ((int)$u['serial']) + 1;
         query("UPDATE `" . $engine->server->prefix . "user` SET `serial`=? WHERE `uid`=?;", array($_SESSION[$engine->server->prefix . 'serial'], $uid));
         return $_SESSION[$engine->server->prefix . 'serial'];
     }
