@@ -145,6 +145,33 @@ class Building {
         // Empty village slots use building type 0. They are valid UI entries, not real buildings.
         // Returning a zero-cost placeholder keeps the Building collection valid and prevents a
         // missing bid0 from breaking the complete game cache response.
+        // Invalid building definitions must never take down the complete cache/API.
+        $safeLevel = max(1, (int)$level);
+        $safeDefinition = BuildingData::get((int)$type, $safeLevel);
+        if (!$safeDefinition) {
+            return array(
+                'name' => 'Building:' . $id,
+                'data' => array(
+                    'buildingType' => (int)$type,
+                    'villageId' => (int)$wid,
+                    'locationId' => (int)$location,
+                    'lvl' => max(0, (int)$level),
+                    'lvlNext' => max(1, (int)$level + 1),
+                    'isMaxLvl' => true,
+                    'lvlMax' => max(1, (int)$level),
+                    'upgradeCosts' => array(1=>0,2=>0,3=>0,4=>0),
+                    'upgradeTime' => 0,
+                    'nextUpgradeCosts' => array(),
+                    'nextUpgradeTimes' => array(),
+                    'upgradeSupplyUsage' => 0,
+                    'upgradeSupplyUsageSums' => array(),
+                    'category' => 1,
+                    'sortOrder' => (int)$location,
+                    'effect' => array(),
+                ),
+            );
+        }
+
         if ((int)$type <= 0) {
             return array(
                 'name' => 'Building:' . $id,
@@ -490,12 +517,13 @@ class Building {
     public function BuildingEffect($type, $level) {
         global $engine;
         $effect = BuildingData::get($type, $level);
-        if ($level == 0) {
-            if ($type == 15) {
-                $effect = array('effect' => 100);
-            }
+        if (!$effect) {
+            return ($type == 15) ? 100 : 0;
         }
-        return $effect['effect'];
+        if ($level == 0 && $type == 15) {
+            return 100;
+        }
+        return isset($effect['effect']) ? $effect['effect'] : 0;
     }
 
     public function isMax($wid, $location, $type, $level = null) {
