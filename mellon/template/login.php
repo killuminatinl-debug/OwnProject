@@ -41,19 +41,6 @@
         </script>
         <script type="text/javascript">
             //<!--
-
-            $(function () {
-                setTimeout(function () {
-                    if (!window.bridgePresenceCheckSkip && (!window.parent || !window.parent.bridge)) {
-                        window.location.href = '<?php echo $lobby_url; ?>api/login.php?token=<?php echo md5($_SESSION['mellon_msid']); ?>&msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid';
-                    }
-                }, 4000);
-            });
-
-            //-->
-        </script>
-        <script type="text/javascript">
-            //<!--
             $(function () {
                 if (!window.parent || !window.parent.bridge) {
                     return;
@@ -83,7 +70,7 @@
 
     <body class="mellon-dialog c-authentication-login ltr">
         <div class="container">
-            <form action="<?php echo $base; ?>/authentication/login/applicationDomain/www.kingdoms.com/applicationPath/&#x25;2Fcom&#x25;2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid" method="POST" name="login" class="form-horizontal tk-sign-process" id="login">
+            <form action="<?php echo $mellon_url; ?>authentication/login/" method="POST" name="login" class="form-horizontal tk-sign-process" id="login">
                 <fieldset class="social-login">
                     <legend>Login with</legend>
                 </fieldset>
