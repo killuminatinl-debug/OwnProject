@@ -155,8 +155,30 @@ class Village {
 
         $this->data = $data;
         for ($i = 0; $i < count($this->data); $i += 1) {
-            $engine->auto->procRes($this->data[$i]['wid']);
-            if ($this->data[$i]['wid'] == $_COOKIE['village']) {
+            $wid = (int)$this->data[$i]['wid'];
+
+            // Repair villages created by older versions of this project:
+            // resource fields must start at level 1 or production remains 0.
+            query(
+                "UPDATE `{$engine->server->prefix}field`
+                 SET `level`=1
+                 WHERE `wid`=? AND `location` BETWEEN 1 AND 18
+                   AND `type` BETWEEN 1 AND 4 AND `level`<1",
+                [$wid]
+            );
+
+            $engine->auto->procRes($wid);
+
+            // Reload the village after offline production has been processed.
+            $fresh = query(
+                "SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=?",
+                [$wid]
+            )->fetch(PDO::FETCH_ASSOC);
+            if ($fresh) {
+                $this->data[$i] = $fresh;
+            }
+
+            if ($wid == (int)$_COOKIE['village']) {
                 $this->current = $this->data[$i];
             }
         }
