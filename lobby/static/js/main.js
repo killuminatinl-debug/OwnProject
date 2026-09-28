@@ -1719,7 +1719,7 @@
                     var r = this,
                         a = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : function() {},
                         o = arguments.length > 4 && void 0 !== arguments[4] ? arguments[4] : function() {};
-                    return (0, l.default)("/api/index.php", {
+                    return (0, l.default)("/lobby/api/index.php", {
                         method: "post",
                         credentials: "include",
                         body: JSON.stringify(this._getQuery(e, t, n))
@@ -1735,7 +1735,7 @@
                 key: "logout",
                 value: function() {
                     var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : function() {};
-                    return (0, l.default)("/api/index.php", {
+                    return (0, l.default)("/lobby/api/index.php", {
                         method: "post",
                         credentials: "include",
                         body: JSON.stringify(this._getQuery("login", "logout", {}))
@@ -5419,7 +5419,7 @@
             return Object.keys(e.avatarImage).length > 0 && e.avatarImage.face && (Object.keys(e.avatarImage.face).forEach(function(n) {
                 t = "" + t + e.avatarImage.face[n]
             }), t = "" + t + e.avatarImage.hairColor + e.avatarImage.gender), o.default.createElement("img", {
-                src: "/api/public/player/getPotrait?type=avatar&id=" + e.avatarIdentifier + "&size=" + e.size + "&hash=" + t,
+                src: "/lobby/api/public/player/getPotrait.php?type=avatar&id=" + e.avatarIdentifier + "&size=" + e.size + "&hash=" + t,
                 role: "presentation"
             })
         };
