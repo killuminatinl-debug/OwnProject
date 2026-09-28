@@ -12,10 +12,6 @@
             return;
         }
 
-        if (!root.getAttribute('ng-controller')) {
-            root.setAttribute('ng-controller', 'MainController');
-        }
-
         try {
             angular.bootstrap(document, ['GameLobby']);
         } catch (e) {
