@@ -157,6 +157,29 @@ class Village {
         for ($i = 0; $i < count($this->data); $i += 1) {
             $wid = (int)$this->data[$i]['wid'];
 
+            // Repair incomplete starter villages from older installs. The Kingdoms client
+            // expects all 18 resource fields and all 22 building slots to exist.
+            $resourceTypes = [1,4,1,3,2,2,3,4,4,3,3,4,4,1,4,2,1,2];
+            for ($loc = 1; $loc <= 40; $loc++) {
+                $existingField = query(
+                    "SELECT `id`,`type`,`level` FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1",
+                    [$wid, $loc]
+                )->fetch(PDO::FETCH_ASSOC);
+                if (!$existingField) {
+                    $type = ($loc <= 18) ? (int)$resourceTypes[$loc - 1] : (($loc === 27) ? 15 : 0);
+                    $level = ($loc <= 18) ? 1 : (($loc === 27) ? 1 : 0);
+                    query(
+                        "INSERT INTO `{$engine->server->prefix}field` (`type`,`wid`,`location`,`level`,`rubble`) VALUES (?,?,?,?,?)",
+                        [$type, $wid, $loc, $level, 0]
+                    );
+                } elseif ($loc <= 18 && (int)$existingField['type'] >= 1 && (int)$existingField['type'] <= 4 && (int)$existingField['level'] < 1) {
+                    query(
+                        "UPDATE `{$engine->server->prefix}field` SET `level`=1 WHERE `wid`=? AND `location`=?",
+                        [$wid, $loc]
+                    );
+                }
+            }
+
             // Repair villages created by older versions of this project:
             // resource fields must start at level 1 or production remains 0.
             query(
