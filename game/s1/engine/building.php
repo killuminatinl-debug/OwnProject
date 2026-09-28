@@ -400,82 +400,37 @@ class Building {
 
     public function StartBuild($location, $type = 0, $wid = 0) {
         global $engine;
-
-        $wid = (int)$wid;
-        $location = (int)$location;
-        $type = (int)$type;
-        if ($wid <= 0) { $wid = (int)$engine->village->select; }
-
-        $owner = $engine->account->getByVillage($wid);
-        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) { return false; }
-
-        $field = query(
-            "SELECT * FROM `" . $engine->server->prefix . "field` WHERE `wid`=? AND `location`=? LIMIT 1",
-            array($wid, $location)
-        )->fetch(PDO::FETCH_ASSOC);
-        if (!$field) { return false; }
-
-        if ($type === 0) { $type = (int)$field['type']; }
-        if ($location === 32) {
-            $type = 16;
-        } elseif ($location === 33) {
-            $type = 30 + (int)$owner['tribe'];
-        }
-        if ($type <= 0) { return false; }
-
-        // One active construction per slot.
-        if ($this->inQueue($wid, $type, $location)) { return false; }
-
-        // Rubble is rebuilt first and does not consume normal resources.
-        if ((int)$field['rubble'] === 1 && $type !== 31 && $type !== 32 && $type !== 33) {
-            $request = BuildingData::get($type, 0);
-            if (!$request) { return false; }
-            $start = time();
-            $duration = max(1, (int)$request['time']);
-            query(
-                "INSERT INTO `" . $engine->server->prefix . "building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUES (?,?,?,?,?,?,?,?)",
-                array($wid, $location, $type, $start + $duration, $start, 5, 1, $duration)
-            );
+        $location=(int)$location; $type=(int)$type; $wid=(int)$wid;
+        if ($wid<=0) $wid=(int)$engine->village->select;
+        if ($location<=0 || $wid<=0) return false;
+        $owner=$engine->account->getByVillage($wid);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
+        $field=query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1",[$wid,$location])->fetch(PDO::FETCH_ASSOC);
+        if (!$field) return false;
+        if ($type===0) $type=(int)$field['type'];
+        if ($location===32) $type=16; elseif ($location===33) $type=30+(int)$owner['tribe'];
+        if ($type<=0) return false;
+        if ((int)$field['rubble']===1 && $type!==31 && $type!==32 && $type!==33) {
+            $request=BuildingData::get($type,0); if (!$request) return false;
+            $start=time(); $duration=max(1,(int)$request['time']);
+            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUES (?,?,?,?,?,?,?,?)",[$wid,$location,$type,$start+$duration,$start,5,1,$duration]);
             return true;
         }
-
-        $level = max(0, (int)$field['level']) + 1;
-        $max = $this->getMax($wid, $type);
-        if ($level > $max) { return false; }
-        $request = BuildingData::get($type, $level);
-        if (!$request) { return false; }
-
-        $speed = max(0.0001, (float)$engine->server->speed_world);
-        $effect = max(1, (float)$this->BuildingEffect(15, $this->getTypeLevel($wid, 15)));
-        $duration = max(1, (int)round(($request['time'] * ($effect / 100)) / $speed));
-        $start = time();
-        $time = $start + $duration;
-        if ((int)$owner['tutorial'] < 256) { $duration = 1; $time = $start + 1; }
-
+        $level=max(0,(int)$field['level'])+1; $request=BuildingData::get($type,$level);
+        if (!$request) return false;
+        $speed=max(0.0001,(float)$engine->server->speed_world);
+        $effect=(float)$this->BuildingEffect(15,$this->getTypeLevel($wid,15)); if ($effect<=0) $effect=100;
+        $duration=max(1,(int)round(($request['time']*($effect/100))/$speed));
+        $start=time(); $time=$start+$duration;
+        if ((int)$owner['tutorial']<256) { $duration=1; $time=$start+1; }
         $engine->auto->procRes($wid);
-        $v = query("SELECT * FROM `" . $engine->server->prefix . "village` WHERE `wid`=? LIMIT 1", array($wid))->fetch(PDO::FETCH_ASSOC);
-        if (!$v) { return false; }
-
-        if ((float)$v['wood'] < (float)$request['wood'] ||
-            (float)$v['clay'] < (float)$request['clay'] ||
-            (float)$v['iron'] < (float)$request['iron'] ||
-            (float)$v['crop'] < (float)$request['crop']) {
-            return false;
-        }
-
-        $queue = ($location >= 1 && $location <= 18) ? 2 : 1;
-        query(
-            "UPDATE `" . $engine->server->prefix . "village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?",
-            array($request['wood'], $request['clay'], $request['iron'], $request['crop'], $wid)
-        );
-        query(
-            "UPDATE `" . $engine->server->prefix . "field` SET `type`=? WHERE `wid`=? AND `location`=?",
-            array($type, $wid, $location)
-        );
-        query(
-            "INSERT INTO `" . $engine->server->prefix . "building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUES (?,?,?,?,?,?,?,?)",
-            array($wid, $location, $type, $time, $start, $queue, 1, $duration)
-        );
+        $v=query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=? LIMIT 1",[$wid])->fetch(PDO::FETCH_ASSOC);
+        if (!$v) return false;
+        foreach (array('wood','clay','iron','crop') as $resource) if (!isset($request[$resource]) || (float)$v[$resource]<(float)$request[$resource]) return false;
+        $queue=($location>=1 && $location<=18)?2:1;
+        query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?",[$request['wood'],$request['clay'],$request['iron'],$request['crop'],$wid]);
+        query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?",[$type,$wid,$location]);
+        query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUES (?,?,?,?,?,?,?,?)",[$wid,$location,$type,$time,$start,$queue,1,$duration]);
         return true;
     }
 
