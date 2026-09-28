@@ -141,7 +141,7 @@ class Account {
 
     public function getById($uid, $field = null) {
         global $engine;
-        $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", array($id))->fetch(PDO::FETCH_ASSOC);
+        $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", array($uid))->fetch(PDO::FETCH_ASSOC);
         if (!$p) {
             return array(
                 'name' => 'Player:' . $id,
@@ -255,9 +255,14 @@ class Account {
     public function getPrestige($uid = null, $onlystar = false) {
         global $engine;
 
-        $uid === null ? $uid = $_SESSION[$engine->server->prefix . 'uid'] : 0;
-        $email = $this->getById($uid, 'email');
-        $gu = query("SELECT * FROM `global_user` WHERE `email`=?;", [$email])->fetch(PDO::FETCH_ASSOC);
+        $uid === null ? $uid = (int)$_SESSION[$engine->server->prefix . 'uid'] : (int)$uid;
+        // Read the world user directly. Calling getById() here recursively calls getPrestige().
+        $user = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=? LIMIT 1", [$uid])->fetch(PDO::FETCH_ASSOC);
+        $email = $user && isset($user['email']) ? $user['email'] : '';
+        $gu = false;
+        if ($email !== '') {
+            $gu = query("SELECT * FROM `global_user` WHERE `email`=? LIMIT 1;", [$email])->fetch(PDO::FETCH_ASSOC);
+        }
         // A world account can exist without a global-user row on a fresh/local install.
         // Keep the player cache valid instead of aborting the whole bootstrap request.
         $prestige = $gu && isset($gu['prestige']) ? (int)$gu['prestige'] : 0;
