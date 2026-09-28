@@ -29,9 +29,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   if(!$sql)throw new RuntimeException('travian5.sql ontbreekt.');
   if(!$db->multi_query($sql))throw new RuntimeException('SQL import: '.$db->error);
   while($db->more_results()&&$db->next_result()){if($db->errno)throw new RuntimeException($db->error);}
-  $scheme=(!empty($_SERVER['HTTPS'])&&$_SERVER['HTTPS']!=='off')?'https':'http';
-  $base=$scheme.'://'.$_SERVER['HTTP_HOST'].rtrim(str_replace('\\','/',dirname($_SERVER['SCRIPT_NAME'])),'/');
-  if($base==='http://')$base='';
+  // The supported deployment is the web document root (htdocs on XAMPP).
+  // Keep application URLs root-relative so the same build also works on normal hosting.
+  $base='';
   $cfg="<?php\n".
    "define('SQL_HOST',".var_export($host,true).");\n".
    "define('SQL_USER',".var_export($user,true).");\n".
@@ -46,7 +46,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   if(file_put_contents(__DIR__.'/config.php',$cfg,LOCK_EX)===false)throw new RuntimeException('config.php schriven mislukt.');
   $r=$db->query("SHOW TABLES LIKE 's1_%'"); while($x=$r->fetch_row())$db->query("TRUNCATE TABLE ".$x[0]);
   $st=$db->prepare("UPDATE global_server_data SET name=?,tag='server1',folder=?,prefix='s1_',speed_world=?,speed_unit=?,start=?,maintenance=0,genmap='0' WHERE sid=1");
-  $folder=$base.'/game/s1';$start=date('Y-m-d H:i:s');$st->bind_param('ssiis',$server,$folder,$speed,$unitSpeed,$start);$st->execute();$st->close();
+  $folder='/game/s1';$start=date('Y-m-d H:i:s');$st->bind_param('ssiis',$server,$folder,$speed,$unitSpeed,$start);$st->execute();$st->close();
   require __DIR__.'/admin/engine/engine.php'; $engine->server=(object)$engine->database->getServer(1); $engine->world->generateMap();
   if (file_put_contents(__DIR__.'/.installed', date('c'), LOCK_EX) === false) {
     throw new RuntimeException('Kan installatiestatus niet opslaan.');
