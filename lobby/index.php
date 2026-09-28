@@ -1,5 +1,6 @@
 <?php
 include_once __DIR__ . '/engine/session.php';
+$lobbyUser = $engine->session->data;
 if (isset($_GET['g_msid'])) {
     if ($_GET['g_msid'] == md5($_GET['gl5SessionKey'])) {
         header("Location: index.php#msid=" . rawurlencode($_GET['gl5SessionKey']));
@@ -33,22 +34,22 @@ include_once __DIR__.'/lang/en.php';
             window.__INITIAL_STATE__ = {
             country: 'us',
                     cache: {
-                    'Session:450bd510c7240adeb0b8': {
+                    'Session:<?php echo addslashes(session_id()); ?>': {
                     name: 'Session:450bd510c7240adeb0b8',
                             data: {
-                            "sessionId": "450bd510c7240adeb0b8",
+                            "sessionId": "<?php echo addslashes(session_id()); ?>",
                                     "type": 0,
                                     "country": "us"
                             }
                     },
-                            'Player:13953': {
+                            'Player:<?php echo (int)($lobbyUser->uid ?? 0); ?>': {
                             name: 'Player:13953',
                                     data: {
-                                    "playerId": "13953",
-                                            "avatarName": "phoomin009",
-                                            "userAccountIdentifier": "52219",
+                                    "playerId": "<?php echo (int)($lobbyUser->uid ?? 0); ?>",
+                                            "avatarName": "<?php echo addslashes($lobbyUser->username ?? ''); ?>",
+                                            "userAccountIdentifier": "<?php echo (int)($lobbyUser->uid ?? 0); ?>",
                                             "isInstantAccount": 0,
-                                            "isActivated": 0,
+                                            "isActivated": 1,
                                             "signupTime": "---"
                                     }
                             },
@@ -206,7 +207,7 @@ include_once __DIR__.'/lang/en.php';
             m.parentNode.insertBefore(a, m)
             })(window, document, 'script', '', 'ga');
             ga('create', 'UA-83432822-1', 'auto');
-            ga('set', 'userId', 52219);
+            ga('set', 'userId', <?php echo (int)($lobbyUser->uid ?? 0); ?>);
             ga('require', 'linkid');
         </script>
 
