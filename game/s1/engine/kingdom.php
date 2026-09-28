@@ -6,7 +6,7 @@ class Kingdom {
         global $engine;
 
         $k = query("SELECT * FROM `{$engine->server->prefix}kingdom` WHERE `id`=?;", [$id])->fetch(PDO::FETCH_ASSOC);
-        if ($k || $id != 0) {
+        if ($k) {
             $ms = query("SELECT * FROM `{$engine->server->prefix}user` WHERE `kingdom`=?;", [$id])->fetchAll(PDO::FETCH_ASSOC);
             $r = [
                 "name" => "Kingdom:" . $id,
@@ -57,7 +57,7 @@ class Kingdom {
         global $engine;
 
         $k = query("SELECT * FROM `{$engine->server->prefix}kingdom` WHERE `id`=?;", [$id])->fetch(PDO::FETCH_ASSOC);
-        if ($k || $id != 0) {
+        if ($k) {
             $r = [
                 "name" => "KingdomStats:$id",
                 "data" => [
