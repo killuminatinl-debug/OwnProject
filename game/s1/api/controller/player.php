@@ -8,16 +8,22 @@ if ($data['action'] == "ping") {
         "cache" => array()
     ));
 } elseif ($data['action'] == "chooseTribe") {
-    if ($_SESSION[$engine->server->prefix . 'tutorial'] != 1) {
-        query("UPDATE `" . $engine->server->prefix . "user` SET `tribe`=? WHERE `uid`=?;", array($data['params']['tribeId'], $_SESSION[$engine->server->prefix . 'uid']));
-        query("UPDATE `" . $engine->server->prefix . "user` SET `tutorial`=? WHERE `uid`=?;", array(256, $_SESSION[$engine->server->prefix . 'uid']));
-        // The local single-world build does not require the original tutorial gate.
-        // Mark the account as tutorial-complete so all normal game actions are immediately available.
-        $_SESSION[$engine->server->prefix . 'tutorial'] = 256;
-        $_SESSION[$engine->server->prefix . 'tribe'] = $data['params']['tribeId'];
+    $uid = (int)$_SESSION[$engine->server->prefix . 'uid'];
+    $tribe = (int)($data['params']['tribeId'] ?? 0);
+    if ($tribe < 1 || $tribe > 7) {
+        echo json_encode(array("response"=>array("error"=>"INVALID_TRIBE"),"serialNo"=>$engine->session->serialNo(),"time"=>round(microtime(true)*1000)));
+        exit();
+    }
 
-        $vid = - 10000 - $_SESSION[$engine->server->prefix . 'uid'];
-        $engine->village->createVillage($_SESSION[$engine->server->prefix . 'uid'], $_SESSION[$engine->server->prefix . 'username'], $vid);
+    query("UPDATE `" . $engine->server->prefix . "user` SET `tribe`=?,`tutorial`=? WHERE `uid`=?;", array($tribe,256,$uid));
+    $_SESSION[$engine->server->prefix . 'tutorial'] = 256;
+    $_SESSION[$engine->server->prefix . 'tribe'] = $tribe;
+
+    $existing = query("SELECT `wid` FROM `" . $engine->server->prefix . "village` WHERE `owner`=? ORDER BY `wid` ASC LIMIT 1", array($uid))->fetch(PDO::FETCH_ASSOC);
+    $vid = $existing ? (int)$existing['wid'] : (int)(-10000-$uid);
+
+    if (!$existing) {
+        $engine->village->createVillage($uid, $_SESSION[$engine->server->prefix . 'username'], $vid);
         $engine->building->setBuilding($vid, 20, 10, 0, true);
         $engine->building->setBuilding($vid, 23, 8, 0, true);
         $engine->building->setBuilding($vid, 27, 15, 3);
@@ -28,68 +34,18 @@ if ($data['action'] == "ping") {
         $engine->building->setBuilding($vid, 35, 11, 0, true);
         $engine->building->setBuilding($vid, 39, 17, 0, true);
         $engine->building->setBuilding($vid, 40, 13, 0, true);
-
-        $engine->unit->addUnit($vid, 1, 5,$_SESSION[$engine->server->prefix . 'uid']);
-        $engine->unit->addUnit($vid, 2, 12,$_SESSION[$engine->server->prefix . 'uid']);
-        $engine->unit->addUnit($vid, 11, 1,$_SESSION[$engine->server->prefix . 'uid']);
-
-        setcookie("village", $vid, 0, '/');
+        $engine->unit->addUnit($vid, 1, 5, $uid);
+        $engine->unit->addUnit($vid, 2, 12, $uid);
+        $engine->unit->addUnit($vid, 11, 1, $uid);
     }
-    $action = array(2 => 0);
+    setcookie("village", $vid, 0, '/');
+
     echo json_encode(array(
         "response" => array(),
         "serialNo" => $engine->session->serialNo(),
         "time" => round(microtime(true) * 1000),
-        "event" => array(
-            array(
-                "name" => "clearCache",
-                "data" => array()
-            )
-        ),
-        'cache' => array(
-            0 => $engine->unit->getTraining($vid),
-            1 => $engine->building->getQueue($vid),
-            2 => $engine->building->getBuilding($vid),
-            3 => $engine->unit->getStay($vid),
-            4 => $engine->move->get($vid),
-            5 => array(
-                'name' => 'Collection:Troops:trapped:' . $vid,
-                'data' => array(
-                    'cache' => array(),
-                    'operation' => 1,
-                ),
-            ),
-            6 => array(
-                'name' => 'Collection:Troops:elsewhere:' . $vid,
-                'data' => array(
-                    'cache' => array(),
-                    'operation' => 1,
-                ),
-            ),
-            7 => array(
-                'name' => 'Collection:Village:own',
-                'data' => array(
-                    'cache' => $engine->village->getAll('own'),
-                    'operation' => 1,
-                ),
-            ),
-            8 => $engine->hero->get($_SESSION[$engine->server->prefix . 'uid']),
-            9 => $engine->hero->getFace($_SESSION[$engine->server->prefix . 'uid'], $_SESSION[$engine->server->prefix . 'avatar']),
-            10 => array(
-                'name' => 'Collection:PlayerProgressTrigger:',
-                'data' => array(
-                    'cache' => array(),
-                    'operation' => 1,
-                ),
-            ),
-            11 => $engine->account->getAjax($_SESSION[$engine->server->prefix . 'uid']),
-            12 => array(
-                'name' => 'Setting:' . $_SESSION[$engine->server->prefix . 'uid'],
-                'data' => $engine->setting->getAll()
-            ),
-            13 => $engine->quest->get(),
-            14 => $engine->quest->giver(),
-        ),
+        "event" => array(array("name"=>"clearCache","data"=>array())),
+        "cache" => $engine->cache->getAll(),
     ));
 } elseif ($data['action'] == "selectVillageDirection") {
     $vid = $engine->world->bestPosition($data['params']['direction']);
