@@ -190,6 +190,14 @@ class Village {
                 [$wid]
             );
 
+            // Always repair the starter village into a playable state. Older versions
+            // stored rubble=3 on resource fields and could leave the main building slot empty.
+            query("UPDATE `{$engine->server->prefix}field` SET `rubble`=0 WHERE `wid`=? AND `location` BETWEEN 1 AND 18 AND `type` BETWEEN 1 AND 4", [$wid]);
+            $hasMain = (int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `type`=15 AND `level`>0", [$wid])->fetchColumn();
+            if ($hasMain === 0) {
+                query("UPDATE `{$engine->server->prefix}field` SET `type`=15, `level`=1, `rubble`=0 WHERE `wid`=? AND `location`=27", [$wid]);
+            }
+
             $engine->auto->procRes($wid);
 
             // Reload the village after offline production has been processed.
