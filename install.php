@@ -32,19 +32,26 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   // The supported deployment is the web document root (htdocs on XAMPP).
   // Keep application URLs root-relative so the same build also works on normal hosting.
   $base='';
-  $cfg="<?php\n".
-   "define('SQL_HOST',".var_export($host,true).");\n".
-   "define('SQL_USER',".var_export($user,true).");\n".
-   "define('SQL_PASS',".var_export($pass,true).");\n".
-   "define('SQL_DATB',".var_export($name,true).");\n".
-   "define('LANGUAGE','en');\n".
-   "define('APP_BASE',".var_export($base,true).");\n".
-   "define('ADMIN_USERNAME',".var_export($admin,true).");\n".
-   "define('ADMIN_PASSWORD_HASH',".var_export(password_hash($adminPass,PASSWORD_DEFAULT),true).");\n".
-   "\$base=APP_BASE; \$index_url=APP_BASE.'/'; \$mellon_url=APP_BASE.'/mellon/'; \$cdn_url=APP_BASE.'/cdn/'; \$lobby_url=APP_BASE.'/lobby/'; \$domain=\$_SERVER['HTTP_HOST']??'localhost'; \$game_dir=APP_BASE.'/game/s1/';\n".
-   "function protocalRemove(\$url){return preg_replace('#^https?://#i','',\$url);} function myErrorHandler(\$c,\$m,\$f,\$l){error_log('[OwnProject] '.\$m.' '.\$f.':'.\$l);} function fatalErrorShutdownHandler(){\$e=error_get_last();if(\$e&&in_array(\$e['type'],[E_ERROR,E_PARSE,E_CORE_ERROR,E_COMPILE_ERROR],true))error_log('[OwnProject] '.\$e['message']);}\n";
+  $cfg=<<<'PHP_CONFIG'
+<?php
+ini_set('display_errors','1'); error_reporting(E_ALL);
+define('SQL_HOST','127.0.0.1'); define('SQL_USER','root'); define('SQL_PASS',''); define('SQL_DATB','travian_kingdoms'); define('LANGUAGE','en');
+$base=''; define('APP_BASE',$base); $index_url='/'; $mellon_url='/mellon/'; $cdn_url='/cdn/'; $lobby_url='/lobby/'; $domain=$_SERVER['HTTP_HOST']??'localhost'; $game_dir='/game/s1/';
+function protocalRemove($url){return preg_replace('#^https?://#i','',$url);}
+function myErrorHandler($c,$m,$f,$l){error_log('[OwnProject] '.$m.' '.$f.':'.$l);}
+function fatalErrorShutdownHandler(){ $e=error_get_last(); if($e&&in_array($e['type'],[E_ERROR,E_PARSE,E_CORE_ERROR,E_COMPILE_ERROR],true))error_log('[OwnProject] '.$e['message'].' '.$e['file'].':'.$e['line']);}
+set_error_handler('myErrorHandler'); register_shutdown_function('fatalErrorShutdownHandler');
+$GLOBALS['db']=null;
+function db(){if($GLOBALS['db'] instanceof PDO)return $GLOBALS['db'];$GLOBALS['db']=new PDO('mysql:host='.SQL_HOST.';dbname='.SQL_DATB.';charset=utf8mb4',SQL_USER,SQL_PASS,[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,PDO::ATTR_EMULATE_PREPARES=>false]);$GLOBALS['db']->exec("SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO'");return $GLOBALS['db'];}
+function query($sql,$params=[]){$s=db()->prepare($sql);$s->execute(is_array($params)?$params:[]);return $s;}
+
+PHP_CONFIG;
   if(file_put_contents(__DIR__.'/config.php',$cfg,LOCK_EX)===false)throw new RuntimeException('config.php schriven mislukt.');
   $r=$db->query("SHOW TABLES LIKE 's1_%'"); while($x=$r->fetch_row())$db->query("TRUNCATE TABLE ".$x[0]);
+  $adminEmail=(strpos($admin,'@')!==false)?$admin:$admin.'@localhost';
+  $as=$db->prepare("SELECT uid FROM global_user WHERE email=? OR username=? LIMIT 1"); $as->bind_param('ss',$adminEmail,$admin); $as->execute(); $ar=$as->get_result()->fetch_assoc(); $as->close();
+  if(!$ar){$nextUid=(int)$db->query("SELECT COALESCE(MAX(uid),0)+1 n FROM global_user")->fetch_assoc()['n'];$adminHash=base64_encode($adminPass);$adminTimed=time();$adminPrestige=0;$adminLevel=0;$ins=$db->prepare("INSERT INTO global_user (uid,username,password,email,timed,prestige,level) VALUES (?,?,?,?,?,?,?)");$ins->bind_param('isssiii',$nextUid,$admin,$adminHash,$adminEmail,$adminTimed,$adminPrestige,$adminLevel);$ins->execute();$ins->close();}
+
   $st=$db->prepare("UPDATE global_server_data SET name=?,tag='server1',folder=?,prefix='s1_',speed_world=?,speed_unit=?,start=?,maintenance=0,genmap='0' WHERE sid=1");
   $folder='/game/s1';$start=date('Y-m-d H:i:s');$st->bind_param('ssiis',$server,$folder,$speed,$unitSpeed,$start);$st->execute();$st->close();
   require __DIR__.'/admin/engine/engine.php'; $engine->server=(object)$engine->database->getServer(1); $engine->world->generateMap();
