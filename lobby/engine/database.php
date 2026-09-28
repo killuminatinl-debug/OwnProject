@@ -25,7 +25,7 @@ class Database {
             $t = $q->fetch(PDO::FETCH_ASSOC);
             $token = $t['token'];
         } else {
-            query("DELETE FROM `global_msid` WHERE `email`=? AND `ip`=?", array($email, $_SERVER['REMOTE_ADDR']));
+            query("DELETE FROM `global_msid` WHERE `email`=?", array($email));
             query("INSERT INTO `global_msid` (`token`,`email`,`ip`) VALUES (?,?,?);", array($token, $email, $_SERVER['REMOTE_ADDR']));
         }
         return $token;
