@@ -92,7 +92,7 @@ define('TB_PREFIX', $engine->server->tag);
 
 if (!isset($ignoreLoad) || $ignoreLoad !== true) {
     if (!$engine->session->checkLogin()) {
-        header("Location: " . $lobby_url);
+        header("Location: " . $mellon_url . "authentication/login/");
         exit;
     }
     $engine->auto->tick();
