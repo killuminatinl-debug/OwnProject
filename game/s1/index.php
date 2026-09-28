@@ -31,6 +31,7 @@ header('Access-Control-Allow-Origin: *');
                     "resource": "chat"
                 },
                 "nodeDisabled": true,
+                "audioDisabled": true,
                 "portal": "<?php echo $lobby_url; ?>",
                 "portalLogout": "",
                 "veryShortTimeFormat": "dd.MM. | HH:mm",
