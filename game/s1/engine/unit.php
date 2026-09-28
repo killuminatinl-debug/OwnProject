@@ -146,11 +146,17 @@ class Unit {
 
     public function getVillageSupply($wid) {
         global $engine;
-        $u = query("SELECT * FROM `{$engine->server->prefix}units` WHERE `wid`=?;", array($wid))->fetch();
-        $p = $engine->account->getByVillage($wid);
-        $supply = 0;
-        for ($i = 1; $i <= 10; $i++) {
-            $supply += $u['u' . $i] * UnitData::get($i + (($p['tribe'] - 1) * 10), 'pop');
+        $u=query("SELECT * FROM `{$engine->server->prefix}units` WHERE `wid`=? LIMIT 1",array((int)$wid))->fetch(PDO::FETCH_ASSOC);
+        $p=$engine->account->getByVillage($wid);
+        if (!$u || !$p) return 0;
+        $supply=0;
+        for ($i=1;$i<=10;$i++) {
+            $key='u'.$i;
+            $count=isset($u[$key])?(int)$u[$key]:0;
+            if ($count<=0) continue;
+            $unitType=$i+(((int)$p['tribe']-1)*10);
+            $pop=UnitData::get($unitType,'pop');
+            if ($pop!==null && $pop!==false) $supply += $count*(float)$pop;
         }
         return $supply;
     }
