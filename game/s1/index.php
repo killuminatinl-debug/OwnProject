@@ -30,6 +30,7 @@ header('Access-Control-Allow-Origin: *');
                     "port": 8081,
                     "resource": "chat"
                 },
+                "nodeDisabled": true,
                 "portal": "<?php echo $lobby_url; ?>",
                 "portalLogout": "",
                 "veryShortTimeFormat": "dd.MM. | HH:mm",
@@ -4207,7 +4208,6 @@ header('Access-Control-Allow-Origin: *');
         <!--<link rel="icon" href="layout/favicon.ico?v=5" type="image/x-icon">-->
 
         <!-- apple related favicons and settings -->
-        <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="apple-touch-icon" sizes="57x57" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-57x57.png?v=2">
         <link rel="apple-touch-icon" sizes="60x60" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-60x60.png?v=2">
         <link rel="apple-touch-icon" sizes="72x72" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-72x72.png?v=2">
@@ -4216,16 +4216,13 @@ header('Access-Control-Allow-Origin: *');
         <link rel="apple-touch-icon" sizes="120x120" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-120x120.png?v=2">
         <link rel="apple-touch-icon" sizes="144x144" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-144x144.png?v=2">
         <link rel="apple-touch-icon" sizes="152x152" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-152x152.png?v=2">
-        <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-180x180.png?v=2">
-        <link rel="mask-icon" href="<?php echo $cdn_url; ?>0.66/layout/favicons/safari-pinned-tab.svg?v=2" color="#5bbad5">
+        <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-180x180.png?v=2">0.66/layout/favicons/safari-pinned-tab.svg?v=2" color="#5bbad5">
 
         <!-- android related favicons and settings -->
-        <link rel="manifest" href="<?php echo $cdn_url; ?>0.66/layout/favicons/manifest.json?v=2">
         <meta name="theme-color" content="#7DA100">
 
         <!-- windows phone related favicons and settings -->
-        <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="msapplication-config" content="<?php echo $cdn_url; ?>0.66/layout/favicons/browserconfig.xml?v=2" />
+        <meta name="msapplication-tap-highlight" content="no" />0.66/layout/favicons/browserconfig.xml?v=2" />
         <meta name="application-name" content="Travian Kingdoms" />
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="msapplication-TileImage" content="<?php echo $cdn_url; ?>0.66/layout/favicons/mstile-144x144.png?v=2" />
@@ -4268,7 +4265,7 @@ header('Access-Control-Allow-Origin: *');
                 font-family: Verdana, Arial, Helvetica, sans-serif;
                 font-size: 14px;
                 background-color: #9CA55B;
-                background-image: url(<?php echo $cdn_url; ?>0.66/layout/images/illustration/loadingScreen/loading_screen_logo.png);
+                background-image: none;
                 background-repeat: no-repeat;
                 background-position: center;
             }
