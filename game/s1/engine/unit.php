@@ -105,65 +105,43 @@ class Unit {
 
     public function training($wid, $type, $amount = 0) {
         global $engine;
+        $wid=(int)$wid; $type=(int)$type; $amount=(int)$amount;
+        if ($wid<=0 || $type<=0 || $amount<=0) return false;
+        $owner=$engine->account->getByVillage($wid);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
+        $res=UnitData::get($type);
+        if (!$res || !isset($res['wood'])) return false;
+        if (in_array($type,$this->barrack,true)) $btype=19;
+        elseif (in_array($type,$this->stable,true)) $btype=20;
+        elseif (in_array($type,$this->workshop,true)) $btype=21;
+        elseif (in_array($type,$this->residence_palase,true)) {
+            $btype=($engine->building->getTypeLevel($wid,25)>0)?25:26;
+        } else return false;
 
-        $uid = $engine->account->getByVillage($wid, 'uid');
-        $engine->auto->emitEvent($uid, array(
-            "name" => "flashNotification",
-            "data" => "53",
-        ));
-
-        $res = UnitData::get($type);
-        if (in_array($type, $this->barrack)) {
-            $btype = 19;
-        } elseif (in_array($type, $this->stable)) {
-            $btype = 20;
-        } elseif (in_array($type, $this->workshop)) {
-            $btype = 21;
-        } elseif (in_array($type, $this->residence_palase)) {
-            $residence = $engine->building->getTypeLevel($wid, 25);
-            $palase = $engine->building->getTypeLevel($wid, 26);
-            if ($residence > 0) {
-                $btype = 25;
-            } elseif ($palase > 0) {
-                $btype = 26;
-            }
-        }
-        if ($type == 9 || $type == 19 || $type == 29) {
-            $engine->village->setVillageField($wid, "settler_used", $engine->village->getVillageField($wid, "settler_used") + 3 * $amount);
-        } elseif ($type == 10 || $type == 20 || $type == 30) {
-            $engine->village->setVillageField($wid, "settler_used", $engine->village->getVillageField($wid, "settler_used") + 1 * $amount);
-        }
-
-        $duration = ($res['time'] * ($engine->building->BuildingEffect($btype, $engine->building->getTypeLevel($wid, $btype)) / 100)) / $engine->server->speed_world;
-        $start = time();
-        $next = $start + $duration;
-
-        $qt = query("SELECT * FROM `{$engine->server->prefix}train` WHERE `wid`=? AND `type`=?", array($wid, $type));
-        if ($qt->rowCount() > 0) {
-            $last = $qt->fetch()['id'];
-        } else {
-            query("INSERT INTO `{$engine->server->prefix}train` (`wid`,`type`,`duration`,`start`,`next`) VALUES (?,?,?,?,?)", array($wid, $type, $duration, $start, $next));
-            $last = $engine->sql->lastInsertId();
-        }
-        $tsub = query("SELECT * FROM `{$engine->server->prefix}train_queue` WHERE `tid`=? AND `duration`=?", array($last, $duration));
-        if ($tsub->rowCount() > 0) {
-            query("UPDATE `{$engine->server->prefix}train_queue` SET `amount`=`amount`+? WHERE `tid`=? AND `duration`=?", array($amount, $last, $duration));
-        } else {
-            query("INSERT INTO `{$engine->server->prefix}train_queue` (`tid`,`amount`,`duration`) VALUES (?,?,?)", array($last, $amount, $duration));
-        }
-        $res = UnitData::get($type);
-        $res['wood'] = $res['wood'] * $amount;
-        $res['clay'] = $res['clay'] * $amount;
-        $res['iron'] = $res['iron'] * $amount;
-        $res['crop'] = $res['crop'] * $amount;
+        // Reconcile offline resources before charging the queue.
         $engine->auto->procRes($wid);
-        query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?", array($res['wood'], $res['clay'], $res['iron'], $res['crop'], $wid));
+        $v=query("SELECT * FROM `".$engine->server->prefix."village` WHERE `wid`=? LIMIT 1",[$wid])->fetch(PDO::FETCH_ASSOC);
+        if (!$v) return false;
+        $wood=(float)$res['wood']*$amount; $clay=(float)$res['clay']*$amount;
+        $iron=(float)$res['iron']*$amount; $crop=(float)$res['crop']*$amount;
+        if ((float)$v['wood']<$wood || (float)$v['clay']<$clay || (float)$v['iron']<$iron || (float)$v['crop']<$crop) return false;
 
-        $p = $engine->account->getById($_SESSION[$engine->server->prefix . 'uid']);
-        if ($p['tutorial'] == 9) {
-            $engine->account->edit('tutorial', 10, $p['uid']);
-            $engine->auto->emitCache($p['uid'], $engine->quest->get($p['uid']));
+        $duration=max(1,(int)round(($res['time']*$engine->building->BuildingEffect($btype,$engine->building->getTypeLevel($wid,$btype))/100)/max(0.0001,(float)$engine->server->speed_world)));
+        $start=time();
+        $next=$start+$duration;
+        $qt=query("SELECT * FROM `".$engine->server->prefix."train` WHERE `wid`=? AND `type`=? LIMIT 1",[$wid,$type]);
+        if ($qt->rowCount()>0) { $last=$qt->fetch(PDO::FETCH_ASSOC)['id']; }
+        else {
+            query("INSERT INTO `".$engine->server->prefix."train` (`wid`,`type`,`duration`,`start`,`next`) VALUES (?,?,?,?,?)",[$wid,$type,$duration,$start,$next]);
+            $last=$engine->sql->lastInsertId();
         }
+        $tsub=query("SELECT * FROM `".$engine->server->prefix."train_queue` WHERE `tid`=? AND `duration`=? LIMIT 1",[$last,$duration]);
+        if ($tsub->rowCount()>0) query("UPDATE `".$engine->server->prefix."train_queue` SET `amount`=`amount`+? WHERE `tid`=? AND `duration`=?",[$amount,$last,$duration]);
+        else query("INSERT INTO `".$engine->server->prefix."train_queue` (`tid`,`amount`,`duration`) VALUES (?,?,?)",[$last,$amount,$duration]);
+        query("UPDATE `".$engine->server->prefix."village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?",[$wood,$clay,$iron,$crop,$wid]);
+        if ($type==9 || $type==19 || $type==29) $engine->village->setVillageField($wid,"settler_used",$engine->village->getVillageField($wid,"settler_used")+3*$amount);
+        elseif ($type==10 || $type==20 || $type==30) $engine->village->setVillageField($wid,"settler_used",$engine->village->getVillageField($wid,"settler_used")+$amount);
+        return true;
     }
 
     public function getVillageSupply($wid) {
