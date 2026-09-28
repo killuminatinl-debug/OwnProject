@@ -2,9 +2,9 @@
     <head>
         <meta charset="utf-8">
         <title>Mellon</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="/min?g=core-styles" media="screen" rel="stylesheet" type="text/css">
-        <link href="/min?g=styles" media="screen" rel="stylesheet" type="text/css"><script type="text/javascript" src="/min?g=core-scripts"></script>
-        <script type="text/javascript" src="/min?g=scripts"></script>
+        <link href="<?php echo $base; ?>/mellon/min?g=core-styles" media="screen" rel="stylesheet" type="text/css">
+        <link href="<?php echo $base; ?>/mellon/min?g=styles" media="screen" rel="stylesheet" type="text/css"><script type="text/javascript" src="<?php echo $base; ?>/mellon/min?g=core-scripts"></script>
+        <script type="text/javascript" src="<?php echo $base; ?>/mellon/min?g=scripts"></script>
         <script type="text/javascript">
             //<!--
             $(function () {
