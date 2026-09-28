@@ -8,7 +8,16 @@ $bootstrapHash = isset($_GET['g_msid']) ? (string)$_GET['g_msid'] : '';
 if (($engine->session->data === null || empty($engine->session->data->islogin)) &&
     $bootstrapToken !== '' && $bootstrapHash !== '' &&
     hash_equals(md5($bootstrapToken), $bootstrapHash)) {
+    // Normal Kingdoms hand-off: g_msid is md5(gl5SessionKey).
     $engine->account->Login($bootstrapToken);
+} elseif (($engine->session->data === null || empty($engine->session->data->islogin)) &&
+    $bootstrapHash !== '') {
+    // Accept a direct msid as a recovery path as well. This prevents a
+    // white/empty lobby when a frontend version swaps the two parameters.
+    $direct = query('SELECT token FROM global_msid WHERE token=? LIMIT 1', array($bootstrapHash))->fetchColumn();
+    if ($direct) {
+        $engine->account->Login($bootstrapHash);
+    }
 }
 
 if (isset($_GET['g_msid']) && isset($_GET['gl5SessionKey'])) {
