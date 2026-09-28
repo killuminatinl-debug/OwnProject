@@ -1,3 +1,4 @@
 <?php
-include_once __DIR__.'/config.php';
-header('Location: '.$lobby_url);
+include_once __DIR__ . '/config.php';
+header('Location: ' . $mellon_url . 'authentication/login/', true, 302);
+exit;
