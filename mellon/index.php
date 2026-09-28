@@ -10,7 +10,7 @@ if ($page->getURI(0) == "authentication") {
     if ($page->getURI(1) == "login") {
         if ($_POST) {
             if ($engine->account->Login($_POST['email'], $_POST['password'])) {
-                header("Location: /account/welcome?msid={$_SESSION['mellon_msid']}&msname=msid");
+                header("Location: " . APP_BASE . "/account/welcome?msid=" . rawurlencode($_SESSION['mellon_msid']) . "&msname=msid");
             } else {
                 include_once dirname(__FILE__) . '/template/login.php';
             }
@@ -40,7 +40,7 @@ if ($page->getURI(0) == "authentication") {
     }
 } elseif ($page->getURI(0) == "account") {
     if ($page->getURI(1) == "welcome") {
-        header("Location: /page/redirect/forward/aHR0cDovL2xvYmJ5Lmtpbmdkb21zLmNvbS9hcGkvbG9naW4ucGhwP3Rva2VuPTU2MWE2YzQxOTc5YThkOTIwNWEwMjM0MjhjZGFlNjNh?msid={$_SESSION['mellon_msid']}&msname=msid");
+        header("Location: " . APP_BASE . "/page/redirect/forward/" . rawurlencode(APP_BASE . "/lobby/api/login.php?token=" . $_SESSION['mellon_msid']) . "?msid=" . rawurlencode($_SESSION['mellon_msid']) . "&msname=msid");
     } elseif ($page->getURI(1) == "logout") {
         include_once dirname(__FILE__) . '/template/logout.php';
     }
