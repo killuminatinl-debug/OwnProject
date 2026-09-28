@@ -97,7 +97,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
             $q->close();
 
             $db->query("DELETE FROM s1_world");
-            $q=$db->prepare("INSERT INTO s1_world (id,x,y,fieldtype,oasistype,image,bonus) VALUES (?,?,?,?,?,?,?)");
+            $q=$db->prepare("INSERT INTO s1_world (id,fieldtype,oasistype,x,y,bonus,image) VALUES (?,?,?,?,?,?,?)");
             if(!$q)throw new RuntimeException('Wereldtabel voorbereiden mislukt: '.$db->error);
             $types=array('3339','3447','3456','4347','4356','4437','4446','4536','5346','5436');
             $max=70;
@@ -106,11 +106,33 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
                     if(($x*$x+$y*$y)>($max*$max))continue;
                     $id=($x+16384)+32768*($y+16384);
                     $field=$types[array_rand($types)];$oasistype=0;$image=random_int(0,31);$bonus=0;
-                    $q->bind_param('iiisiii',$id,$x,$y,$field,$oasistype,$image,$bonus);
+                    $q->bind_param('issiiis',$id,$field,$oasistype,$x,$y,$bonus,$image);
                     if(!$q->execute())throw new RuntimeException('Wereldgeneratie mislukt: '.$q->error);
                 }
             }
             $q->close();
+            // Provision the installer account on the actual game world as well.
+            $avatarId=0;
+            $qa=$db->prepare("SELECT id FROM global_avatar WHERE email=? LIMIT 1");
+            $qa->bind_param('s',$adminEmail); $qa->execute(); $qa->bind_result($avatarIdExisting);
+            if($qa->fetch()){ $avatarId=(int)$avatarIdExisting; } $qa->close();
+            if($avatarId===0){
+                $qa=$db->prepare("INSERT INTO global_avatar (email,gender,hairColor,beard,ear,eye,eyebrow,hair,mouth,nose) VALUES (?,?,?,?,?,?,?,?,?,?)");
+                $zero=0; $qa->bind_param('siiiiiiiii',$adminEmail,$zero,$zero,$zero,$zero,$zero,$zero,$zero,$zero,$zero);
+                if(!$qa->execute()) throw new RuntimeException('Admin avatar aanmaken mislukt: '.$qa->error);
+                $avatarId=$db->insert_id; $qa->close();
+            }
+            $q=$db->prepare("SELECT uid FROM s1_user WHERE email=? LIMIT 1");
+            $q->bind_param('s',$adminEmail); $q->execute(); $q->bind_result($gameUid); $hasGameUser=$q->fetch(); $q->close();
+            if(!$hasGameUser){
+                $gameUid=$uid;
+                $q=$db->prepare("INSERT INTO s1_user (uid,username,email,tribe,kingdom,gold,silver,cp,avatar,serial,description,protection,tutorial,quest,master,online,spawn,plus,resBonus,cropBonus,starterPack,autoExtend,lastLogin,attp,defp) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                $vals=array($gameUid,$admin,$adminEmail,1,0,250,0,0,$avatarId,0,'','0',0,'0',0,time(),'0','0','0','0','0',0,(string)time(),0,0);
+                $q->bind_param('issiiisidissiiisssssissii',...$vals);
+                if(!$q->execute()) throw new RuntimeException('Admin speler aanmaken mislukt: '.$q->error);
+                $q->close();
+            }
+
             $db->query("UPDATE global_server_data SET genmap='2' WHERE sid=1");
 
             file_put_contents(__DIR__.'/.installed',date('c').' uid='.$uid,LOCK_EX);
