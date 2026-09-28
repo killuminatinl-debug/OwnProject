@@ -22,17 +22,19 @@ if ($data['action'] == "getBuildingList") {
     }
 
     $started = $engine->building->StartBuild($location, $type, $wid);
+    $cache = array(
+        $engine->building->getBuilding(array(
+            'wid' => $wid,
+            'location' => $location,
+        )),
+        $engine->building->getBuildings($wid),
+        $engine->village->get($wid),
+        $engine->building->getQueue($wid),
+    );
+
     echo json_encode(array(
-        "cache" => [
-            $engine->building->getBuilding(array(
-                'wid' => $data['params']['villageId'],
-                'location' => $data['params']['locationId'],
-            )),
-            $engine->building->getBuildings($data['params']['villageId']),
-            $engine->village->get($data['params']['villageId']),
-            $engine->building->getQueue($data['params']['villageId']),
-        ],
-        "response" => array(),
+        "cache" => $cache,
+        "response" => $started ? array() : array("error" => "BUILD_NOT_STARTED"),
         "serialNo" => $engine->session->serialNo(),
         "time" => round(microtime(true) * 1000),
     ));
