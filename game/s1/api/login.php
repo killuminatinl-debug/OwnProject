@@ -46,6 +46,25 @@ if ($_GET['token'] == md5($_GET['msid'])) {
         $_SESSION[$engine->server->prefix . 'silver'] = $u['silver'];
         $_SESSION[$engine->server->prefix . 'tutorial'] = $u['tutorial'];
     }
+
+    /* Repair legacy/incomplete avatars as well: every logged-in player must
+       have a tribe, kingdom and at least one village before the game loads. */
+    $player = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", [$uid])->fetch(PDO::FETCH_ASSOC);
+    if (!$player) {
+        header("Location: " . $lobby_url);
+        exit;
+    }
+    if ((int)$player['tribe'] < 1) {
+        query("UPDATE `" . $engine->server->prefix . "user` SET `tribe`=1 WHERE `uid`=?", [$uid]);
+        $_SESSION[$engine->server->prefix . 'tribe'] = 1;
+    }
+    if ((int)$player['kingdom'] === 0) {
+        $kid = $engine->kingdom->create(substr(preg_replace('/[^A-Za-z0-9]/', '', $_SESSION['mellon_username']), 0, 12) ?: 'Kingdom');
+        query("UPDATE `" . $engine->server->prefix . "user` SET `kingdom`=? WHERE `uid`=?", [$kid, $uid]);
+    }
+    if ((int)query("SELECT COUNT(*) FROM `" . $engine->server->prefix . "village` WHERE `owner`=?", [$uid])->fetchColumn() === 0) {
+        $engine->village->createVillage($uid, $_SESSION['mellon_username']);
+    }
 }
 
 setcookie('t5SessionKey', (json_encode(array("key" => session_id(), "id" => $uid))), time() + 14400, "/");
