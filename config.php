@@ -8,26 +8,15 @@ define('SQL_PASS','');
 define('SQL_DATB','travian_kingdoms');
 define('LANGUAGE','en');
 
-$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$script = str_replace('\\','/', $_SERVER['SCRIPT_NAME'] ?? '');
-$root = str_replace('\\','/', realpath(__DIR__) ?: __DIR__);
-$docRoot = str_replace('\\','/', realpath($_SERVER['DOCUMENT_ROOT'] ?? dirname(__DIR__)) ?: ($_SERVER['DOCUMENT_ROOT'] ?? dirname(__DIR__)));
-$basePath = '';
-if ($docRoot !== '' && strpos($root, $docRoot) === 0) {
-    $basePath = substr($root, strlen($docRoot));
-}
-$basePath = '/' . trim($basePath, '/');
-if ($basePath === '/') $basePath = '';
-$base = $scheme . '://' . $host . $basePath;
+$base = '';
 define('APP_BASE', $base);
 
-$index_url = $base . '/';
-$mellon_url = $base . '/mellon/';
-$cdn_url = $base . '/cdn/';
-$lobby_url = $base . '/lobby/';
-$domain = $host;
-$game_dir = $base . '/game/s1/';
+$index_url = '/';
+$mellon_url = '/mellon/';
+$cdn_url = '/cdn/';
+$lobby_url = '/lobby/';
+$domain = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$game_dir = '/game/s1/';
 
 function protocalRemove($url){ return preg_replace('#^https?://#i','',$url); }
 function myErrorHandler($code,$message,$file,$line){
