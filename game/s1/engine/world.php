@@ -152,12 +152,14 @@ class World {
                             $pD = $engine->account->getByVillage($v['wid']);
 
                             //Prepare Kingdom data
-                            if ($pD['kingdom'] != 0) {
+                            $kD = null;
+                            if ($pD && (int)$pD['kingdom'] != 0) {
                                 $kD = $engine->kingdom->getData($pD['kingdom']);
-                                $k[$pD['kingdom']] = [
-                                    "tag" => $kD['tag']
-                                ];
-                                $pre_r['owner'] = $pD['kingdom'];
+                                if ($kD) {
+                                    $k[$pD['kingdom']] = [
+                                        "tag" => $kD['tag']
+                                    ];
+                                }
                             }
 
                             //Prepare field data
@@ -203,9 +205,9 @@ class World {
                                 'name' => $pD['username'],
                                 'tribeId' => $pD['tribe'],
                                 "kingdomRole" => $pD['kingdom'] != 0 ? ($engine->kingdom->getRole($pD['kingdom'], $pD['uid']) != 0 ? 1 : 0) : '0',
-                                "kingStatus" => $pD['uid'] == $kD['king'] ? true : false,
-                                "kingdomId" => $pD['kingdom'] != 0 ? $kD['id'] : '0',
-                                "kingId" => $pD['kingdom'] != 0 ? $kD['king'] : '0',
+                                "kingStatus" => ($kD && $pD['uid'] == $kD['king']) ? true : false,
+                                "kingdomId" => ($kD && $pD['kingdom'] != 0) ? $kD['id'] : '0',
+                                "kingId" => ($kD && $pD['kingdom'] != 0) ? $kD['king'] : '0',
                                 "spawnedOnMap" => "1471436593",
                                 "active" => "1"
                             ];
