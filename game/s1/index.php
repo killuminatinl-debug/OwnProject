@@ -39,7 +39,7 @@ header('Access-Control-Allow-Origin: *');
                     "applicationCountryId": "en",
                     "applicationInstanceId": "test",
                     "applicationLanguageId": "en_US",
-                    "cookieDomain": ".<?php echo $domain; ?>",
+                    "cookieDomain": "<?php echo ($domain === "localhost" || $domain === "127.0.0.1") ? "" : "." . $domain; ?>",
                     "checkSession": false
                 },
                 "paymentShopDisabled": false
