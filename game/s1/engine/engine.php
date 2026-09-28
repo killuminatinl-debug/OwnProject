@@ -122,13 +122,13 @@ if (!isset($ignoreLoad) || $ignoreLoad !== true) {
             $vrow = query("SELECT `wid` FROM `{$engine->server->prefix}village` WHERE `owner`=? ORDER BY `wid` ASC LIMIT 1", [$uid])->fetch(PDO::FETCH_ASSOC);
             if ($vrow) {
                 $wid = (int)$vrow['wid'];
+                $resourceTypes = [1,4,1,3,2,2,3,4,4,3,3,4,4,1,4,2,1,2];
                 for ($loc = 1; $loc <= 40; $loc++) {
                     $exists = (int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", [$wid, $loc])->fetchColumn();
                     if ($exists === 0) {
-                        $type = 0; $level = 0; $rubble = 0;
-                        if ($loc <= 18) { $type = 4; $level = 1; }
-                        if ($loc === 27) { $type = 15; $level = 1; }
-                        $engine->building->createBuilding($wid, $loc, $type, $level, $rubble);
+                        $type = ($loc <= 18) ? (int)$resourceTypes[$loc - 1] : (($loc === 27) ? 15 : 0);
+                        $level = ($loc <= 18 || $loc === 27) ? 1 : 0;
+                        $engine->building->createBuilding($wid, $loc, $type, $level, 0);
                     }
                 }
                 query("UPDATE `{$engine->server->prefix}field` SET `level`=1,`rubble`=0 WHERE `wid`=? AND `location` BETWEEN 1 AND 18 AND `level`<1", [$wid]);
