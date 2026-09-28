@@ -36,6 +36,7 @@ class Session {
                     return false;
                 }
                 $this->data = (object) $u;
+                query("UPDATE `" . $engine->server->prefix . "user` SET `online`=1,`lastLogin`=? WHERE `uid`=?", [time(), $u['uid']]);
                 $_SESSION[$engine->server->prefix . 'uid'] = $u['uid'];
                 $_SESSION[$engine->server->prefix . 'username'] = $u['username'];
                 $_SESSION[$engine->server->prefix . 'avatar'] = $u['avatar'];
