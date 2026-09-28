@@ -42,11 +42,11 @@ $msid=(string)($_SESSION['mellon_msid'] ?? '');
                                             "signupTime": "---"
                                     }
                             },
-                            'UserAccountImage:52219': {
-                            name: 'UserAccountImage:52219',
+                            'UserAccountImage:<?php echo $uid; ?>': {
+                            name: 'UserAccountImage:<?php echo $uid; ?>',
                                     data: {
                                     "avatarIdentifier": "3810393",
-                                            "userAccountIdentifier": "52219",
+                                            "userAccountIdentifier": <?php echo $uid; ?>,
                                             "gender": "0",
                                             "hairColor": "1",
                                             "face": {
@@ -166,7 +166,7 @@ $msid=(string)($_SESSION['mellon_msid'] ?? '');
                     "prestige": true,
                     "achievements": true,
                     "disableByTutorial": false,
-                    "cdnPrefix": "<?php echo $cdn_url; ?>lobby/live/",
+                    "cdnPrefix": "<?php echo $cdn_url; ?>0.66/",
                     "goldTransferNotAllowedCountries": ["pl", "hu", "ru"]
             };
         </script>
