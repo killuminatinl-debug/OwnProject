@@ -3,16 +3,16 @@
 class Account {
 
     public function get() {
-        global $engine;
-
+        $uid = (int)($_SESSION['lobby_uid'] ?? 0);
+        $username = (string)($_SESSION['lobby_username'] ?? '');
         return [
-            "name" => "Player:" . $_SESSION['lobby_uid'],
+            "name" => "Player:" . $uid,
             "data" => [
-                "playerId" => $_SESSION['lobby_uid'],
-                "avatarName" => $_SESSION['lobby_username'],
-                "userAccountIdentifier" => $_SESSION['lobby_uid'],
+                "playerId" => $uid,
+                "avatarName" => $username,
+                "userAccountIdentifier" => $uid,
                 "isInstantAccount" => 0,
-                "isActivated" => 1
+                "isActivated" => $uid > 0
             ]
         ];
     }
