@@ -1,12 +1,12 @@
 <?php
 
-if ($data['action'] == "getBuildingList") {
+if (in_array($data['action'], array("getBuildingList","getBuildable","getBuildingListForLocation"), true)) {
     echo json_encode(array(
         "response" => $engine->building->getBuildable($data['params']['villageId'], $data['params']['locationId']),
         "serialNo" => $engine->session->serialNo(),
         "time" => round(microtime(true) * 1000),
     ));
-} elseif ($data['action'] == "upgrade") {
+} elseif (in_array($data['action'], array("upgrade","build","upgradeBuilding"), true)) {
     $wid=(int)($data['params']['villageId']??($data['params']['wid']??0));
     $location=(int)($data['params']['locationId']??($data['params']['location']??0));
     $type=(int)($data['params']['buildingType']??($data['params']['type']??0));
