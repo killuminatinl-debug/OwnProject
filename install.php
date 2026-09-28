@@ -56,7 +56,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
             $db->query("SET FOREIGN_KEY_CHECKS=1");
 
             $cfg="<?php\n";
-            $cfg.="ini_set('display_errors','1'); error_reporting(E_ALL);\n";
+            $cfg.="ini_set('display_errors','0'); ini_set('log_errors','1'); error_reporting(E_ALL);\n";
             $cfg.="define('SQL_HOST',".var_export($host,true).");\n";
             $cfg.="define('SQL_USER',".var_export($user,true).");\n";
             $cfg.="define('SQL_PASS',".var_export($pass,true).");\n";
