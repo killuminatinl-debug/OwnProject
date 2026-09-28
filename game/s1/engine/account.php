@@ -136,13 +136,15 @@ class Account {
 
     public function getByVillage($wid, $field = null) {
         global $engine;
-        $v = query("SELECT * FROM `" . $engine->server->prefix . "village` WHERE `wid`=?;", array($wid))->fetch(PDO::FETCH_ASSOC);
+        $v = query("SELECT * FROM `" . $engine->server->prefix . "village` WHERE `wid`=? LIMIT 1;", array($wid))->fetch(PDO::FETCH_ASSOC);
+        if (!$v) return null;
         return $this->getById($v['owner'], $field);
     }
 
     public function getById($uid, $field = null) {
         global $engine;
-        $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?;", array($uid))->fetch(PDO::FETCH_ASSOC);
+        $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=? LIMIT 1;", array($uid))->fetch(PDO::FETCH_ASSOC);
+        if (!$p) return null;
 
         if ($field === null) {
             return $p;
@@ -170,7 +172,8 @@ class Account {
 
         $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", array($id))->fetch(PDO::FETCH_ASSOC);
         $prestige = $this->getPrestige(null, true);
-        $k = $engine->kingdom->getData($p['kingdom']);
+        $k = ((int)$p['kingdom'] > 0) ? $engine->kingdom->getData($p['kingdom']) : null;
+        if (!$k) $k = ['id'=>0,'king'=>0,'tag'=>''];
         $r = [
             'name' => 'Player:' . $id,
             'data' => [
