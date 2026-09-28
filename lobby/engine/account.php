@@ -110,8 +110,7 @@ class Account
 
         header(
             'Location: ' . $lobby_url .
-            '?g_msid=' . rawurlencode(md5($token)) .
-            '&gl5SessionKey=' . rawurlencode($token)
+            '#msid=' . rawurlencode($token)
         );
         exit;
     }
