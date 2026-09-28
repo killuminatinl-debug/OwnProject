@@ -40,6 +40,10 @@ class Account {
         if ($n == 1) {
             $t = $q->fetch();
             $u = query("SELECT * FROM `global_user` WHERE `email`=?;", array($t['email']))->fetch();
+            if (!$u) {
+                header("Location: " . $index_url);
+                exit;
+            }
 
             $engine->session->data = (object) $u;
             $_SESSION['lobby_uid'] = $u['uid'];
