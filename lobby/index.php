@@ -25,9 +25,8 @@ if (isset($_GET['g_msid']) && isset($_GET['gl5SessionKey'])) {
     $token = (string)$_GET['gl5SessionKey'];
 
     if ($token !== '' && hash_equals(md5($token), $hash)) {
-        // The original Kingdoms frontend expects the real session token in
-        // the URL hash. The PHP session is already established by Mellon.
-        header('Location: ' . $lobby_url . '#msid=' . rawurlencode($token), true, 302);
+        $msid = $token;
+        header('Location: ' . rtrim($game_dir, '/') . '/api/login.php?token=' . rawurlencode(md5($msid)) . '&msid=' . rawurlencode($msid), true, 302);
         exit;
     }
 
@@ -37,6 +36,20 @@ if (isset($_GET['g_msid']) && isset($_GET['gl5SessionKey'])) {
 
 if (!$engine->session->data || empty($engine->session->data->islogin)) {
     header('Location: ' . $index_url . '#logout', true, 302);
+    exit;
+}
+
+/*
+ * This installation has exactly one world (s1). Do not expose the legacy
+ * lobby as a required step: send authenticated players straight into the
+ * Kingdoms game. The lobby files remain available for compatibility.
+ */
+$msid = (string)($_SESSION['mellon_msid'] ?? '');
+if ($msid === '' && !empty($_SESSION['lobby_email'])) {
+    $msid = (string)$engine->database->msid($_SESSION['lobby_email']);
+}
+if ($msid !== '') {
+    header('Location: ' . rtrim($game_dir, '/') . '/api/login.php?token=' . rawurlencode(md5($msid)) . '&msid=' . rawurlencode($msid), true, 302);
     exit;
 }
 
