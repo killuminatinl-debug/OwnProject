@@ -1,6 +1,7 @@
 <?php
 // Root deployment: C:\\xampp\\htdocs\\ and normal domain hosting.
-ini_set('display_errors', '1');
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
 error_reporting(E_ALL);
 
 define('SQL_HOST', '127.0.0.1');
