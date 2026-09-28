@@ -660,7 +660,7 @@ class Building {
                     $b = $this->makeDetail(0, $wid, $id, $currentType, $currentLevel, array(
                         'requiredBuildings' => array(),
                         'canBuild' => true
-                    ), false, 1);
+                    ), 0);
                     $buildable[] = $b;
                 }
             }
