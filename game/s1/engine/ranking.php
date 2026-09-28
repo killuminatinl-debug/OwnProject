@@ -120,7 +120,7 @@ class Ranking {
             $all = count($us);
             foreach ($us as $u) {
                 $rank += 1;
-                if ($u['uid'] == $params['id']) {
+                if ((int)$u['uid'] === (int)$params['id']) {
                     break;
                 }
             }
@@ -129,7 +129,7 @@ class Ranking {
             $all = count($ks);
             foreach ($ks as $k) {
                 $rank += 1;
-                if ($k['uid'] == $params['id']) {
+                if ((int)$k['id'] === (int)$params['id']) {
                     break;
                 }
             }
@@ -138,12 +138,12 @@ class Ranking {
             $all = count($vs);
             foreach ($vs as $v) {
                 $rank += 1;
-                if ($v['uid'] == $params['id']) {
+                if ((int)$v['wid'] === (int)$params['id']) {
                     break;
                 }
             }
         }
-        return ['rank' => $rank, 'all' => $all];
+        return ['rank' => $rank + 1, 'all' => $all];
     }
 
     public function getRanking($params) {
@@ -239,7 +239,7 @@ class Ranking {
                     'rank' => $rank,
                     'kingdomId' => $k['id'],
                     'name' => $k['tag'],
-                    'playerId' => $ud['kingdom'],
+                    'playerId' => 0,
                     'membersCount' => $k['memcount'],
                     'village' => 0,
                     'points' => $k['totalpop'],
