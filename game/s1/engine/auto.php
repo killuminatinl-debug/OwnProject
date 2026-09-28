@@ -297,7 +297,7 @@ class Auto {
             $data[$i]['wood'] = $data[$i]['wood'] + (($engine->village->getProc($data[$i]['wid'], 1) / 3600) * (microtime(true) - $data[$i]['lastupdate']));
             $data[$i]['clay'] = $data[$i]['clay'] + (($engine->village->getProc($data[$i]['wid'], 2) / 3600) * (microtime(true) - $data[$i]['lastupdate']));
             $data[$i]['iron'] = $data[$i]['iron'] + (($engine->village->getProc($data[$i]['wid'], 3) / 3600) * (microtime(true) - $data[$i]['lastupdate']));
-            $data[$i]['crop'] = $data[$i]['crop'] + ((($engine->village->getProc($data[$i]['wid'], 4) - $data[$i]['pop']) / 3600) * (microtime(true) - $data[$i]['lastupdate']));
+            $data[$i]['crop'] = $data[$i]['crop'] + (($engine->village->getProc($data[$i]['wid'], 4) / 3600) * (microtime(true) - $data[$i]['lastupdate']));
             $cp = (($engine->account->getCPproduce($engine->account->getByVillage($data[$i]['wid'], 'uid')) / 86400) * (microtime(true) - $data[$i]['lastupdate']));
             $date[$i]['lastupdate'] = microtime(true);
 
