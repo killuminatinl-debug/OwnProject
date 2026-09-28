@@ -2,7 +2,7 @@
 
 class Auto {
 
-    var $last = ['pong' => 0, 'freeSilver' => 0, 'hpHero'];
+    var $last = ['pong' => 0, 'freeSilver' => 0, 'hpHero' => 0];
 
     public function emitEvent($uid = null, $data = []) {
         global $engine;
@@ -513,6 +513,21 @@ class Auto {
             $this->emitCache($h['owner'], $engine->quest->get('',$h['owner']));
             $this->emitCache($h['owner'], $engine->quest->giver($h['owner']));
         }
+    }
+
+    public function tick() {
+        // Request-driven server worker for installations without Node/cron.
+        // The individual methods only process records whose timestamps are due.
+        $this->buildComplete();
+        $this->procRes();
+        $this->researchComplete();
+        $this->trainComplete();
+        $this->movement();
+        $this->procTreasuryTransformations();
+        $this->procAdventurePoint();
+        $this->healthHero();
+        $this->reviveHero();
+        $this->freeSilver();
     }
 
     public function work() {
