@@ -2,9 +2,11 @@
 include_once __DIR__ . '/engine/session.php';
 if (isset($_GET['g_msid'])) {
     if ($_GET['g_msid'] == md5($_GET['gl5SessionKey'])) {
-        header("Location: index.php#msid=" . $_GET['gl5SessionKey']);
+        header("Location: index.php#msid=" . rawurlencode($_GET['gl5SessionKey']));
+        exit;
     } else {
-        header("Location: ../");
+        header("Location: " . $index_url);
+        exit;
     }
 }
 /* Do not redirect an unauthenticated lobby request back to /.
@@ -25,7 +27,7 @@ include_once __DIR__.'/lang/en.php';
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="msapplication-tap-highlight" content="no" />
-        <link rel="shortcut icon" href="/favicon.ico">
+        <link rel="shortcut icon" href="<?php echo $base; ?>/favicon.ico">
         <title>Travian Kingdoms</title>
         <script>
             window.__INITIAL_STATE__ = {
