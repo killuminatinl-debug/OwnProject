@@ -3,10 +3,10 @@
     <head>
         <meta charset="utf-8">
         <title>Mellon</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="/min?g=core-styles" media="screen" rel="stylesheet" type="text/css">
-        <link href="/min?g=styles" media="screen" rel="stylesheet" type="text/css">
-        <script type="text/javascript" src="/min?g=core-scripts"></script>
-        <script type="text/javascript" src="/min?g=scripts"></script>
+        <link href="<?php echo $base; ?>/mellon/min?g=core-styles" media="screen" rel="stylesheet" type="text/css">
+        <link href="<?php echo $base; ?>/mellon/min?g=styles" media="screen" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="<?php echo $base; ?>/mellon/min?g=core-scripts"></script>
+        <script type="text/javascript" src="<?php echo $base; ?>/mellon/min?g=scripts"></script>
         <script type="text/javascript">
             //<!--
             $(function () {
@@ -153,7 +153,7 @@
             <div class="login-extra">
                 <div class="login-extra-login">
                     <span>Already registered?</span>
-                    <a href="/authentication/login/applicationDomain/www.kingdoms.com/applicationPath/%2Fcom%2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=ji9hmqge85c2nv59plhdlrnhd0&msname=msid">
+                    <a href="<?php echo $base; ?>/authentication/login/applicationDomain/www.kingdoms.com/applicationPath/%2Fcom%2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=ji9hmqge85c2nv59plhdlrnhd0&msname=msid">
                         Log in</a>
                 </div>
             </div>
