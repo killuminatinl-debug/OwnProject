@@ -7,6 +7,9 @@ class Account {
 
         if (isset($_SESSION['mellon_msid'])) {
             $msid = query("SELECT * FROM `global_msid` WHERE `token`=?;", [$_SESSION['mellon_msid']])->fetch(PDO::FETCH_ASSOC);
+            if (!$msid) {
+                return false;
+            }
             $q = query("SELECT * FROM `global_user` WHERE `email`=?;", [$msid['email']]);
             $n = $q->rowCount();
             if ($n == 1) {
