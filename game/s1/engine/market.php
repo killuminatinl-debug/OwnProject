@@ -102,6 +102,9 @@ class Market {
     public function cancelOffer($id) {
         global $engine;
         $offer = query("SELECT * FROM `{$engine->server->prefix}market` WHERE `id`=?", [$id])->fetch(PDO::FETCH_ASSOC);
+        if (!$offer) return false;
+        $owner = $engine->account->getByVillage($offer['wid']);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
         $engine->auto->procRes($offer['wid']);
         if ($offer['gtype'] == 1)
             query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`+? WHERE `wid`=?", [$offer['gamt'], $offer['wid']]);
