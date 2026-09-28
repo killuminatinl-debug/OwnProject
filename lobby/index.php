@@ -1,5 +1,16 @@
 <?php
 include_once __DIR__ . '/engine/session.php';
+
+// Allow a fresh lobby URL to bootstrap the session directly. This makes
+// /lobby/?g_msid=...&gl5SessionKey=... reliable even after a lost PHP session.
+$bootstrapToken = isset($_GET['gl5SessionKey']) ? (string)$_GET['gl5SessionKey'] : '';
+$bootstrapHash = isset($_GET['g_msid']) ? (string)$_GET['g_msid'] : '';
+if (($engine->session->data === null || empty($engine->session->data->islogin)) &&
+    $bootstrapToken !== '' && $bootstrapHash !== '' &&
+    hash_equals(md5($bootstrapToken), $bootstrapHash)) {
+    $engine->account->Login($bootstrapToken);
+}
+
 if (!$engine->session->data || empty($engine->session->data->islogin)) {
     header("Location: " . $index_url); exit;
 }
@@ -143,7 +154,7 @@ $msid=(string)($_SESSION['mellon_msid'] ?? '');
                                     "checkSession": "true",
                                     "mellon": {
                                     "cookie": {
-                                    "domain": ".<?php echo $domain; ?>"
+                                    "domain": "<?php echo ($domain === "localhost" || $domain === "127.0.0.1") ? "" : "." . $domain; ?>"
                                     }
                                     }
                             }
