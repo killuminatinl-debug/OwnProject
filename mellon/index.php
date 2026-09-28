@@ -30,7 +30,7 @@ if ($page->getURI(0) == "authentication") {
         if ($_POST) {
             $term = isset($_POST['termsAccepted']) ? true : false;
             if ($engine->account->Signup($_POST['email'], isset($_POST['password']['password']) ? $_POST['password']['password'] : '', false, $term)) {
-                header("Location: /account/welcome?msid={$_SESSION['mellon_msid']}&msname=msid");
+                header("Location: " . $base . "/account/welcome?msid=" . rawurlencode($_SESSION['mellon_msid']) . "&msname=msid");
             } else {
                 include_once dirname(__FILE__) . '/template/login.php';
             }
@@ -147,8 +147,8 @@ if ($page->getURI(0) == "authentication") {
     if ($page->getURI(1) == "join") {
         $engine->server = (object) $engine->database->getServerInfo($page->getURI(3));
         $msid = $engine->database->msid($_SESSION['mellon_email']);
-        if ($_SERVER['SERVER_ADDR'] == "::1" || $_SERVER['SERVER_ADDR'] == "localhost") {
-            $redirect = $engine->server->folder . "/api/login.php?token=" . md5($msid) . "&msid=" . $msid . "&msname=msid";
+        if (isset($engine->server->folder) && $engine->server->folder !== '') {
+            $redirect = $engine->server->folder . "/api/login.php?token=" . md5($msid) . "&msid=" . rawurlencode($msid) . "&msname=msid";
             include_once dirname(__FILE__) . '/template/join.php';
         } else {
             $redirect = $engine->server->folder . "/api/login.php?token=" . md5($msid) . "&msid=" . $msid . "&msname=msid";
