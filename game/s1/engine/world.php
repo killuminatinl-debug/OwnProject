@@ -64,8 +64,9 @@ class World {
 
     private function isField($id) {
         global $engine;
-        $f = query("SELECT * FROM `{$engine->server->prefix}world` WHERE `id`=?", [$id])->fetch(PDO::FETCH_ASSOC);
-        if ($f['oasistype'] == "0" && $f['image'] < 9000)
+        $f = query("SELECT * FROM `{$engine->server->prefix}world` WHERE `id`=? LIMIT 1", [$id])->fetch(PDO::FETCH_ASSOC);
+        if (!$f) return false;
+        if ($f['oasistype'] == "0" && (int)$f['image'] < 9000)
             return true;
         else
             return false;
@@ -377,8 +378,11 @@ class World {
                     $now_y = $b[1] + $y;
                     $now_wid = $this->xy2id($now_x, $now_y);
 
-                    $landscape = query("SELECT * FROM `{$engine->server->prefix}world` WHERE `id`=?", [$now_wid])->fetch(PDO::FETCH_ASSOC);
-                    $v = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=?", [$now_wid])->fetch(PDO::FETCH_ASSOC);
+                    $landscape = query("SELECT * FROM `{$engine->server->prefix}world` WHERE `id`=? LIMIT 1", [$now_wid])->fetch(PDO::FETCH_ASSOC);
+                    $v = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=? LIMIT 1", [$now_wid])->fetch(PDO::FETCH_ASSOC);
+                    if (!$landscape) {
+                        $landscape = ['fieldtype'=>'0','oasistype'=>'0','bonus'=>'0','image'=>'0'];
+                    }
 
                     if ($v) {
 
@@ -475,8 +479,8 @@ class World {
                 "landscape" => $w['image'],
                 "resType" => $w['fieldtype'],
                 "kingdomId" => "0",
-                "playerId" => $u['uid'],
-                "playerName" => $u['username'],
+                "playerId" => $u ? $u['uid'] : 0,
+                "playerName" => $u ? $u['username'] : '',
                 "population" => $v['pop'],
                 "village" => $v['vname'],
                 "tribe" => $u['tribe'],
