@@ -273,8 +273,7 @@ class Battle {
                     }
                 }
                 foreach ($defender as $k => $unitDef) {
-                    var_dump($unitDef);
-                    $type = $i + (10 * ($unitDef['tribeId'] - 1));
+$type = $i + (10 * ($unitDef['tribeId'] - 1));
                     if (!isset($defender[$k]['research'])) {
                         $defi += $engine->tech->getPower($unitDef['wid'], $type, 'di') * $unitDef['unit'][$i];
                         $defc += $engine->tech->getPower($unitDef['wid'], $type, 'dc') * $unitDef['unit'][$i];
