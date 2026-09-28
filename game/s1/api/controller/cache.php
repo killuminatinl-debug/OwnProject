@@ -8,7 +8,13 @@ if ($data['action'] == "get") {
             case "Collection": {
                     include dirname(__FILE__) . '/cache/' . $action[1] . ".php";
                     if (!isset($r)) {
-                        echo "Collection:" . $action[1] . ":" . $action[2] . "\n";
+                        $r = [
+                            "name" => "Collection:" . $action[1] . ":" . ($action[2] ?? ''),
+                            "data" => [
+                                "operation" => 1,
+                                "cache" => []
+                            ]
+                        ];
                     } else {
                         array_push($return, $r);
                         unset($r);
