@@ -1,6 +1,14 @@
 <?php
 include_once dirname(__FILE__) . '/../engine/engine.php';
 
+// Web-mode catch-up: advance timestamp-based game state on normal API traffic.
+// This keeps the original UI while removing the dependency on the old Node worker.
+try {
+    $engine->auto->work();
+} catch (Throwable $e) {
+    error_log('[OwnProject] auto catch-up failed: ' . $e->getMessage());
+}
+
 $request_body = file_get_contents('php://input');
 $data = json_decode($request_body, true);
 if (!is_array($data)) { $data = array(); }
