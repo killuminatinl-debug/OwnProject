@@ -133,11 +133,41 @@ class Building {
         } else {
             $b = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", array($option['wid'], $option['location']))->fetch(PDO::FETCH_ASSOC);
         }
+        if (!$b) {
+            return array('name' => 'Building:0', 'data' => array());
+        }
         return $this->makeDetail($b['id'], $b['wid'], $b['location'], $b['type'], $b['level']);
     }
 
     public function makeDetail($id, $wid, $location, $type, $level, $option = [], $status = 0) {
         global $engine;
+
+        // Empty village slots use building type 0. They are valid UI entries, not real buildings.
+        // Returning a zero-cost placeholder keeps the Building collection valid and prevents a
+        // missing bid0 from breaking the complete game cache response.
+        if ((int)$type <= 0) {
+            return array(
+                'name' => 'Building:' . $id,
+                'data' => array(
+                    'buildingType' => 0,
+                    'villageId' => (int)$wid,
+                    'locationId' => (int)$location,
+                    'lvl' => 0,
+                    'lvlNext' => 1,
+                    'isMaxLvl' => false,
+                    'lvlMax' => 0,
+                    'upgradeCosts' => array(1=>0,2=>0,3=>0,4=>0),
+                    'upgradeTime' => 0,
+                    'nextUpgradeCosts' => array(),
+                    'nextUpgradeTimes' => array(),
+                    'upgradeSupplyUsage' => 0,
+                    'upgradeSupplyUsageSums' => array(),
+                    'category' => 1,
+                    'sortOrder' => (int)$location,
+                    'effect' => array(),
+                ),
+            );
+        }
 
         $queue = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=? AND `type`=?;", [$wid, $location, $type])->rowCount();
         $max = $this->getMax($wid, $type);
