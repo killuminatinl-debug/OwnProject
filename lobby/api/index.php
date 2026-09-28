@@ -16,7 +16,8 @@ register_shutdown_function(function () {
 
 set_error_handler(function ($severity, $message, $file, $line) {
     if (!(error_reporting() & $severity)) return false;
-    throw new ErrorException($message, 0, $severity, $file, $line);
+    error_log('[Lobby API] ' . $message . ' ' . $file . ':' . $line);
+    return true;
 });
 
 try {
@@ -36,9 +37,14 @@ header('Content-Type: application/json; charset=utf-8');
 
 set_exception_handler(function ($e) {
     if (ob_get_level()) ob_clean();
-    http_response_code(500);
+    http_response_code(200);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(array('time'=>time(),'error'=>true,'message'=>'Lobby backend error'), JSON_UNESCAPED_SLASHES);
+    echo json_encode(array(
+        'time'=>time(),
+        'error'=>array('message'=>'Lobby backend error'),
+        'response'=>array(),
+        'cache'=>array()
+    ), JSON_UNESCAPED_SLASHES);
     exit;
 });
 
@@ -193,6 +199,14 @@ if (!isset($json['response'])) {
 
 $json['time'] = time();
 $encoded = json_encode($json, JSON_UNESCAPED_SLASHES);
-if ($encoded === false) { $encoded = json_encode(['time'=>time(),'response'=>[]], JSON_UNESCAPED_SLASHES); }
+if ($encoded === false) {
+    $encoded = json_encode(array(
+        'time'=>time(),
+        'response'=>array(),
+        'cache'=>array(),
+        'error'=>array('message'=>'Invalid lobby response')
+    ), JSON_UNESCAPED_SLASHES);
+}
+http_response_code(200);
 echo $encoded;
 exit;
