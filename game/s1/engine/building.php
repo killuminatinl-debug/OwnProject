@@ -320,7 +320,7 @@ class Building {
             $request['clay'] *= 1;
             $request['iron'] *= 1;
             $request['crop'] *= 1;
-            if (($f['level'] == 1 || $f['level'] == 0) && $b['location'] > 18 && $location != 41) {
+            if (($f['level'] == 1 || $f['level'] == 0) && $b['location'] > 18 && $b['location'] != 41) {
                 query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?", array(0, $b['wid'], $b['location']));
             }
             query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`+?,`clay`=`clay`+?,`iron`=`iron`+?,`crop`=`crop`+? WHERE `wid`=?", array($request['wood'], $request['clay'], $request['iron'], $request['crop'], $b['wid']));
@@ -485,7 +485,7 @@ class Building {
         if ($level === null) {
             $field = $q->fetch(PDO::FETCH_ASSOC);
             $type = $field['type'];
-            $level = $field['type'];
+            $level = $field['level'];
         }
         $dataarray = BuildingData::get($type);
         $village = $engine->village->get($wid, false);
