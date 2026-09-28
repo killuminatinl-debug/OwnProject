@@ -442,14 +442,13 @@ class Building {
         if ($location===32) $type=16; elseif ($location===33) $type=30+(int)$owner['tribe'];
         if ($type<=0) return false;
 
-        // Do not allow a second construction on the same slot.
+        // Empty slots have type 0; the selected building type comes from the client.
+        // Only reject the max-level check when the slot already contains that building.
         $existingQueue = query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=? AND `queue`<>4", [$wid, $location])->fetchColumn();
         if ((int)$existingQueue > 0) return false;
-
-        // A normal building/resource field may only be upgraded while below its maximum level.
         $currentLevel = max(0, (int)$field['level']);
         $maxLevel = $this->getMax($wid, $type);
-        if ((int)$field['rubble'] === 0 && $currentLevel >= $maxLevel) return false;
+        if ((int)$field['type'] > 0 && (int)$field['rubble'] === 0 && $currentLevel >= $maxLevel) return false;
 
         if ((int)$field['rubble']===1 && $type!==31 && $type!==32 && $type!==33) {
             $request=BuildingData::get($type,0); if (!$request) return false;
