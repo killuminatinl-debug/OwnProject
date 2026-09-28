@@ -143,7 +143,7 @@ class Ranking {
                 }
             }
         }
-        return ['rank' => $rank + 1, 'all' => $all];
+        return ['rank' => $rank, 'all' => $all];
     }
 
     public function getRanking($params) {
@@ -157,7 +157,7 @@ class Ranking {
             if ($params['rankingSubtype'] == "population") {
                 foreach ($us as $u) {
                     $ud = $engine->account->getById($u['uid']);
-                    $k = query("SELECT * FROM `{$engine->server->prefix}kingdom` WHERE `id`=?;", [$u['kingdom']])->fetch(PDO::FETCH_ASSOC);
+                    $k = query("SELECT * FROM `{$engine->server->prefix}kingdom` WHERE `id`=?;", [$ud['kingdom']])->fetch(PDO::FETCH_ASSOC);
                     $v = count($engine->village->getAll($u['uid']));
                     $r[] = [
                         'rank' => $rank,
@@ -176,7 +176,7 @@ class Ranking {
             } elseif ($params['rankingSubtype'] == "offPoints") {
                 foreach ($us as $u) {
                     $ud = $engine->account->getById($u['uid']);
-                    $k = query("SELECT * FROM `{$engine->server->prefix}kingdom` WHERE `id`=?;", [$u['kingdom']])->fetch(PDO::FETCH_ASSOC);
+                    $k = query("SELECT * FROM `{$engine->server->prefix}kingdom` WHERE `id`=?;", [$ud['kingdom']])->fetch(PDO::FETCH_ASSOC);
                     $v = count($engine->village->getAll($u['uid']));
                     $r[] = [
                         'rank' => $rank,
@@ -195,7 +195,7 @@ class Ranking {
             } elseif ($params['rankingSubtype'] == "deffPoints") {
                 foreach ($us as $u) {
                     $ud = $engine->account->getById($u['uid']);
-                    $k = query("SELECT * FROM `{$engine->server->prefix}kingdom` WHERE `id`=?;", [$u['kingdom']])->fetch(PDO::FETCH_ASSOC);
+                    $k = query("SELECT * FROM `{$engine->server->prefix}kingdom` WHERE `id`=?;", [$ud['kingdom']])->fetch(PDO::FETCH_ASSOC);
                     $v = count($engine->village->getAll($u['uid']));
                     $r[] = [
                         'rank' => $rank,
@@ -214,7 +214,7 @@ class Ranking {
             } elseif ($params['rankingSubtype'] == "heroes") {
                 foreach ($us as $u) {
                     $ud = $engine->account->getById($u['uid']);
-                    $k = query("SELECT * FROM `{$engine->server->prefix}kingdom` WHERE `id`=?;", [$u['kingdom']])->fetch(PDO::FETCH_ASSOC);
+                    $k = query("SELECT * FROM `{$engine->server->prefix}kingdom` WHERE `id`=?;", [$ud['kingdom']])->fetch(PDO::FETCH_ASSOC);
                     $h = query("SELECT * FROM `{$engine->server->prefix}hero` WHERE `owner`=?;", [$u['uid']])->fetch(PDO::FETCH_ASSOC);
                     $r[] = [
                         'rank' => $rank,
