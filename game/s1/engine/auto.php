@@ -288,49 +288,62 @@ class Auto {
 
     public function procRes($wid = null) {
         global $engine;
-        if ($wid === null) {
-            $data = query("SELECT * FROM `{$engine->server->prefix}village`")->fetchAll(PDO::FETCH_ASSOC);
-        } else {
-            $data = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=?", [$wid])->fetchAll(PDO::FETCH_ASSOC);
+
+        $sql = "SELECT * FROM `" . $engine->server->prefix . "village`";
+        $params = array();
+        if ($wid !== null) {
+            $sql .= " WHERE `wid`=?";
+            $params[] = (int)$wid;
         }
-        for ($i = 0; $i < count($data); $i += 1) {
-            $data[$i]['wood'] = $data[$i]['wood'] + (($engine->village->getProc($data[$i]['wid'], 1) / 3600) * (microtime(true) - $data[$i]['lastupdate']));
-            $data[$i]['clay'] = $data[$i]['clay'] + (($engine->village->getProc($data[$i]['wid'], 2) / 3600) * (microtime(true) - $data[$i]['lastupdate']));
-            $data[$i]['iron'] = $data[$i]['iron'] + (($engine->village->getProc($data[$i]['wid'], 3) / 3600) * (microtime(true) - $data[$i]['lastupdate']));
-            $data[$i]['crop'] = $data[$i]['crop'] + (($engine->village->getProc($data[$i]['wid'], 4) / 3600) * (microtime(true) - $data[$i]['lastupdate']));
-            $cp = (($engine->account->getCPproduce($engine->account->getByVillage($data[$i]['wid'], 'uid')) / 86400) * (microtime(true) - $data[$i]['lastupdate']));
-            $date[$i]['lastupdate'] = microtime(true);
+        $data = query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
+        $now = microtime(true);
 
-            // Check travian plus & increase 25% capacity
-            $p = $engine->account->getById($data[$i]['owner']);
-            $data[$i]['maxstore'] = $data[$i]['maxstore'] * ($p['plus'] == 0 ? 1 : 1.25);
-            $data[$i]['maxcrop'] = $data[$i]['maxcrop'] * ($p['plus'] == 0 ? 1 : 1.25);
+        foreach ($data as $v) {
+            $id = (int)$v['wid'];
+            $last = (float)$v['lastupdate'];
+            if ($last <= 0 || $last > $now) { $last = $now; }
+            $elapsed = max(0, $now - $last);
 
-            if ($data[$i]['wood'] >= $data[$i]['maxstore']) {
-                $data[$i]['wood'] = $data[$i]['maxstore'];
+            // Calculate production once and persist it so the UI and the
+            // construction system always see the same current values.
+            $pw = max(0, (float)$engine->village->getProc($id, 1));
+            $pc = max(0, (float)$engine->village->getProc($id, 2));
+            $pi = max(0, (float)$engine->village->getProc($id, 3));
+            $pg = (float)$engine->village->getProc($id, 4);
+
+            // A legacy village can contain level-0 resource fields. Repair the
+            // production floor here as well, so old installations recover.
+            $fields = query(
+                "SELECT `type`,`level` FROM `" . $engine->server->prefix . "field` WHERE `wid`=? AND `location` BETWEEN 1 AND 18",
+                array($id)
+            )->fetchAll(PDO::FETCH_ASSOC);
+            $fallback = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
+            foreach ($fields as $f) {
+                $t = (int)$f['type'];
+                $l = max(1, (int)$f['level']);
+                if ($t >= 1 && $t <= 4) {
+                    $bd = BuildingData::get($t, $l);
+                    if ($bd) { $fallback[$t] += max(0, (float)$bd['effect']) * (float)$engine->server->speed_world; }
+                }
             }
-            if ($data[$i]['clay'] >= $data[$i]['maxstore']) {
-                $data[$i]['clay'] = $data[$i]['maxstore'];
-            }
-            if ($data[$i]['iron'] >= $data[$i]['maxstore']) {
-                $data[$i]['iron'] = $data[$i]['maxstore'];
-            }
-            if ($data[$i]['crop'] >= $data[$i]['maxcrop']) {
-                $data[$i]['crop'] = $data[$i]['maxcrop'];
+            if ($pw <= 0) { $pw = $fallback[1]; }
+            if ($pc <= 0) { $pc = $fallback[2]; }
+            if ($pi <= 0) { $pi = $fallback[3]; }
+            if ($pg == 0 && $fallback[4] > 0) {
+                $pg = $fallback[4] - ((float)$v['pop'] + (float)$engine->unit->getVillageSupply($id));
             }
 
-            query("UPDATE `{$engine->server->prefix}user` SET `cp`=`cp`+? WHERE `uid`=?", [$cp, $data[$i]['owner']]);
-            query("UPDATE `{$engine->server->prefix}village` SET `wood`=?,`clay`=?,`iron`=?,`crop`=?,`pwood`=?,`pclay`=?,`piron`=?,`pcrop`=?,`lastupdate`=? WHERE `wid`=?;", array(
-                $data[$i]['wood'],
-                $data[$i]['clay'],
-                $data[$i]['iron'],
-                $data[$i]['crop'],
-                $engine->village->getProc($data[$i]['wid'], 1),
-                $engine->village->getProc($data[$i]['wid'], 2),
-                $engine->village->getProc($data[$i]['wid'], 3),
-                $engine->village->getProc($data[$i]['wid'], 4),
-                $date[$i]['lastupdate'],
-                $data[$i]['wid']));
+            $wood = min((float)$v['maxstore'], (float)$v['wood'] + ($pw / 3600) * $elapsed);
+            $clay = min((float)$v['maxstore'], (float)$v['clay'] + ($pc / 3600) * $elapsed);
+            $iron = min((float)$v['maxstore'], (float)$v['iron'] + ($pi / 3600) * $elapsed);
+            $crop = min((float)$v['maxcrop'], (float)$v['crop'] + ($pg / 3600) * $elapsed);
+
+            // Never leave resource fields/producers at zero after the first
+            // request on an old world.
+            query(
+                "UPDATE `" . $engine->server->prefix . "village` SET `wood`=?,`clay`=?,`iron`=?,`crop`=?,`pwood`=?,`pclay`=?,`piron`=?,`pcrop`=?,`lastupdate`=? WHERE `wid`=?",
+                array($wood, $clay, $iron, $crop, $pw, $pc, $pi, $pg, $now, $id)
+            );
         }
     }
 
