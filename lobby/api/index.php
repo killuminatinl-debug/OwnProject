@@ -10,8 +10,11 @@ if (!is_array($data)) {
 header('Content-Type: application/json');
 
 $json = array();
+$controller = isset($data['controller']) ? (string)$data['controller'] : '';
+$actionName = isset($data['action']) ? (string)$data['action'] : '';
+if (!isset($data['params']) || !is_array($data['params'])) { $data['params'] = []; }
 
-if ($data['controller'] == "cache") {
+if ($controller == "cache") {
     if ($data['action'] == "get") {
         $json['serialNo'] = 1092;
         $json['cache'] = [];
@@ -60,7 +63,7 @@ if ($data['controller'] == "cache") {
             }
         }
     }
-} elseif ($data['controller'] == "player") {
+} elseif ($controller == "player") {
     if ($data['action'] == "getPrestigeStars") {
         $json['serialNo'] = 1032;
         $json['response'] = array(
@@ -108,7 +111,7 @@ if ($data['controller'] == "cache") {
             "accountType" => "Account",
             "duals" => [],
             "sitters" => [],
-            "email" => $_SESSION['mellon_email'],
+            "email" => (string)($_SESSION['mellon_email'] ?? ''),
             "facebookId" => null,
             "googleId" => null,
             "vkontakteId" => null,
@@ -157,11 +160,40 @@ if ($data['controller'] == "cache") {
         ];
         $json['cache'] = array_merge($json['cache'], $engine->avatar->getAll());
     }
-} elseif ($data['controller'] == "achievements") {
+} elseif ($controller == "player" && in_array($actionName, ["getPrestigeOnWorlds","deleteAvatar","abortDeletion","logoutAll","saveName","savePortrait","switchCountry"], true)) {
+    $uid = (int)($_SESSION['lobby_uid'] ?? 0);
+    $json['serialNo'] = 1200;
+    if ($actionName === "getPrestigeOnWorlds") {
+        $json['response'] = [
+            "activeGameWorlds" => [],
+            "finishedGameWorlds" => [],
+            "activeGameWorldsPrestige" => 0,
+            "finishedGameWorldsPrestige" => 0
+        ];
+    } elseif ($actionName === "saveName" && $uid > 0) {
+        $name = trim((string)($data['params']['name'] ?? ''));
+        if ($name !== '') {
+            query("UPDATE global_user SET username=? WHERE uid=?", [$name, $uid]);
+            $_SESSION['lobby_username'] = $name;
+        }
+        $json['response'] = [];
+    } elseif ($actionName === "savePortrait") {
+        $json['response'] = [];
+    } elseif ($actionName === "switchCountry") {
+        $json['response'] = [];
+    } elseif ($actionName === "deleteAvatar") {
+        $json['response'] = ["data" => false];
+    } else {
+        $json['response'] = [];
+    }
+} elseif ($controller == "sitter" || $controller == "dual" || $controller == "notification" || $controller == "gold") {
+    $json['serialNo'] = 1201;
+    $json['response'] = [];
+} elseif ($controller == "achievements") {
     if ($data['action'] == "update") {
         $json['response'] = [];
     }
-} elseif ($data['controller'] == "gameworld") {
+} elseif ($controller == "gameworld") {
     if ($data['action'] == "getPossibleNewGameworlds") {
         $json['response'] = [
             "cluster" => ["en", "gb", "us"],
@@ -170,7 +202,7 @@ if ($data['controller'] == "cache") {
         ];
         $json['serialNo'] = 1172;
     }
-} elseif ($data['controller'] == "login") {
+} elseif ($controller == "login") {
     if ($data['action'] == "logout") {
         $engine->account->Logout();
         $json['response'] = [];
