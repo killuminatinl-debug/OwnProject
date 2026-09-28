@@ -236,7 +236,7 @@ $msid=(string)($_SESSION['mellon_msid'] ?? '');
         </script>
         <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=906554786118185&ev=PageView&noscript=1"/></noscript>
         <!-- End Facebook Pixel Code -->
-        <script type="text/javascript" src="<?php echo $lobby_url; ?>static/js/main.js"></script>
+        <script type="text/javascript" src="<?php echo $lobby_url; ?>static/js/main.js?v=20260928"></script>
     </body>
 
 </html>
