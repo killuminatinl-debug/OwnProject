@@ -62,3 +62,5 @@ function db() {
     $GLOBALS['db']->exec("SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO'");
     return $GLOBALS['db'];
 }
+
+
