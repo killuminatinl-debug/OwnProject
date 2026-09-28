@@ -173,7 +173,10 @@ class Kingdom {
         global $engine;
 
 
-        query("INSERT INTO `{$engine->server->prefix}kingdom` (`king`,`tag`) VALUES (?,?);", [$_SESSION[$engine->server->prefix . 'uid'], $tag]);
+        query("INSERT INTO `{$engine->server->prefix}kingdom`
+            (`king`,`tag`,`vca`,`vcw`,`indesc`,`pubdesc`,`duke1`,`duke2`,`duke3`,`duke4`)
+            VALUES (?,?,?,?,?,?,?,?,?,?);",
+            [$_SESSION[$engine->server->prefix . 'uid'], $tag, 0, 0, '', '', 0, 0, 0, 0]);
         $kid = $engine->sql->lastInsertId();
         $this->join($_SESSION[$engine->server->prefix . 'uid'], $kid);
         return $kid;
