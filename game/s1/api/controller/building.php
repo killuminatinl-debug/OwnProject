@@ -7,9 +7,9 @@ if ($data['action'] == "getBuildingList") {
         "time" => round(microtime(true) * 1000),
     ));
 } elseif ($data['action'] == "upgrade") {
-    $wid=(int)($data['params']['villageId']??0);
-    $location=(int)($data['params']['locationId']??0);
-    $type=(int)($data['params']['buildingType']??0);
+    $wid=(int)($data['params']['villageId']??($data['params']['wid']??0));
+    $location=(int)($data['params']['locationId']??($data['params']['location']??0));
+    $type=(int)($data['params']['buildingType']??($data['params']['type']??0));
     $started=false;
     $error=null;
 
