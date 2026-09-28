@@ -37,9 +37,14 @@ class Account {
 
     public function Signup($email, $password, $newsletter, $term) {
         global $engine;
-        $username = explode("@", $email)[0];
+        if (!$term || !filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') return false;
+        if ($this->EmailValid($email)) return false;
+        $username = substr(preg_replace('/[^A-Za-z0-9_-]/', '', explode("@", $email)[0]), 0, 20);
+        if ($username === '') $username = 'Player' . random_int(1000, 9999);
         $password = base64_encode($password);
-        return query("INSERT INTO `global_user` (`username`,`email`,`password`,`timed`) VALUES (?,?,?,?);", [$username, $email, $password, time()]);
+        $ok = query("INSERT INTO `global_user` (`username`,`email`,`password`,`timed`) VALUES (?,?,?,?);", [$username, $email, $password, time()]);
+        if (!$ok) return false;
+        return $this->Login($email, $password === '' ? '' : base64_decode($password));
     }
 
     public function EmailValid($email) {
