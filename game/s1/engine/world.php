@@ -441,6 +441,13 @@ class World {
     public function getMapDetail($id) {
         global $engine;
         $w = query("SELECT * FROM `{$engine->server->prefix}world` WHERE `id`=?", array($id))->fetch(PDO::FETCH_ASSOC);
+        if (!$w) {
+            return [
+                "hasNPC" => 0, "hasVillage" => 0, "isHabitable" => 0,
+                "isOasis" => false, "isWonder" => false, "oasisType" => "0",
+                "landscape" => 0, "resType" => "0"
+            ];
+        }
         $v = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=?", array($w['id']))->fetch(PDO::FETCH_ASSOC);
         if ($v) {
             $u = query("SELECT * FROM `{$engine->server->prefix}user` WHERE `uid`=?", array($v['owner']))->fetch(PDO::FETCH_ASSOC);
@@ -472,7 +479,12 @@ class World {
                       }
                       } */
                     $unit = query("SELECT * FROM `{$engine->server->prefix}troop_stay` WHERE `wid`=? AND `owner`=?;", [$id, 0])->fetch(PDO::FETCH_ASSOC);
-                    $troop = $engine->unit->getUnit($unit['unit'])['data'];
+                    if ($unit && !empty($unit['unit'])) {
+                        $unitData = $engine->unit->getUnit($unit['unit']);
+                        $troop = ($unitData && isset($unitData['data'])) ? $unitData['data'] : [];
+                    } else {
+                        $troop = [];
+                    }
                     $troop['tribeId'] = 4;
 
                     return array(
