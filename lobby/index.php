@@ -189,6 +189,8 @@ $msid=(string)($_SESSION['mellon_msid'] ?? '');
             <div class="jqFensterModalContent"></div>
         </div>
         <script type="text/javascript" src="<?php echo $lobby_url; ?>static/js/vendor.js"></script>
+        <script type="text/javascript" src="<?php echo $cdn_url; ?>lobby/live/js/all.min.js"></script>
+        <script type="text/javascript" src="<?php echo $cdn_url; ?>lobby/live/js/templates.js"></script>
         <link rel="stylesheet" href="<?php echo $cdn_url; ?>startpage/live/css/ltr/mellonModal.css?h=21ba5197cdd21b864e49104ba38a3b9d">
         <link rel="stylesheet" href="<?php echo $mellon_url; ?>/tk/fenster-css.css">
         <script src="<?php echo $mellon_url; ?>/tk/fenster-js.js"></script>
