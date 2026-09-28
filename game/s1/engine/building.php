@@ -262,9 +262,25 @@ class Building {
         }
     }
 
-    public function createBuilding($wid, $location, $type, $level = 1) {
+    public function createBuilding($wid, $location, $type, $level = 1, $rubble = 0) {
         global $engine;
-        query("INSERT INTO `{$engine->server->prefix}field` (`type`,`wid`,`location`,`level`) VALUES (?,?,?,?)", [$type, $wid, $location, $level]);
+
+        $wid = (int)$wid;
+        $location = (int)$location;
+        $type = (int)$type;
+        $level = max(0, (int)$level);
+        $rubble = (int)$rubble;
+
+        // A fresh village starts its 18 resource fields at level 1.
+        // Existing empty building slots remain level 0.
+        if ($location >= 1 && $location <= 18 && $type >= 1 && $type <= 4 && $level < 1) {
+            $level = 1;
+        }
+
+        query(
+            "INSERT INTO `{$engine->server->prefix}field` (`type`,`wid`,`location`,`level`,`rubble`) VALUES (?,?,?,?,?)",
+            [$type, $wid, $location, $level, $rubble]
+        );
     }
 
     public function setBuilding($wid, $location, $type, $level = 1, $rubble = false) {
