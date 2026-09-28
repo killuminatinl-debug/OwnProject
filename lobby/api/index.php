@@ -14,7 +14,20 @@ register_shutdown_function(function () {
     }
 });
 
+set_error_handler(function ($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) return false;
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
+
+try {
 include_once __DIR__ . '/../engine/session.php';
+} catch (Throwable $e) {
+    if (ob_get_level()) ob_clean();
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(array('time'=>time(),'error'=>true,'message'=>'Lobby initialization failed'), JSON_UNESCAPED_SLASHES);
+    exit;
+}
 
 $request_body = file_get_contents('php://input');
 $data = json_decode($request_body, true);
@@ -22,8 +35,10 @@ if (!is_array($data)) $data = [];
 header('Content-Type: application/json; charset=utf-8');
 
 set_exception_handler(function ($e) {
+    if (ob_get_level()) ob_clean();
     http_response_code(500);
-    echo json_encode(['time'=>time(),'error'=>true,'message'=>'Lobby backend error'], JSON_UNESCAPED_SLASHES);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(array('time'=>time(),'error'=>true,'message'=>'Lobby backend error'), JSON_UNESCAPED_SLASHES);
     exit;
 });
 
