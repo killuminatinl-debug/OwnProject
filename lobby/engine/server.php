@@ -7,8 +7,7 @@ class Server {
         $ss = query("SELECT * FROM `global_server_data`")->fetchAll(PDO::FETCH_ASSOC);
         $r = [];
         foreach ($ss as $s) {
-            $sdq = query("SELECT * FROM `{$s['prefix']}user` WHERE `email`=?;", [$_SESSION['lobby_email']]);
-            if ($sdq->rowCount() == 0) {
+            if (!empty($s['prefix']) && !empty($s['sid'])) {
                 $r[] = $this->getInfo($s);
             }
         }
@@ -41,8 +40,8 @@ class Server {
             "blacklisted" => 0,
             "baseUrl" => rtrim($world['folder'], '/'),
             "daysSinceStart" => round((time() - $world['start']) / 86400),
-            "speedGame" => 1,//$world['speed_world'],
-            "speedTroops" => 1,//$world['speed_unit'],
+            "speedGame" => (int)$world['speed_world'],
+            "speedTroops" => (int)$world['speed_unit'],
             "specialRules" => ["none"], //"none","cropDiet","nightPeace"
             "canTransferMoney" => 1,
             "tribes" => [
