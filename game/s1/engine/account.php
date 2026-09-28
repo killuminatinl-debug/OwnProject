@@ -144,7 +144,7 @@ class Account {
         $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", array($uid))->fetch(PDO::FETCH_ASSOC);
         if (!$p) {
             return array(
-                'name' => 'Player:' . $id,
+                'name' => 'Player:' . $uid,
                 'data' => array()
             );
         }
@@ -152,24 +152,24 @@ class Account {
         // Kingdoms client does not hide the normal resource/building controls.
         if ((int)$p['tutorial'] < 256) {
             $p['tutorial'] = 256;
-            query("UPDATE `" . $engine->server->prefix . "user` SET `tutorial`=? WHERE `uid`=?", array(256, $id));
+            query("UPDATE `" . $engine->server->prefix . "user` SET `tutorial`=? WHERE `uid`=?", array(256, $uid));
             $_SESSION[$engine->server->prefix . 'tutorial'] = 256;
         }
         $prestige = $this->getPrestige(null, true);
         $k = ((int)$p['kingdom'] > 0) ? $engine->kingdom->getData($p['kingdom']) : null;
         if (!$k) $k = ['id'=>0,'king'=>0,'tag'=>''];
         $r = [
-            'name' => 'Player:' . $id,
+            'name' => 'Player:' . $uid,
             'data' => [
-                'playerId' => $id,
+                'playerId' => $uid,
                 'name' => $p['username'] == null ? "" : $p['username'],
                 'tribeId' => $p['tribe'],
                 'kingdomId' => $p['kingdom'],
-                'kingdomRole' => $engine->kingdom->getRole($p['kingdom'], $id) != 0 ? 1 : 0,
+                'kingdomRole' => $engine->kingdom->getRole($p['kingdom'], $uid) != 0 ? 1 : 0,
                 'kingdomTag' => $k['tag'],
                 'kingId' => $k['king'],
                 'kingstatus' => $k['king'] == $p['uid'] ? '1' : '0',
-                'isKing' => ($engine->kingdom->getRole($p['kingdom'], $id) == 1) ? true : false,
+                'isKing' => ($engine->kingdom->getRole($p['kingdom'], $uid) == 1) ? true : false,
                 'isActivated' => '1',
                 'isInstant' => '0',
                 'isBannedFromMessaging' => false,
