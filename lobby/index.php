@@ -35,7 +35,7 @@ include_once __DIR__.'/lang/en.php';
             country: 'us',
                     cache: {
                     'Session:<?php echo addslashes(session_id()); ?>': {
-                    name: 'Session:450bd510c7240adeb0b8',
+                    name: 'Session:<?php echo addslashes(session_id()); ?>',
                             data: {
                             "sessionId": "<?php echo addslashes(session_id()); ?>",
                                     "type": 0,
@@ -43,7 +43,7 @@ include_once __DIR__.'/lang/en.php';
                             }
                     },
                             'Player:<?php echo (int)($lobbyUser->uid ?? 0); ?>': {
-                            name: 'Player:13953',
+                            name: 'Player:<?php echo (int)($lobbyUser->uid ?? 0); ?>',
                                     data: {
                                     "playerId": "<?php echo (int)($lobbyUser->uid ?? 0); ?>",
                                             "avatarName": "<?php echo addslashes($lobbyUser->username ?? ''); ?>",
@@ -53,11 +53,11 @@ include_once __DIR__.'/lang/en.php';
                                             "signupTime": "---"
                                     }
                             },
-                            'UserAccountImage:52219': {
-                            name: 'UserAccountImage:52219',
+                            'UserAccountImage:<?php echo (int)($lobbyUser->uid ?? 0); ?>': {
+                            name: 'UserAccountImage:<?php echo (int)($lobbyUser->uid ?? 0); ?>',
                                     data: {
                                     "avatarIdentifier": "3810393",
-                                            "userAccountIdentifier": "52219",
+                                            "userAccountIdentifier": "<?php echo (int)($lobbyUser->uid ?? 0); ?>",
                                             "gender": "0",
                                             "hairColor": "1",
                                             "face": {
@@ -83,13 +83,13 @@ include_once __DIR__.'/lang/en.php';
                     },
                     forms: {
                         changeName: {
-                        value: "phoomin009",
+                        value: "<?php echo addslashes($lobbyUser->username ?? ''); ?>",
                                 errors: []
                         }
                     },
                     config: {
                     "backendUrl": "<?php echo $base; ?>/lobby/api/index.php",
-                            "redirectAfterLogout": "<?php echo $base; ?>/#logout",
+                            "redirectAfterLogout": "<?php echo $lobby_url; ?>",
                             "environment": "live",
                             "node": {
                             "host": "<?php echo $lobby_url; ?>",
