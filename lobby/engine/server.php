@@ -18,7 +18,10 @@ class Server {
         global $engine;
 
         if (!is_array($world)) {
-            $world = query("SELECT * FROM `global_server_data` WHERE `sid`=?;", [$world])->fetch(PDO::FETCH_ASSOC);
+            $world = query("SELECT * FROM `global_server_data` WHERE `sid`=? LIMIT 1;", [$world])->fetch(PDO::FETCH_ASSOC);
+        }
+        if (!$world || empty($world["sid"]) || empty($world["prefix"])) {
+            return ["consumersId"=>0,"identifier"=>"","country"=>"en","region"=>"international","status"=>0,"gameId"=>30,"applicationId"=>"travian-ks","applicationCountryId"=>"en","applicationInstanceId"=>"","worldName"=>"","worldStartTime"=>0,"playersRegistered"=>0,"playersActive"=>0,"playersOnline"=>0,"worldCapacity"=>0,"recommended"=>0,"blacklisted"=>0,"baseUrl"=>"/game/s1/","daysSinceStart"=>0,"speedGame"=>1,"speedTroops"=>1,"specialRules"=>["none"],"canTransferMoney"=>1,"tribes"=>["1"=>0,"2"=>0,"3"=>0],"wwIsActivated"=>0,"currentWWLevel"=>0,"maxWWLevel"=>100];
         }
         $r = [
             "consumersId" => $world['sid'],
@@ -58,7 +61,7 @@ class Server {
 
     public function getServerInfo($world) {
         global $engine;
-        return query("SELECT * FROM `global_server_data` WHERE `sid`=?;", array($world))->fetch(PDO::FETCH_ASSOC);
+        return query("SELECT * FROM `global_server_data` WHERE `sid`=? LIMIT 1;", array($world))->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
     public function sittler($world) {
