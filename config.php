@@ -8,4 +8,3 @@ function fatalErrorShutdownHandler(){ $e=error_get_last(); if($e&&in_array($e['t
 set_error_handler('myErrorHandler'); register_shutdown_function('fatalErrorShutdownHandler');
 $GLOBALS['db']=null;
 function db(){if($GLOBALS['db'] instanceof PDO)return $GLOBALS['db'];$GLOBALS['db']=new PDO('mysql:host='.SQL_HOST.';dbname='.SQL_DATB.';charset=utf8mb4',SQL_USER,SQL_PASS,[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,PDO::ATTR_EMULATE_PREPARES=>false]);$GLOBALS['db']->exec("SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO'");return $GLOBALS['db'];}
-function query($sql,$params=[]){$s=db()->prepare($sql);$s->execute(is_array($params)?$params:[]);return $s;}
