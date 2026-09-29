@@ -376,7 +376,7 @@ header('Access-Control-Allow-Origin: *');
             // and run those after config is there
             var onConfigLoaded = [];
             var $ = null
-            fileLoader.addScript('<?php echo $cdn_url . $apiversion; ?>/js/game.js?h=96e1935d5532767d0989693a822df40e', function () {
+            fileLoader.addScript('<?php echo $cdn_url . $apiversion; ?>/js/game.js?h=853ae1028190c609b30f402052566eb556d8edd5', function () {
                 //put all game design related config here
                 Travian.Globals = {};
                 Travian.Config = {};
