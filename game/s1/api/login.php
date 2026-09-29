@@ -22,8 +22,9 @@ if ($_GET['token'] == md5($_GET['msid'])) {
 
         $numUser = query("SELECT * FROM `" . $engine->server->prefix . "user`")->rowCount();
         $uid = $numUser + 101;
-        query("INSERT INTO `" . $engine->server->prefix . "user` (`uid`,`email`,`gold`,`silver`,`avatar`,`lastLogin`) VALUES (?,?,?,?,?,?);", array($uid, $_SESSION['mellon_email'], $engine->account->start_gold, 0, $aid, time()));
+        query("INSERT INTO `" . $engine->server->prefix . "user` (`uid`,`email`,`username`,`gold`,`silver`,`avatar`,`lastLogin`,`tribe`,`tutorial`,`spawn`) VALUES (?,?,?,?,?,?,?,?,?,?);", array($uid, $_SESSION['mellon_email'], $_SESSION['mellon_username'], $engine->account->start_gold, 0, $aid, time(), 0, 0, time()));
         $_SESSION[$engine->server->prefix . 'uid'] = $uid;
+        $_SESSION[$engine->server->prefix . 'username'] = $_SESSION['mellon_username'];
         $_SESSION[$engine->server->prefix . 'tribe'] = 0;
         $_SESSION[$engine->server->prefix . 'gold'] = $engine->account->start_gold;
         $_SESSION[$engine->server->prefix . 'silver'] = 0;
@@ -37,7 +38,9 @@ if ($_GET['token'] == md5($_GET['msid'])) {
         $_SESSION[$engine->server->prefix . 'uid'] = $u['uid'];
         $_SESSION[$engine->server->prefix . 'gold'] = $u['gold'];
         $_SESSION[$engine->server->prefix . 'silver'] = $u['silver'];
-        $_SESSION[$engine->server->prefix . 'tutorial'] = $u['tutorial'];
+        $_SESSION[$engine->server->prefix . 'username'] = !empty($u['username']) ? $u['username'] : $_SESSION['mellon_username'];
+        if (empty($u['username'])) query("UPDATE `" . $engine->server->prefix . "user` SET `username`=? WHERE `uid`=?", array($_SESSION['mellon_username'], $u['uid']));
+        $_SESSION[$engine->server->prefix . 'tutorial'] = (int)$u['tutorial'];
     }
 }
 
