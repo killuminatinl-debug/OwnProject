@@ -1,45 +1,27 @@
 <?php
 
-if (in_array($data['action'], array("getBuildingList","getBuildable","getBuildingListForLocation"), true)) {
+if ($data['action'] == "getBuildingList") {
     echo json_encode(array(
         "response" => $engine->building->getBuildable($data['params']['villageId'], $data['params']['locationId']),
         "serialNo" => $engine->session->serialNo(),
         "time" => round(microtime(true) * 1000),
     ));
-} elseif (in_array($data['action'], array("upgrade","build","upgradeBuilding"), true)) {
-    $wid=(int)($data['params']['villageId']??($data['params']['wid']??0));
-    $location=(int)($data['params']['locationId']??($data['params']['location']??0));
-    $type=(int)($data['params']['buildingType']??($data['params']['type']??0));
-    $started=false;
-    $error=null;
-
-    try {
-        $owner=$engine->account->getByVillage($wid);
-        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
-            $error="NOT_OWNER";
-        } else {
-            $started=$engine->building->StartBuild($location,$type,$wid);
-            if (!$started) $error="BUILD_NOT_STARTED";
-        }
-
-        $cache=array(
-            $engine->building->getBuilding(array('wid'=>$wid,'location'=>$location)),
-            $engine->building->getBuildings($wid),
-            $engine->village->get($wid),
-            $engine->building->getQueue($wid)
-        );
-    } catch (Throwable $e) {
-        $cache=array();
-        $error="BUILD_ERROR";
-        error_log("[OwnProject] upgrade failed: ".$e->getMessage()." in ".$e->getFile().":".$e->getLine());
-    }
-
+} elseif ($data['action'] == "upgrade") {
+    $engine->building->StartBuild($data['params']['locationId'], $data['params']['buildingType'], $data['params']['villageId']);
     echo json_encode(array(
-        "cache"=>$cache,
-        "response"=>$error===null?array():array("error"=>$error),
-        "serialNo"=>$engine->session->serialNo(),
-        "time"=>round(microtime(true)*1000)
-    ), JSON_INVALID_UTF8_SUBSTITUTE);
+        "cache" => [
+            $engine->building->getBuilding(array(
+                'wid' => $data['params']['villageId'],
+                'location' => $data['params']['locationId'],
+            )),
+            $engine->building->getBuildings($data['params']['villageId']),
+            $engine->village->get($data['params']['villageId']),
+            $engine->building->getQueue($data['params']['villageId']),
+        ],
+        "response" => array(),
+        "serialNo" => $engine->session->serialNo(),
+        "time" => round(microtime(true) * 1000),
+    ));
 } elseif ($data['action'] == "useMasterBuilder") {
     isset($data['params']['count']) ? $count = $data['params']['count'] : $count = 1;
     for($i=0;$i<$count;$i++){
@@ -134,6 +116,8 @@ if (in_array($data['action'], array("getBuildingList","getBuildable","getBuildin
         "serialNo" => $engine->session->serialNo(),
         "time" => round(microtime(true) * 1000),
     ));
+    "locationId";
+    "villageId";
 } elseif ($data['action'] == "researchUnit") {
     $engine->tech->Research($data['params']['villageId'], $data['params']['unitType']);
     echo json_encode(array(
