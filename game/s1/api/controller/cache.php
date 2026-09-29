@@ -8,13 +8,7 @@ if ($data['action'] == "get") {
             case "Collection": {
                     include dirname(__FILE__) . '/cache/' . $action[1] . ".php";
                     if (!isset($r)) {
-                        $r = [
-                            "name" => "Collection:" . $action[1] . ":" . ($action[2] ?? ''),
-                            "data" => [
-                                "operation" => 1,
-                                "cache" => []
-                            ]
-                        ];
+                        echo "Collection:" . $action[1] . ":" . $action[2] . "\n";
                     } else {
                         array_push($return, $r);
                         unset($r);
@@ -203,11 +197,11 @@ if ($data['action'] == "get") {
                     $r = array(
                         'name' => 'Gameworld:',
                         'data' => array(
-                            'status' => 1,
+                            'status' => 0,
                             'data' => array(),
-                            'messageTitle' => '',
-                            'messageText' => '',
-                            'startTime' => (string)time(),
+                            'messageTitle' => 'Maintenance work',
+                            'messageText' => "Dear players,\n\nwe're currently updating this game world to a new version. This means the world will be unavailable for about 30-60 minutes. For more information regarding the update please see the game forum. http://forum.kingdoms.travian.com/com/\n\nThank you for your patience!\n\nYour Travian: Kingdoms Team",
+                            'startTime' => '1455636868',
                             'worldWonderActivated' => 0,
                             'maintenance' => false,
                         )
@@ -265,10 +259,7 @@ if ($data['action'] == "get") {
                     break;
                 }
             default: {
-                    array_push($return, array(
-                        "name" => $data['params']['names'][$i],
-                        "data" => array()
-                    ));
+                    echo $data['params']['names'][$i];
                     break;
                 }
         }
