@@ -4217,13 +4217,15 @@ header('Access-Control-Allow-Origin: *');
         <link rel="apple-touch-icon" sizes="120x120" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-120x120.png?v=2">
         <link rel="apple-touch-icon" sizes="144x144" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-144x144.png?v=2">
         <link rel="apple-touch-icon" sizes="152x152" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-152x152.png?v=2">
-        <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-180x180.png?v=2">0.66/layout/favicons/safari-pinned-tab.svg?v=2" color="#5bbad5">
+        <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $cdn_url; ?>0.66/layout/favicons/apple-touch-icon-180x180.png?v=2">
+        <link rel="mask-icon" href="<?php echo $cdn_url; ?>0.66/layout/favicons/safari-pinned-tab.svg?v=2" color="#5bbad5">
 
         <!-- android related favicons and settings -->
         <meta name="theme-color" content="#7DA100">
 
         <!-- windows phone related favicons and settings -->
-        <meta name="msapplication-tap-highlight" content="no" />0.66/layout/favicons/browserconfig.xml?v=2" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <meta name="msapplication-config" content="<?php echo $cdn_url; ?>0.66/layout/favicons/browserconfig.xml?v=2">
         <meta name="application-name" content="Travian Kingdoms" />
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="msapplication-TileImage" content="<?php echo $cdn_url; ?>0.66/layout/favicons/mstile-144x144.png?v=2" />
@@ -4231,7 +4233,6 @@ header('Access-Control-Allow-Origin: *');
         <!-- normal favicons -->
         <link rel="icon" type="image/x-icon" href="<?php echo $cdn_url; ?>0.66/layout/favicons/favicon.ico?v=2">
         <link rel="icon" type="image/png" href="<?php echo $cdn_url; ?>0.66/layout/favicons/favicon-32x32.png?v=2" sizes="32x32">
-        <link rel="icon" type="image/png" href="<?php echo $cdn_url; ?>0.66/layout/favicons/favicon-194x194.png?v=2" sizes="194x194">
         <link rel="icon" type="image/png" href="<?php echo $cdn_url; ?>0.66/layout/favicons/favicon-96x96.png?v=2" sizes="96x96">
         <link rel="icon" type="image/png" href="<?php echo $cdn_url; ?>0.66/layout/favicons/favicon-16x16.png?v=2" sizes="16x16">
 
