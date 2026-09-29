@@ -98,11 +98,13 @@ class Account {
     public function Login($username) {
         global $engine;
         $q = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `username`=?;", array($username));
-        $n = $q->rowCount();
+        $n = $q->rowCount($q);
         $us = $q->fetch();
         if ($n == 1) {
             $q2 = query("SELECT * FROM `global_user` WHERE `username`=?;", array($us['username']));
             $u = $q2->fetch(PDO::FETCH_ASSOC);
+            $u2 = $q->fetch(PDO::FETCH_ASSOC);
+            array_push($u2, $u);
             $engine->session->data = (object) $us;
             $_SESSION[$engine->server->prefix . 'uid'] = $u['uid'];
             $_SESSION[$engine->server->prefix . 'username'] = $u['username'];
@@ -122,7 +124,7 @@ class Account {
         query("UPDATE `" . $engine->server->prefix . "user` SET `" . $field . "`=? WHERE `uid`=?;", array($value, $user));
 
         $q = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?;", array($user));
-        $n = $q->rowCount();
+        $n = $q->rowCount($q);
         $us = $q->fetch(PDO::FETCH_ASSOC);
         if ($n == 1) {
             $q2 = query("SELECT * FROM `global_user` WHERE `uid`=?;", array($us['username']));
@@ -134,57 +136,53 @@ class Account {
 
     public function getByVillage($wid, $field = null) {
         global $engine;
-        $v = query("SELECT * FROM `" . $engine->server->prefix . "village` WHERE `wid`=? LIMIT 1;", array($wid))->fetch(PDO::FETCH_ASSOC);
-        if (!$v) return null;
+        $v = query("SELECT * FROM `" . $engine->server->prefix . "village` WHERE `wid`=?;", array($wid))->fetch(PDO::FETCH_ASSOC);
         return $this->getById($v['owner'], $field);
     }
 
     public function getById($uid, $field = null) {
         global $engine;
-        $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", array($uid))->fetch(PDO::FETCH_ASSOC);
-        if (!$p) {
-            return array(
-                'name' => 'Player:' . $uid,
-                'data' => array()
-            );
+        $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?;", array($uid))->fetch(PDO::FETCH_ASSOC);
+
+        if ($field === null) {
+            return $p;
+        } else {
+            return $p[$field];
         }
-        // Single-world mode has no tutorial gate. Promote older accounts as well so the
-        // Kingdoms client does not hide the normal resource/building controls.
-        if ((int)$p['tutorial'] < 256) {
-            $p['tutorial'] = 256;
-            query("UPDATE `" . $engine->server->prefix . "user` SET `tutorial`=? WHERE `uid`=?", array(256, $uid));
-            $_SESSION[$engine->server->prefix . 'tutorial'] = 256;
-        }
-        // The original client requires a concrete tribe before it constructs Troops.
-        // Old/local accounts may have NULL/0 here, which otherwise causes the Angular
-        // bootstrap to abort with "cannot set tribeId" and hides the whole game UI.
-        $tribe = (int)($p['tribe'] ?? 0);
-        if ($tribe < 1 || $tribe > 7) {
-            $tribe = 1;
-            $p['tribe'] = 1;
-            query("UPDATE `" . $engine->server->prefix . "user` SET `tribe`=? WHERE `uid`=?", array(1, $uid));
-            $_SESSION[$engine->server->prefix . 'tribe'] = 1;
-        }
-        // Keep the live session object synchronized with repaired player data.
-        if (isset($engine->session->data) && is_object($engine->session->data)) {
-            $engine->session->data->tribe = $tribe;
-            $engine->session->data->tutorial = 256;
-        }
-        $prestige = $this->getPrestige(null, true);
-        $k = ((int)$p['kingdom'] > 0) ? $engine->kingdom->getData($p['kingdom']) : null;
-        if (!$k) $k = ['id'=>0,'king'=>0,'tag'=>''];
+    }
+
+    public function getProfile($uid = null, $head = true) {
+        global $engine;
+        ($uid === null ) ? $uid = $_SESSION[$engine->server->prefix . 'uid'] : '';
+        $u = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?;", [$uid])->fetch(PDO::FETCH_ASSOC);
         $r = [
-            'name' => 'Player:' . $uid,
+            "name" => "PlayerProfile:" . $uid,
+            "data" => [
+                "description" => $u['desc'],
+            ]
+        ];
+        return $r;
+    }
+
+    public function getAjax($id = null) {
+        global $engine;
+        ($id === null ) ? $id = $_SESSION[$engine->server->prefix . 'uid'] : '';
+
+        $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", array($id))->fetch(PDO::FETCH_ASSOC);
+        $prestige = $this->getPrestige(null, true);
+        $k = $engine->kingdom->getData($p['kingdom']);
+        $r = [
+            'name' => 'Player:' . $id,
             'data' => [
-                'playerId' => $uid,
+                'playerId' => $id,
                 'name' => $p['username'] == null ? "" : $p['username'],
                 'tribeId' => $p['tribe'],
                 'kingdomId' => $p['kingdom'],
-                'kingdomRole' => $engine->kingdom->getRole($p['kingdom'], $uid) != 0 ? 1 : 0,
+                'kingdomRole' => $engine->kingdom->getRole($p['kingdom'], $id) != 0 ? 1 : 0,
                 'kingdomTag' => $k['tag'],
                 'kingId' => $k['king'],
                 'kingstatus' => $k['king'] == $p['uid'] ? '1' : '0',
-                'isKing' => ($engine->kingdom->getRole($p['kingdom'], $uid) == 1) ? true : false,
+                'isKing' => ($engine->kingdom->getRole($p['kingdom'], $id) == 1) ? true : false,
                 'isActivated' => '1',
                 'isInstant' => '0',
                 'isBannedFromMessaging' => false,
@@ -256,14 +254,6 @@ class Account {
         return $r;
     }
 
-    public function getAjax($uid = null) {
-        global $engine;
-        if ($uid === null) {
-            $uid = (int)$engine->session->data->uid;
-        }
-        return $this->getById((int)$uid);
-    }
-
     public function getCPproduce($uid) {
         global $engine;
 
@@ -278,17 +268,10 @@ class Account {
     public function getPrestige($uid = null, $onlystar = false) {
         global $engine;
 
-        $uid === null ? $uid = (int)$_SESSION[$engine->server->prefix . 'uid'] : (int)$uid;
-        // Read the world user directly. Calling getById() here recursively calls getPrestige().
-        $user = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=? LIMIT 1", [$uid])->fetch(PDO::FETCH_ASSOC);
-        $email = $user && isset($user['email']) ? $user['email'] : '';
-        $gu = false;
-        if ($email !== '') {
-            $gu = query("SELECT * FROM `global_user` WHERE `email`=? LIMIT 1;", [$email])->fetch(PDO::FETCH_ASSOC);
-        }
-        // A world account can exist without a global-user row on a fresh/local install.
-        // Keep the player cache valid instead of aborting the whole bootstrap request.
-        $prestige = $gu && isset($gu['prestige']) ? (int)$gu['prestige'] : 0;
+        $uid === null ? $uid = $_SESSION[$engine->server->prefix . 'uid'] : 0;
+        $email = $this->getById($uid, 'email');
+        $gu = query("SELECT * FROM `global_user` WHERE `email`=?;", [$email])->fetch(PDO::FETCH_ASSOC);
+        $prestige = $gu['prestige'];
         $next_prestige = 0;
         foreach ($this->prestige_data as $pr => $s) {
             if ($prestige >= $pr){
@@ -385,7 +368,7 @@ class Account {
         unset($_SESSION[$engine->server->prefix . 'uid']);
         unset($_SESSION[$engine->server->prefix . 'username']);
         unset($_COOKIE[$engine->server->prefix . 'vselect']);
-        header("Location: " . $mellon_url . "authentication/login/");
+        header("Location: ../../?lobby");
         exit();
     }
 
