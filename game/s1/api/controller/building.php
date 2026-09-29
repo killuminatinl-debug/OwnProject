@@ -7,7 +7,7 @@ if ($data['action'] == "getBuildingList") {
         "time" => round(microtime(true) * 1000),
     ));
 } elseif ($data['action'] == "upgrade") {
-    $engine->building->StartBuild($data['params']['locationId'], $data['params']['buildingType'], $data['params']['villageId']);
+    $ok=$engine->building->StartBuild($data['params']['locationId'], $data['params']['buildingType'], $data['params']['villageId']);
     echo json_encode(array(
         "cache" => [
             $engine->building->getBuilding(array(
@@ -18,7 +18,7 @@ if ($data['action'] == "getBuildingList") {
             $engine->village->get($data['params']['villageId']),
             $engine->building->getQueue($data['params']['villageId']),
         ],
-        "response" => array(),
+        "response" => $ok ? array() : array("error"=>"BUILD_NOT_STARTED"),
         "serialNo" => $engine->session->serialNo(),
         "time" => round(microtime(true) * 1000),
     ));
