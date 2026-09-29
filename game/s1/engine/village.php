@@ -35,17 +35,8 @@ class Village {
     public function get($id, $head = true) {
         global $engine;
         $v = query("SELECT * FROM `" . $engine->server->prefix . "village` WHERE `wid`=?", array($id))->fetch(PDO::FETCH_ASSOC);
-        if (!$v) {
-            return ['name' => 'Village:' . $id, 'data' => []];
-        }
         $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", array($v['owner']))->fetch(PDO::FETCH_ASSOC);
-        if (!$p) {
-            return ['name' => 'Village:' . $id, 'data' => []];
-        }
-        $k = ($p['kingdom'] ?? 0) ? query("SELECT * FROM `" . $engine->server->prefix . "kingdom` WHERE `id`=?", array($p['kingdom']))->fetch(PDO::FETCH_ASSOC) : null;
-        if (!$k) {
-            $k = ['id' => 0, 'king' => 0, 'tag' => ''];
-        }
+        $k = query("SELECT * FROM `" . $engine->server->prefix . "kingdom` WHERE `id`=?", array($p['kingdom']))->fetch(PDO::FETCH_ASSOC);
 
         $r = array(
             'name' => 'Village:' . $id,
@@ -143,84 +134,20 @@ class Village {
 
         $data = query("SELECT * FROM `" . $engine->server->prefix . "village` WHERE `owner`=?;", array($uid))->fetchAll();
 
-        // Always point the client at a village owned by the current player.
-        // A stale cookie from another test account otherwise leaves the Kingdoms UI
-        // without a valid Village/Building cache even though the account has a village.
-        $selected = isset($_COOKIE['village']) ? (int)$_COOKIE['village'] : 0;
-        $validSelected = false;
-        foreach ($data as $row) {
-            if ((int)$row['wid'] === $selected) { $validSelected = true; break; }
-        }
-        if (!$validSelected) {
+        if (!isset($_COOKIE['village'])) {
             if (count($data) > 0) {
-                $selected = (int)$data[0]['wid'];
-                setcookie("village", (string)$selected, 0, "/");
-                $_COOKIE['village'] = $selected;
+                setcookie("village", $data[0]['wid'], 0, "/");
+                $_COOKIE['village'] = $data[0]['wid'];
             } else {
-                $selected = 0;
-                setcookie("village", "0", 0, "/");
+                setcookie("village", 0, 0, "/");
                 $_COOKIE['village'] = 0;
             }
         }
 
-        $this->select = $selected;
         $this->data = $data;
         for ($i = 0; $i < count($this->data); $i += 1) {
-            $wid = (int)$this->data[$i]['wid'];
-
-            // Repair incomplete starter villages from older installs. The Kingdoms client
-            // expects all 18 resource fields and all 22 building slots to exist.
-            $resourceTypes = [1,4,1,3,2,2,3,4,4,3,3,4,4,1,4,2,1,2];
-            for ($loc = 1; $loc <= 40; $loc++) {
-                $existingField = query(
-                    "SELECT `id`,`type`,`level` FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1",
-                    [$wid, $loc]
-                )->fetch(PDO::FETCH_ASSOC);
-                if (!$existingField) {
-                    $type = ($loc <= 18) ? (int)$resourceTypes[$loc - 1] : (($loc === 27) ? 15 : 0);
-                    $level = ($loc <= 18) ? 1 : (($loc === 27) ? 1 : 0);
-                    query(
-                        "INSERT INTO `{$engine->server->prefix}field` (`type`,`wid`,`location`,`level`,`rubble`) VALUES (?,?,?,?,?)",
-                        [$type, $wid, $loc, $level, 0]
-                    );
-                } elseif ($loc <= 18 && (int)$existingField['type'] >= 1 && (int)$existingField['type'] <= 4 && (int)$existingField['level'] < 1) {
-                    query(
-                        "UPDATE `{$engine->server->prefix}field` SET `level`=1 WHERE `wid`=? AND `location`=?",
-                        [$wid, $loc]
-                    );
-                }
-            }
-
-            // Repair villages created by older versions of this project:
-            // resource fields must start at level 1 or production remains 0.
-            query(
-                "UPDATE `{$engine->server->prefix}field`
-                 SET `level`=1, `rubble`=0
-                 WHERE `wid`=? AND `location` BETWEEN 1 AND 18
-                   AND `type` BETWEEN 1 AND 4",
-                [$wid]
-            );
-
-            // Always repair the starter village into a playable state. Older versions
-            // stored rubble=3 on resource fields and could leave the main building slot empty.
-            query("UPDATE `{$engine->server->prefix}field` SET `rubble`=0 WHERE `wid`=? AND `location` BETWEEN 1 AND 18 AND `type` BETWEEN 1 AND 4", [$wid]);
-            $hasMain = (int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `type`=15 AND `level`>0", [$wid])->fetchColumn();
-            if ($hasMain === 0) {
-                query("UPDATE `{$engine->server->prefix}field` SET `type`=15, `level`=1, `rubble`=0 WHERE `wid`=? AND `location`=27", [$wid]);
-            }
-
-            $engine->auto->procRes($wid);
-
-            // Reload the village after offline production has been processed.
-            $fresh = query(
-                "SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=?",
-                [$wid]
-            )->fetch(PDO::FETCH_ASSOC);
-            if ($fresh) {
-                $this->data[$i] = $fresh;
-            }
-
-            if ($wid == (int)$_COOKIE['village']) {
+            $engine->auto->procRes($this->data[$i]['wid']);
+            if ($this->data[$i]['wid'] == $_COOKIE['village']) {
                 $this->current = $this->data[$i];
             }
         }
@@ -238,11 +165,7 @@ class Village {
     public function createVillage($uid, $username = null, $wid = null, $name = null, $pop = null, $option = []) {
         global $engine;
         if ($wid === null) {
-            $position = $engine->world->bestPosition();
-            $wid = is_array($position) ? (int)$position[0] : (int)$position;
-        }
-        if ((int)$wid <= 0) {
-            throw new RuntimeException('No free starting village position is available.');
+            $wid = $engine->world->bestPosition();
         }
         $wdata = $engine->world->getMapDetail($wid);
         if ($wid < 0) {
@@ -503,29 +426,10 @@ class Village {
         $engine->building->createBuilding($wid, 39, 0, 0, 0);
         $engine->building->createBuilding($wid, 40, 0, 0, 0);
 
-        // Starter villages must not carry rubble markers from the legacy generator.
-        query("UPDATE `{$engine->server->prefix}field` SET `rubble`=0 WHERE `wid`=? AND `location` BETWEEN 1 AND 18", [$wid]);
-        query("UPDATE `{$engine->server->prefix}field` SET `type`=15, `level`=1, `rubble`=0 WHERE `wid`=? AND `location`=27", [$wid]);
-
         !isset($option['settled']) ? $option['settled'] = time() : '';
         !isset($option['expandedfrom']) ? $option['expandedfrom'] = $wid : '';
 
-        if (query("INSERT INTO `" . $engine->server->prefix . "village`
-                (`wid`,`vname`,`owner`,`pop`,`wood`,`clay`,`iron`,`pwood`,`pclay`,`piron`,
-                 `maxstore`,`maxcrop`,`crop`,`pcrop`,`cp`,`settler`,`settler_used`,`capitel`,`town`,
-                 `lastupdate`,`settled`,`expandedfrom`,`natar`,`area`)
-                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
-                array(
-                    $wid,
-                    ($name != null ? $name : (($username == null || $username == "") ? "New Village" : $username . "'s village")),
-                    $uid,
-                    ($pop == null ? 1 : $pop),
-                    750, 750, 750, 0, 0, 0,
-                    $engine->server->multiple_storage * $engine->server->base_storage,
-                    $engine->server->multiple_storage * $engine->server->base_storage,
-                    750, 0, 0, 0, 0, 1, 0,
-                    microtime(true), 0, 0, 0, -1
-                ))) {
+        if (query("INSERT INTO `" . $engine->server->prefix . "village` (`wid`,`vname`,`owner`,`pop`,`maxstore`,`maxcrop`,`capitel`) VALUE (?,?,?,?,?,?,?);", array($wid, ($name != null ? $name : (($username == null || $username == "") ? "New Village" : $username . "'s village")), $uid, ($pop == null ? 1 : $pop), $engine->server->multiple_storage * $engine->server->base_storage, $engine->server->multiple_storage * $engine->server->base_storage, 1))) {
             $engine->unit->setUnit($wid, 1, 0);
             query("INSERT INTO `" . $engine->server->prefix . "tdata` (`wid`) VALUES (?);", array($wid));
             return true;
