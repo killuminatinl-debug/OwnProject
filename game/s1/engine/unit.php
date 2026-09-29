@@ -105,58 +105,74 @@ class Unit {
 
     public function training($wid, $type, $amount = 0) {
         global $engine;
-        $wid=(int)$wid; $type=(int)$type; $amount=(int)$amount;
-        if ($wid<=0 || $type<=0 || $amount<=0) return false;
-        $owner=$engine->account->getByVillage($wid);
-        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
-        $res=UnitData::get($type);
-        if (!$res || !isset($res['wood'])) return false;
-        if (in_array($type,$this->barrack,true)) $btype=19;
-        elseif (in_array($type,$this->stable,true)) $btype=20;
-        elseif (in_array($type,$this->workshop,true)) $btype=21;
-        elseif (in_array($type,$this->residence_palase,true)) {
-            $btype=($engine->building->getTypeLevel($wid,25)>0)?25:26;
-        } else return false;
 
-        // Reconcile offline resources before charging the queue.
-        $engine->auto->procRes($wid);
-        $v=query("SELECT * FROM `".$engine->server->prefix."village` WHERE `wid`=? LIMIT 1",[$wid])->fetch(PDO::FETCH_ASSOC);
-        if (!$v) return false;
-        $wood=(float)$res['wood']*$amount; $clay=(float)$res['clay']*$amount;
-        $iron=(float)$res['iron']*$amount; $crop=(float)$res['crop']*$amount;
-        if ((float)$v['wood']<$wood || (float)$v['clay']<$clay || (float)$v['iron']<$iron || (float)$v['crop']<$crop) return false;
+        $uid = $engine->account->getByVillage($wid, 'uid');
+        $engine->auto->emitEvent($uid, array(
+            "name" => "flashNotification",
+            "data" => "53",
+        ));
 
-        $duration=max(1,(int)round(($res['time']*$engine->building->BuildingEffect($btype,$engine->building->getTypeLevel($wid,$btype))/100)/max(0.0001,(float)$engine->server->speed_world)));
-        $start=time();
-        $next=$start+$duration;
-        $qt=query("SELECT * FROM `".$engine->server->prefix."train` WHERE `wid`=? AND `type`=? LIMIT 1",[$wid,$type]);
-        if ($qt->rowCount()>0) { $last=$qt->fetch(PDO::FETCH_ASSOC)['id']; }
-        else {
-            query("INSERT INTO `".$engine->server->prefix."train` (`wid`,`type`,`duration`,`start`,`next`) VALUES (?,?,?,?,?)",[$wid,$type,$duration,$start,$next]);
-            $last=$engine->sql->lastInsertId();
+        $res = UnitData::get($type);
+        if (in_array($type, $this->barrack)) {
+            $btype = 19;
+        } elseif (in_array($type, $this->stable)) {
+            $btype = 20;
+        } elseif (in_array($type, $this->workshop)) {
+            $btype = 21;
+        } elseif (in_array($type, $this->residence_palase)) {
+            $residence = $engine->building->getTypeLevel($wid, 25);
+            $palase = $engine->building->getTypeLevel($wid, 26);
+            if ($residence > 0) {
+                $btype = 25;
+            } elseif ($palase > 0) {
+                $btype = 26;
+            }
         }
-        $tsub=query("SELECT * FROM `".$engine->server->prefix."train_queue` WHERE `tid`=? AND `duration`=? LIMIT 1",[$last,$duration]);
-        if ($tsub->rowCount()>0) query("UPDATE `".$engine->server->prefix."train_queue` SET `amount`=`amount`+? WHERE `tid`=? AND `duration`=?",[$amount,$last,$duration]);
-        else query("INSERT INTO `".$engine->server->prefix."train_queue` (`tid`,`amount`,`duration`) VALUES (?,?,?)",[$last,$amount,$duration]);
-        query("UPDATE `".$engine->server->prefix."village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?",[$wood,$clay,$iron,$crop,$wid]);
-        if ($type==9 || $type==19 || $type==29) $engine->village->setVillageField($wid,"settler_used",$engine->village->getVillageField($wid,"settler_used")+3*$amount);
-        elseif ($type==10 || $type==20 || $type==30) $engine->village->setVillageField($wid,"settler_used",$engine->village->getVillageField($wid,"settler_used")+$amount);
-        return true;
+        if ($type == 9 || $type == 19 || $type == 29) {
+            $engine->village->setVillageField($wid, "settler_used", $engine->village->getVillageField($wid, "settler_used") + 3 * $amount);
+        } elseif ($type == 10 || $type == 20 || $type == 30) {
+            $engine->village->setVillageField($wid, "settler_used", $engine->village->getVillageField($wid, "settler_used") + 1 * $amount);
+        }
+
+        $duration = ($res['time'] * ($engine->building->BuildingEffect($btype, $engine->building->getTypeLevel($wid, $btype)) / 100)) / $engine->server->speed_world;
+        $start = time();
+        $next = $start + $duration;
+
+        $qt = query("SELECT * FROM `{$engine->server->prefix}train` WHERE `wid`=? AND `type`=?", array($wid, $type));
+        if ($qt->rowCount() > 0) {
+            $last = $qt->fetch()['id'];
+        } else {
+            query("INSERT INTO `{$engine->server->prefix}train` (`wid`,`type`,`duration`,`start`,`next`) VALUES (?,?,?,?,?)", array($wid, $type, $duration, $start, $next));
+            $last = $engine->sql->lastInsertId();
+        }
+        $tsub = query("SELECT * FROM `{$engine->server->prefix}train_queue` WHERE `tid`=? AND `duration`=?", array($last, $duration));
+        if ($tsub->rowCount() > 0) {
+            query("UPDATE `{$engine->server->prefix}train_queue` SET `amount`=`amount`+? WHERE `tid`=? AND `duration`=?", array($amount, $last, $duration));
+        } else {
+            query("INSERT INTO `{$engine->server->prefix}train_queue` (`tid`,`amount`,`duration`) VALUES (?,?,?)", array($last, $amount, $duration));
+        }
+        $res = UnitData::get($type);
+        $res['wood'] = $res['wood'] * $amount;
+        $res['clay'] = $res['clay'] * $amount;
+        $res['iron'] = $res['iron'] * $amount;
+        $res['crop'] = $res['crop'] * $amount;
+        $engine->auto->procRes($wid);
+        query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?", array($res['wood'], $res['clay'], $res['iron'], $res['crop'], $wid));
+
+        $p = $engine->account->getById($_SESSION[$engine->server->prefix . 'uid']);
+        if ($p['tutorial'] == 9) {
+            $engine->account->edit('tutorial', 10, $p['uid']);
+            $engine->auto->emitCache($p['uid'], $engine->quest->get($p['uid']));
+        }
     }
 
     public function getVillageSupply($wid) {
         global $engine;
-        $u=query("SELECT * FROM `{$engine->server->prefix}units` WHERE `wid`=? LIMIT 1",array((int)$wid))->fetch(PDO::FETCH_ASSOC);
-        $p=$engine->account->getByVillage($wid);
-        if (!$u || !$p) return 0;
-        $supply=0;
-        for ($i=1;$i<=10;$i++) {
-            $key='u'.$i;
-            $count=isset($u[$key])?(int)$u[$key]:0;
-            if ($count<=0) continue;
-            $unitType=$i+(((int)$p['tribe']-1)*10);
-            $pop=UnitData::get($unitType,'pop');
-            if ($pop!==null && $pop!==false) $supply += $count*(float)$pop;
+        $u = query("SELECT * FROM `{$engine->server->prefix}units` WHERE `wid`=?;", array($wid))->fetch();
+        $p = $engine->account->getByVillage($wid);
+        $supply = 0;
+        for ($i = 1; $i <= 10; $i++) {
+            $supply += $u['u' . $i] * UnitData::get($i + (($p['tribe'] - 1) * 10), 'pop');
         }
         return $supply;
     }
@@ -457,50 +473,88 @@ class Unit {
     public function getStay($wid, $head = true) {
         global $engine;
 
-        $rows = [];
-        $stays = query("SELECT * FROM `{$engine->server->prefix}troop_stay` WHERE `wid`=?", [(int)$wid])->fetchAll(PDO::FETCH_ASSOC);
+        $r = array();
+        $stays = query("SELECT * FROM `{$engine->server->prefix}troop_stay` WHERE `wid`=?;", array($wid))->fetchAll();
+
         foreach ($stays as $stay) {
-            $u = query("SELECT * FROM `{$engine->server->prefix}units` WHERE `id`=? LIMIT 1", [(int)$stay['unit']])->fetch(PDO::FETCH_ASSOC);
-            if (!$u) continue;
-            $v = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=? LIMIT 1", [(int)$u['wid']])->fetch(PDO::FETCH_ASSOC);
-            if (!$v) continue;
-            $p = $engine->account->getById((int)$stay['owner']);
-            if (!is_array($p) || empty($p['data'])) continue;
-            $pd = $p['data'];
-            $tribe = (int)($pd['tribeId'] ?? 1);
-            if ($tribe < 1 || $tribe > 7) $tribe = 1;
-            $pl = $engine->account->getByVillage((int)$stay['wid']);
-            $plUid = $pl ? (int)$pl['uid'] : (int)$stay['owner'];
-            $plName = $pl ? (string)$pl['username'] : (string)($pd['name'] ?? '');
-            $xy = $engine->world->id2xy((int)$u['wid']);
-            $map = $engine->world->getMapDetail((int)$u['wid']);
-            $isOasis = is_array($map) && !empty($map['isOasis']);
-            $vname = $isOasis ? "Oasis (" . $xy[0] . "|" . $xy[1] . ")" : (string)$v['vname'];
-            $units = [];
-            for ($i=1; $i<=11; $i++) $units[$i] = (int)($u['u'.$i] ?? 0);
-            $supply = 0;
-            for ($i=1; $i<=10; $i++) {
-                if ($units[$i] <= 0) continue;
-                $pop = UnitData::get($i + (($tribe - 1) * 10), 'pop');
-                if ($pop !== null && $pop !== false) $supply += $units[$i] * (float)$pop;
+            $u = query("SELECT * FROM `{$engine->server->prefix}units` WHERE `id`=?;", array($stay['unit']))->fetch();
+            $v = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=?;", array($u['wid']))->fetch();
+            $p = $engine->account->getById($stay['owner']);
+            $w = $engine->world->getMapDetail($u['wid']);
+
+            if (isset($w['isOasis'])) {
+                if ($w['isOasis'] == true) {
+                    $vid = $u['wid'];
+                    $vname = "Oasis (" . $engine->world->id2xy($vid)[0] . "|" . $engine->world->id2xy($vid)[1] . ")";
+                } else {
+                    $vid = $v['wid'];
+                    $vname = $v['vname'];
+                }
+                if ($stay['owner'] == 4) {
+                    $uid = 0;
+                    $username = null;
+                } else {
+                    $uid = $p['uid'];
+                    $username = $p['username'];
+                }
+            } else {
+                $vid = $v['wid'];
+                $vname = $v['vname'];
+                $uid = $p['uid'];
+                $username = $p['username'];
             }
-            $rows[] = [
-                'name' => 'Troops:' . (int)$u['id'],
-                'data' => [
-                    'troopId' => (int)$u['id'], 'tribeId' => $tribe, 'capacity' => 715, 'filter' => '',
-                    'playerId' => (int)($pd['playerId'] ?? $stay['owner']), 'playerName' => (string)($pd['name'] ?? ''),
-                    'villageId' => (int)$u['wid'], 'villageName' => $vname,
-                    'villageIdSupply' => (int)$stay['wid'], 'playerIdLocation' => $plUid,
-                    'playerNameLocation' => $plName, 'villageIdLocation' => (int)$stay['wid'],
-                    'villageNameLocation' => (string)$v['vname'], 'status' => ((int)$wid === (int)$u['wid']) ? 'home' : 'support',
-                    'supplyTroops' => $supply, 'units' => $units,
-                ]
+
+            $vl = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=?;", array($stay['wid']))->fetch();
+            $pl = $engine->account->getByVillage($stay['wid']);
+
+            $supply = 0;
+            for ($i = 1; $i <= 10; $i++) {
+                $supply += $u['u' . $i] * UnitData::get($i + (($p['tribe'] - 1) * 10), 'pop');
+            }
+            $status = ($wid == $u['wid']) ? "home" : "support";
+            $troop = [
+                "name" => "Troops:" . $u['id'],
+                "data" => array(
+                    "troopId" => $u['id'],
+                    "tribeId" => $p['tribe'],
+                    "capacity" => 715,
+                    "filter" => "",
+                    "playerId" => $uid,
+                    "playerName" => $username,
+                    "villageId" => $vid,
+                    "villageName" => $vname,
+                    "villageIdSupply" => $stay['wid'],
+                    "playerIdLocation" => $pl['uid'],
+                    "playerNameLocation" => $pl['username'],
+                    "villageIdLocation" => $stay['wid'],
+                    "villageNameLocation" => $vl['vname'],
+                    "status" => $status,
+                    "supplyTroops" => $supply,
+                    "units" => array(
+                        1 => $u['u1'],
+                        2 => $u['u2'],
+                        3 => $u['u3'],
+                        4 => $u['u4'],
+                        5 => $u['u5'],
+                        6 => $u['u6'],
+                        7 => $u['u7'],
+                        8 => $u['u8'],
+                        9 => $u['u9'],
+                        10 => $u['u10'],
+                        11 => $u['u11'],
+                    ),
+                )
             ];
+            array_push($r, $head ? $troop : $troop['data']);
         }
-        return [
-            'name' => 'Collection:Troops:stationary:' . (int)$wid,
-            'data' => ['operation' => 1, 'cache' => $rows]
-        ];
+        $r = array(
+            "name" => "Collection:Troops:stationary:" . $wid,
+            "data" => array(
+                "operation" => 1,
+                "cache" => $r,
+            )
+        );
+        return $head ? $r : $r['data']['cache'];
     }
 
     public function createUnit($owner, $units) {
