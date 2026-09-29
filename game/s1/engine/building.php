@@ -133,68 +133,11 @@ class Building {
         } else {
             $b = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", array($option['wid'], $option['location']))->fetch(PDO::FETCH_ASSOC);
         }
-        if (!$b) {
-            return array('name' => 'Building:0', 'data' => array());
-        }
         return $this->makeDetail($b['id'], $b['wid'], $b['location'], $b['type'], $b['level']);
     }
 
     public function makeDetail($id, $wid, $location, $type, $level, $option = [], $status = 0) {
         global $engine;
-
-        // Empty village slots use building type 0. They are valid UI entries, not real buildings.
-        // Returning a zero-cost placeholder keeps the Building collection valid and prevents a
-        // missing bid0 from breaking the complete game cache response.
-        // Invalid building definitions must never take down the complete cache/API.
-        $safeLevel = max(1, (int)$level);
-        $safeDefinition = BuildingData::get((int)$type, $safeLevel);
-        if (!$safeDefinition) {
-            return array(
-                'name' => 'Building:' . $id,
-                'data' => array(
-                    'buildingType' => (int)$type,
-                    'villageId' => (int)$wid,
-                    'locationId' => (int)$location,
-                    'lvl' => max(0, (int)$level),
-                    'lvlNext' => max(1, (int)$level + 1),
-                    'isMaxLvl' => true,
-                    'lvlMax' => max(1, (int)$level),
-                    'upgradeCosts' => array(1=>0,2=>0,3=>0,4=>0),
-                    'upgradeTime' => 0,
-                    'nextUpgradeCosts' => array(),
-                    'nextUpgradeTimes' => array(),
-                    'upgradeSupplyUsage' => 0,
-                    'upgradeSupplyUsageSums' => array(),
-                    'category' => 1,
-                    'sortOrder' => (int)$location,
-                    'effect' => array(),
-                ),
-            );
-        }
-
-        if ((int)$type <= 0) {
-            return array(
-                'name' => 'Building:' . $id,
-                'data' => array(
-                    'buildingType' => 0,
-                    'villageId' => (int)$wid,
-                    'locationId' => (int)$location,
-                    'lvl' => 0,
-                    'lvlNext' => 1,
-                    'isMaxLvl' => false,
-                    'lvlMax' => 0,
-                    'upgradeCosts' => array(1=>0,2=>0,3=>0,4=>0),
-                    'upgradeTime' => 0,
-                    'nextUpgradeCosts' => array(),
-                    'nextUpgradeTimes' => array(),
-                    'upgradeSupplyUsage' => 0,
-                    'upgradeSupplyUsageSums' => array(),
-                    'category' => 1,
-                    'sortOrder' => (int)$location,
-                    'effect' => array(),
-                ),
-            );
-        }
 
         $queue = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=? AND `type`=?;", [$wid, $location, $type])->rowCount();
         $max = $this->getMax($wid, $type);
@@ -253,7 +196,6 @@ class Building {
          * 2 = ขยะ
          */
         if ($status == 1) {
-            // Construction-slot preview uses level 1 so the client receives valid level-1 costs.
             $level = 1;
         } elseif ($status == 2) {
             $max = 0;
@@ -320,25 +262,9 @@ class Building {
         }
     }
 
-    public function createBuilding($wid, $location, $type, $level = 1, $rubble = 0) {
+    public function createBuilding($wid, $location, $type, $level = 1) {
         global $engine;
-
-        $wid = (int)$wid;
-        $location = (int)$location;
-        $type = (int)$type;
-        $level = max(0, (int)$level);
-        $rubble = (int)$rubble;
-
-        // A fresh village starts its 18 resource fields at level 1.
-        // Existing empty building slots remain level 0.
-        if ($location >= 1 && $location <= 18 && $type >= 1 && $type <= 4 && $level < 1) {
-            $level = 1;
-        }
-
-        query(
-            "INSERT INTO `{$engine->server->prefix}field` (`type`,`wid`,`location`,`level`,`rubble`) VALUES (?,?,?,?,?)",
-            [$type, $wid, $location, $level, $rubble]
-        );
+        query("INSERT INTO `{$engine->server->prefix}field` (`type`,`wid`,`location`,`level`) VALUES (?,?,?,?)", [$type, $wid, $location, $level]);
     }
 
     public function setBuilding($wid, $location, $type, $level = 1, $rubble = false) {
@@ -371,9 +297,6 @@ class Building {
     public function cancelBuild($id) {
         global $engine;
         $b = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `id`=?", [$id])->fetch(PDO::FETCH_ASSOC);
-        if (!$b) return false;
-        $owner = $engine->account->getByVillage($b['wid']);
-        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
         $f = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", [$b['wid'], $b['location']])->fetch(PDO::FETCH_ASSOC);
         if ($b['paid'] == 1) {
             $request = BuildingData::get($b['type'], $f['level'] + 1);
@@ -381,7 +304,7 @@ class Building {
             $request['clay'] *= 1;
             $request['iron'] *= 1;
             $request['crop'] *= 1;
-            if (($f['level'] == 1 || $f['level'] == 0) && $b['location'] > 18 && $b['location'] != 41) {
+            if (($f['level'] == 1 || $f['level'] == 0) && $b['location'] > 18 && $location != 41) {
                 query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?", array(0, $b['wid'], $b['location']));
             }
             query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`+?,`clay`=`clay`+?,`iron`=`iron`+?,`crop`=`crop`+? WHERE `wid`=?", array($request['wood'], $request['clay'], $request['iron'], $request['crop'], $b['wid']));
@@ -458,46 +381,60 @@ class Building {
 
     public function StartBuild($location, $type = 0, $wid = 0) {
         global $engine;
-        $location=(int)$location; $type=(int)$type; $wid=(int)$wid;
-        if ($wid<=0) $wid=(int)$engine->village->select;
-        if ($location<=0 || $wid<=0) return false;
-        $owner=$engine->account->getByVillage($wid);
-        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
-        $field=query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1",[$wid,$location])->fetch(PDO::FETCH_ASSOC);
-        if (!$field) return false;
-        if ($type===0) $type=(int)$field['type'];
-        if ($location===32) $type=16; elseif ($location===33) $type=30+(int)$owner['tribe'];
-        if ($type<=0) return false;
-
-        // Empty slots have type 0; the selected building type comes from the client.
-        // Only reject the max-level check when the slot already contains that building.
-        $existingQueue = query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=? AND `queue`<>4", [$wid, $location])->fetchColumn();
-        if ((int)$existingQueue > 0) return false;
-        $currentLevel = max(0, (int)$field['level']);
-        $maxLevel = $this->getMax($wid, $type);
-        if ((int)$field['type'] > 0 && (int)$field['rubble'] === 0 && $currentLevel >= $maxLevel) return false;
-
-        if ((int)$field['rubble']===1 && $type!==31 && $type!==32 && $type!==33) {
-            $request=BuildingData::get($type,0); if (!$request) return false;
-            $start=time(); $duration=max(1,(int)$request['time']);
-            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUES (?,?,?,?,?,?,?,?)",[$wid,$location,$type,$start+$duration,$start,5,1,$duration]);
-            return true;
+        if ($wid == 0) {
+            $wid = $engine->village->select;
         }
-        $level=max(0,(int)$field['level'])+1; $request=BuildingData::get($type,$level);
-        if (!$request) return false;
-        $speed=max(0.0001,(float)$engine->server->speed_world);
-        $effect=(float)$this->BuildingEffect(15,$this->getTypeLevel($wid,15)); if ($effect<=0) $effect=100;
-        $duration=max(1,(int)round(($request['time']*($effect/100))/$speed));
-        $start=time(); $time=$start+$duration;
-        $engine->auto->procRes($wid);
-        $v=query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=? LIMIT 1",[$wid])->fetch(PDO::FETCH_ASSOC);
-        if (!$v) return false;
-        foreach (array('wood','clay','iron','crop') as $resource) if (!isset($request[$resource]) || (float)$v[$resource]<(float)$request[$resource]) return false;
-        $queue=($location>=1 && $location<=18)?2:1;
-        query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?",[$request['wood'],$request['clay'],$request['iron'],$request['crop'],$wid]);
-        query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?",[$type,$wid,$location]);
-        query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUES (?,?,?,?,?,?,?,?)",[$wid,$location,$type,$time,$start,$queue,1,$duration]);
-        return true;
+        $owner = $engine->account->getByVillage($wid);
+        $field = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", array($wid, $location))->fetch(PDO::FETCH_ASSOC);
+        if ($type == 0) {
+            $type = $field['type'];
+        }
+        if ($location == 32) {
+            $type = 16;
+        }
+        if ($location == 33) {
+            $type = 30 + $owner['tribe'];
+        }
+        if ($field['rubble'] == 1 && ($type != 31 && $type != 32 && $type != 33)) {
+            $queuetype = 5;
+            $request = BuildingData::get($type, 0);
+            $start = time();
+            $time = time() + $request['time'];
+            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`) VALUE (?,?,?,?,?,?,?);", array($wid, $location, $type, $time, $start, $queuetype, 1));
+            return true;
+        } else {
+            $level = $field['level'] + 1;
+            $start = time();
+            $request = BuildingData::get($type, $level);
+            $time = round(($request['time'] * ($this->BuildingEffect(15, $this->getTypeLevel($wid, 15)) / 100)) / $engine->server->speed_world);
+            //}
+            $time += time();
+            $request = BuildingData::get($type, $level);
+            $request['time'] = round(($request['time'] * ($this->BuildingEffect(15, $this->getTypeLevel($wid, 15)) / 100)) / $engine->server->speed_world);
+            $duration = $request['time'];
+
+            if ($location >= 1 && $location <= 18) {
+                $queuetype = 2;
+            } else {
+                $queuetype = 1;
+            }
+
+            if ($owner['tutorial'] < 256) {
+                $duration = 1;
+                $time = time() + 1;
+            }
+
+            $engine->auto->procRes($wid);
+            $v = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=?", [$wid])->fetch(PDO::FETCH_ASSOC);
+            if (($v['wood'] - $request['wood'] >= 0) && ($v['clay'] - $request['clay'] >= 0) && ($v['iron'] - $request['iron'] >= 0) && ($v['crop'] - $request['crop'] >= 0)) {
+                query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?", array($request['wood'], $request['clay'], $request['iron'], $request['crop'], $wid));
+                query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?", array($type, $wid, $location));
+                query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUE (?,?,?,?,?,?,?,?);", array($wid, $location, $type, $time, $start, $queuetype, 1, $duration));
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     public function getTreasuryTransformations() {
@@ -517,13 +454,12 @@ class Building {
     public function BuildingEffect($type, $level) {
         global $engine;
         $effect = BuildingData::get($type, $level);
-        if (!$effect) {
-            return ($type == 15) ? 100 : 0;
+        if ($level == 0) {
+            if ($type == 15) {
+                $effect = array('effect' => 100);
+            }
         }
-        if ($level == 0 && $type == 15) {
-            return 100;
-        }
-        return isset($effect['effect']) ? $effect['effect'] : 0;
+        return $effect['effect'];
     }
 
     public function isMax($wid, $location, $type, $level = null) {
@@ -533,7 +469,7 @@ class Building {
         if ($level === null) {
             $field = $q->fetch(PDO::FETCH_ASSOC);
             $type = $field['type'];
-            $level = $field['level'];
+            $level = $field['type'];
         }
         $dataarray = BuildingData::get($type);
         $village = $engine->village->get($wid, false);
@@ -586,9 +522,7 @@ class Building {
 
     public function destroy($params) {
         global $engine;
-        $wid = (int)$params['villageId'];
-        $owner = $engine->account->getByVillage($wid);
-        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
+        $wid = $params['villageId'];
         $location = $params['locationId'];
         $field = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?;", array($wid, $location))->fetch(PDO::FETCH_ASSOC);
         $type = $field['type'];
@@ -605,9 +539,6 @@ class Building {
         global $engine;
 
         $bq = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `id`=?", array($bid))->fetch(PDO::FETCH_ASSOC);
-        if (!$bq) return false;
-        $owner = $engine->account->getByVillage($bq['wid']);
-        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
         $f = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", array($bq['wid'], $bq['location']))->fetch(PDO::FETCH_ASSOC);
 
         $request = BuildingData::get($bq['type'], $bq['level']);
@@ -681,34 +612,22 @@ class Building {
         $hasPalaceAnywhere = 0; //$this->hasPalaceAnywhere();
         $hasWW = 0;
 
-        // Existing fields/buildings must expose their next upgrade to the Kingdoms client.
-        // The original build list mostly describes empty slots; without this block the UI has
-        // nothing to send when a player clicks an already occupied field/building.
-        $currentField = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1", [$wid, $id])->fetch(PDO::FETCH_ASSOC);
-        if ($currentField && (int)$currentField['type'] > 0 && (int)$currentField['rubble'] === 0) {
-            $currentType = (int)$currentField['type'];
-            $currentLevel = max(0, (int)$currentField['level']);
-            $maxLevel = $this->getMax($wid, $currentType);
-            $queuedHere = query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=? AND `queue`<>4", [$wid, $id])->fetchColumn();
-            if ((int)$queuedHere === 0 && $currentLevel < $maxLevel) {
-                $upgrade = BuildingData::get($currentType, $currentLevel + 1);
-                if ($upgrade) {
-                    $b = $this->makeDetail(0, $wid, $id, $currentType, $currentLevel, array(
-                        'requiredBuildings' => array(),
-                        'canBuild' => true
-                    ), 0);
-                    $buildable[] = $b;
-                }
-            }
-        }
-
-        // A fresh village must always be able to start with a Main Building.
         if ($mainbuilding == 0 && !$this->inQueue($wid, 15) && $id != 32 && $id != 33) {
+
             $b = $this->makeDetail(0, $wid, $id, 15, 0, array(
-                'requiredBuildings' => array(),
-                'canBuild' => true
-            ), true, 1);
-            $buildable[count($buildable)] = $b;
+                'requiredBuildings' => array(
+                    array(
+                        'buildingType' => 15,
+                        'currentLevel' => $mainbuilding,
+                        'requiredLevel' => 1,
+                        'valid' => ($mainbuilding >= 1)
+                    )
+                )), true, 1);
+            if ($mainbuilding >= 1) {
+                $buildable[count($buildable)] = $b;
+            } else {
+                $notBuildable[count($notBuildable)] = $b;
+            }
         }
         if ((($cranny == 0 && !$this->inQueue($wid, 23)) || $cranny == 10) && $mainbuilding >= 1 && $id != 32 && $id != 33) {
             if ($cranny == 10) {
