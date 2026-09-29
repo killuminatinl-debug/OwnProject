@@ -3,6 +3,7 @@ session_start();
 if (!is_file(__DIR__.'/config.php')) { header('Location: install.php'); exit; }
 require __DIR__.'/config.php';
 function db(){static $p;if($p instanceof PDO)return $p;$p=new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME.';charset=utf8mb4',DB_USER,DB_PASS,[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC]);return $p;}
+try{db()->query('SELECT 1 FROM op_worlds LIMIT 1');}catch(Throwable $e){header('Location: install.php');exit;}
 function q($s,$a=[]){$x=db()->prepare($s);$x->execute($a);return $x;} function one($s,$a=[]){return q($s,$a)->fetch();} function all($s,$a=[]){return q($s,$a)->fetchAll();} function val($s,$a=[]){return q($s,$a)->fetchColumn();}
 function e($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');} function now(){return time();} function me(){return (int)($_SESSION['uid']??0);} function needLogin(){if(!me()){header('Location: index.php');exit;}}
 function flash($m,$t='ok'){$_SESSION['flash']=['m'=>$m,'t'=>$t];} function takeFlash(){$f=$_SESSION['flash']??null;unset($_SESSION['flash']);return $f;}
