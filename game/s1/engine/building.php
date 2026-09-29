@@ -128,138 +128,83 @@ class Building {
 
     public function getBuilding($option) {
         global $engine;
-        if (isset($option['id'])) {
-            $b = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `id`=?", array($option['id']))->fetch(PDO::FETCH_ASSOC);
-        } else {
-            $b = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", array($option['wid'], $option['location']))->fetch(PDO::FETCH_ASSOC);
-        }
-        return $this->makeDetail($b['id'], $b['wid'], $b['location'], $b['type'], $b['level']);
+        if(isset($option['id'])) $b=query("SELECT * FROM `{$engine->server->prefix}field` WHERE `id`=? LIMIT 1",array((int)$option['id']))->fetch(PDO::FETCH_ASSOC);
+        else $b=query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1",array((int)$option['wid'],(int)$option['location']))->fetch(PDO::FETCH_ASSOC);
+        if(!$b) return $this->makeDetail(0,(int)($option['wid']??0),(int)($option['location']??0),0,0);
+        return $this->makeDetail($b['id'],$b['wid'],$b['location'],$b['type'],$b['level']);
     }
 
     public function makeDetail($id, $wid, $location, $type, $level, $option = [], $status = 0) {
         global $engine;
+        $id=(int)$id; $wid=(int)$wid; $location=(int)$location; $type=(int)$type; $level=(int)$level;
+        $option=is_array($option)?$option:array();
 
-        $queue = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=? AND `type`=?;", [$wid, $location, $type])->rowCount();
-        $max = $this->getMax($wid, $type);
-        $cat = 1;
-        $cat1 = array(10, 11, 15, 17, 18, 23);
-        $cat2 = array(16, 19, 22, 33);
-        $cat3 = array(1, 2, 3, 4);
-        $cat4 = array(15);
-        if (in_array($type, $cat1)) {
-            $cat = 1;
-        } elseif (in_array($type, $cat2)) {
-            $cat = 2;
-        } elseif (in_array($type, $cat3)) {
-            $cat = 3;
-        } elseif (in_array($type, $cat4)) {
-            $cat = 4;
-        } else {
-            $cat = 1;
+        if ($type <= 0) {
+            return array('name'=>'Building:'.$id,'data'=>array(
+                'buildingType'=>0,'villageId'=>$wid,'locationId'=>$location,'lvl'=>0,'lvlNext'=>1,
+                'isMaxLvl'=>false,'lvlMax'=>0,'upgradeCosts'=>array(1=>0,2=>0,3=>0,4=>0),
+                'upgradeTime'=>0,'nextUpgradeCosts'=>array(),'nextUpgradeTimes'=>array(),
+                'upgradeSupplyUsage'=>0,'upgradeSupplyUsageSums'=>array(),'category'=>1,
+                'sortOrder'=>$id,'effect'=>array()
+            ));
         }
-        $order = [23 => 27, 45 => 23];
-        $return = array(
-            'name' => 'Building:' . $id,
-            'data' => array(
-                'buildingType' => $type,
-                'villageId' => $wid,
-                'locationId' => $location,
-                'lvl' => $level,
-                'lvlNext' => $level + 1 + $queue,
-                'isMaxLvl' => $this->isMax($wid, $location, $type, $level),
-                'lvlMax' => $max,
-                'upgradeCosts' => [],
-                'upgradeTime' => 0,
-                'nextUpgradeCosts' => [],
-                'nextUpgradeTimes' => [],
-                'upgradeSupplyUsage' => 0,
-                'upgradeSupplyUsageSums' => [],
-                'category' => $cat,
-                'sortOrder' => in_array($id, $order) ? $order[$id] : $id,
-                'effect' => [],
-            ),
+
+        $field=query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1",array($wid,$location))->fetch(PDO::FETCH_ASSOC);
+        if(!$field) return array('name'=>'Building:'.$id,'data'=>array(
+            'buildingType'=>$type,'villageId'=>$wid,'locationId'=>$location,'lvl'=>$level,'lvlNext'=>$level+1,
+            'isMaxLvl'=>false,'lvlMax'=>0,'upgradeCosts'=>array(1=>0,2=>0,3=>0,4=>0),'upgradeTime'=>0,
+            'nextUpgradeCosts'=>array(),'nextUpgradeTimes'=>array(),'upgradeSupplyUsage'=>0,
+            'upgradeSupplyUsageSums'=>array(),'category'=>1,'sortOrder'=>$id,'effect'=>array()
+        ));
+
+        $queue=(int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=?",array($wid,$location))->fetchColumn();
+        $max=$this->getMax($wid,$type);
+        if(!$max || $max<1) $max=20;
+        $displayLevel=($status==1)?0:max(0,$level);
+        $upgrade=BuildingData::get($type,$displayLevel+1);
+        $current=BuildingData::get($type,$displayLevel);
+        if(!$upgrade) return array('name'=>'Building:'.$id,'data'=>array(
+            'buildingType'=>$type,'villageId'=>$wid,'locationId'=>$location,'lvl'=>$displayLevel,'lvlNext'=>$displayLevel,
+            'isMaxLvl'=>true,'lvlMax'=>$max,'upgradeCosts'=>array(1=>0,2=>0,3=>0,4=>0),'upgradeTime'=>0,
+            'nextUpgradeCosts'=>array(),'nextUpgradeTimes'=>array(),'upgradeSupplyUsage'=>0,
+            'upgradeSupplyUsageSums'=>array(),'category'=>1,'sortOrder'=>$id,'effect'=>array()
+        ));
+
+        $cat=in_array($type,array(1,2,3,4),true)?3:(in_array($type,array(16,19,22,33),true)?2:1);
+        if($type===15) $cat=4;
+        $speed=max(0.0001,(float)$engine->server->speed_world);
+        $mainLevel=$this->getTypeLevel($wid,15);
+        $mainData=BuildingData::get(15,$mainLevel);
+        $mainEffect=($mainLevel>0 && $mainData && isset($mainData['effect']))?(float)$mainData['effect']:100;
+
+        $result=array('name'=>'Building:'.$id,'data'=>array(
+            'buildingType'=>$type,'villageId'=>$wid,'locationId'=>$location,'lvl'=>$displayLevel,
+            'lvlNext'=>$displayLevel+1+$queue,'isMaxLvl'=>($displayLevel>=$max),'lvlMax'=>$max,
+            'upgradeCosts'=>array(1=>(int)$upgrade['wood'],2=>(int)$upgrade['clay'],3=>(int)$upgrade['iron'],4=>(int)$upgrade['crop']),
+            'upgradeTime'=>max(1,(int)round(((float)$upgrade['time']*($mainEffect/100))/$speed)),
+            'nextUpgradeCosts'=>array(),'nextUpgradeTimes'=>array(),'upgradeSupplyUsage'=>0,
+            'upgradeSupplyUsageSums'=>array(),'category'=>$cat,'sortOrder'=>$id,'effect'=>array()
+        ));
+        if((int)$field['rubble']===1 && $location>18) $result['data']['rubble']=array(
+            1=>(int)$upgrade['wood'],2=>(int)$upgrade['clay'],3=>(int)$upgrade['iron'],4=>(int)$upgrade['crop']
         );
-        $f = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", array($wid, $location))->fetch(PDO::FETCH_ASSOC);
-        if ($location > 18) {
-            if ($f['rubble'] == "1" && ($type != 0 && $type != 31 && $type != 32 && $type != 33)) {
-                $upgrade = BuildingData::get($type, $f['level']);
-                $return['data']['lvl'] = 0;
-                $return['data']['lvlNext'] = 1;
-                $return['data']['rubbleDismantleTime'] = $upgrade['time'];
-                $return['data']['rubble'] = array(1 => $upgrade['wood'], 2 => $upgrade['clay'], 3 => $upgrade['iron'], 4 => $upgrade['crop']);
-            }
-        }
-        /*
-         * ค่า $status
-         * 0 = สิ่งก่อสร้างปกติ
-         * 1 = พื้นที่ก่อสร้าง
-         * 2 = ขยะ
-         */
-        if ($status == 1) {
-            $level = 1;
-        } elseif ($status == 2) {
-            $max = 0;
-        }
-        if ($level == 0 && $location > 18 && $location != 41) {
-            $level = $level - 1;
-        }
-        $upgrade = BuildingData::get($type, $level + 1);
-        $return['data']['upgradeCosts'] = array(1 => $upgrade['wood'], 2 => $upgrade['clay'], 3 => $upgrade['iron'], 4 => $upgrade['crop']);
-        $return['data']['upgradeTime'] = round(($upgrade['time'] * ($this->BuildingEffect(15, $this->getTypeLevel($wid, 15)) / 100)) / $engine->server->speed_world);
 
-        // Calculate supply
-        $supply = 0;
-        for ($i3 = 1; $i3 <= $level; $i3++) {
-            $upgrade = BuildingData::get($type, $i3);
-            $supply += $upgrade['pop'];
-        }
-        $return['data']['upgradeSupplyUsage'] = $supply;
-        //End
+        $supply=0;
+        for($n=1;$n<=$displayLevel;$n++){ $d=BuildingData::get($type,$n); if($d && isset($d['pop'])) $supply+=(float)$d['pop']; }
+        $result['data']['upgradeSupplyUsage']=$supply;
+        if($current && isset($current['effect']) && !in_array($type,array(13,16,18,22,24,25,26,40),true)) $result['data']['effect'][0]=$current['effect'];
 
-        $upgrade = BuildingData::get($type, $level);
-        // Get effect
-        $ignore_effect = [13, 16, 18, 22, 24, 25, 26, 40];
-        if (!in_array($type, $ignore_effect)) {
-            $return['data']['effect'][0] = $upgrade['effect'];
+        for($n=$displayLevel;$n<min($max,$displayLevel+7);$n++){
+            $d=BuildingData::get($type,$n+1); if(!$d) continue;
+            $key=($status==1)?($n-$displayLevel):$n;
+            $result['data']['nextUpgradeCosts'][$key]=array(1=>(int)$d['wood'],2=>(int)$d['clay'],3=>(int)$d['iron'],4=>(int)$d['crop']);
+            $result['data']['nextUpgradeTimes'][$key]=max(1,(int)round(((float)$d['time']*($mainEffect/100))/$speed));
+            $sum=0;
+            for($x=1;$x<=$n;$x++){ $dd=BuildingData::get($type,$x); if($dd && isset($dd['pop'])) $sum+=(float)$dd['pop']; }
+            $result['data']['upgradeSupplyUsageSums'][$key]=$sum;
         }
-        //End
-
-        for ($i2 = $level; $i2 <= (($level + 7 > $max) ? $max : $level + 7); $i2++) {
-            $upgrade = BuildingData::get($type, $i2 + 1);
-            if ($upgrade) {
-                $return['data']['nextUpgradeCosts'][($status == 1 || $status == 2) ? $i2 - $level : $i2] = array(1 => $upgrade['wood'], 2 => $upgrade['clay'], 3 => $upgrade['iron'], 4 => $upgrade['crop']);
-                $return['data']['nextUpgradeTimes'][($status == 1 || $status == 2) ? $i2 - $level : $i2] = round(($upgrade['time'] * ($this->BuildingEffect(15, $this->getTypeLevel($wid, 15)) / 100)) / $engine->server->speed_world);
-
-                // Calculate supply
-                $supply = 0;
-                for ($i3 = 1; $i3 <= $i2; $i3++) {
-                    $upgrade = BuildingData::get($type, $i3);
-                    $supply += $upgrade['pop'];
-                }
-                $return['data']['upgradeSupplyUsageSums'][($status == 1 || $status == 2) ? $i2 - $level : $i2] = $supply;
-                //End
-
-                $upgrade = BuildingData::get($type, $i2);
-                // Get effect
-                if (!in_array($type, $ignore_effect)) {
-                    if ($type == 1 || $type == 2 || $type == 3 || $type == 4) {
-                        $return['data']['effect'][$i2 - $level] = round($upgrade['effect']) * $engine->server->speed_world;
-                    } else {
-                        $return['data']['effect'][$i2 - $level] = round($upgrade['effect']);
-                    }
-                }
-                //End
-            }
-        }
-
-        foreach ($option as $key => $value) {
-            $return['data'][$key] = $option[$key];
-        }
-        if ($status == 1) {
-            return $return['data'];
-        } else {
-            return $return;
-        }
+        foreach($option as $key=>$value) $result['data'][$key]=$value;
+        return ($status==1)?$result['data']:$result;
     }
 
     public function createBuilding($wid, $location, $type, $level = 1) {
@@ -381,60 +326,62 @@ class Building {
 
     public function StartBuild($location, $type = 0, $wid = 0) {
         global $engine;
-        if ($wid == 0) {
-            $wid = $engine->village->select;
-        }
-        $owner = $engine->account->getByVillage($wid);
-        $field = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", array($wid, $location))->fetch(PDO::FETCH_ASSOC);
-        if ($type == 0) {
-            $type = $field['type'];
-        }
-        if ($location == 32) {
-            $type = 16;
-        }
-        if ($location == 33) {
-            $type = 30 + $owner['tribe'];
-        }
-        if ($field['rubble'] == 1 && ($type != 31 && $type != 32 && $type != 33)) {
-            $queuetype = 5;
-            $request = BuildingData::get($type, 0);
-            $start = time();
-            $time = time() + $request['time'];
-            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`) VALUE (?,?,?,?,?,?,?);", array($wid, $location, $type, $time, $start, $queuetype, 1));
+        $location=(int)$location; $type=(int)$type; $wid=(int)$wid;
+        if($wid<=0) $wid=(int)$engine->village->select;
+        if($location<1 || $wid<=0) return false;
+
+        $owner=$this->getOwnerForVillage($wid);
+        if(!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
+        $field=query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1",array($wid,$location))->fetch(PDO::FETCH_ASSOC);
+        if(!$field) return false;
+
+        if($location===32) $type=16;
+        elseif($location===33) $type=30+(int)$owner['tribe'];
+        elseif($type<=0) $type=(int)$field['type'];
+        if($type<=0) return false;
+
+        if((int)$field['rubble']===1 && !in_array($type,array(31,32,33),true)){
+            $d=BuildingData::get($type,0); if(!$d) return false;
+            $now=time(); $duration=max(1,(int)round(((float)$d['time'])/max(0.0001,(float)$engine->server->speed_world)));
+            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUES (?,?,?,?,?,?,?,?)",
+                array($wid,$location,$type,$now+$duration,$now,5,1,$duration));
             return true;
-        } else {
-            $level = $field['level'] + 1;
-            $start = time();
-            $request = BuildingData::get($type, $level);
-            $time = round(($request['time'] * ($this->BuildingEffect(15, $this->getTypeLevel($wid, 15)) / 100)) / $engine->server->speed_world);
-            //}
-            $time += time();
-            $request = BuildingData::get($type, $level);
-            $request['time'] = round(($request['time'] * ($this->BuildingEffect(15, $this->getTypeLevel($wid, 15)) / 100)) / $engine->server->speed_world);
-            $duration = $request['time'];
-
-            if ($location >= 1 && $location <= 18) {
-                $queuetype = 2;
-            } else {
-                $queuetype = 1;
-            }
-
-            if ($owner['tutorial'] < 256) {
-                $duration = 1;
-                $time = time() + 1;
-            }
-
-            $engine->auto->procRes($wid);
-            $v = query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=?", [$wid])->fetch(PDO::FETCH_ASSOC);
-            if (($v['wood'] - $request['wood'] >= 0) && ($v['clay'] - $request['clay'] >= 0) && ($v['iron'] - $request['iron'] >= 0) && ($v['crop'] - $request['crop'] >= 0)) {
-                query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?", array($request['wood'], $request['clay'], $request['iron'], $request['crop'], $wid));
-                query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?", array($type, $wid, $location));
-                query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUE (?,?,?,?,?,?,?,?);", array($wid, $location, $type, $time, $start, $queuetype, 1, $duration));
-                return true;
-            } else {
-                return false;
-            }
         }
+
+        $level=(int)$field['level']+1;
+        $request=BuildingData::get($type,$level); if(!$request) return false;
+        $max=$this->getMax($wid,$type); if($max && $level>$max) return false;
+        if((int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=?",array($wid,$location))->fetchColumn()>0) return false;
+
+        $queueType=($location<=18)?2:1;
+        $normal=(int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `queue` IN (1,2)",array($wid))->fetchColumn();
+        $resource=(int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `queue`=2",array($wid))->fetchColumn();
+        if((int)$owner['tribe']===1){
+            if($queueType===1 && (int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `queue`=1",array($wid))->fetchColumn()>=1) return false;
+            if($queueType===2 && $resource>=1) return false;
+        } elseif($normal>=1) return false;
+
+        $engine->auto->procRes($wid);
+        $v=query("SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=? LIMIT 1",array($wid))->fetch(PDO::FETCH_ASSOC);
+        if(!$v) return false;
+        foreach(array('wood','clay','iron','crop') as $res) if((float)$v[$res] < (float)$request[$res]) return false;
+
+        $speed=max(0.0001,(float)$engine->server->speed_world);
+        $mainLevel=$this->getTypeLevel($wid,15); $main=BuildingData::get(15,$mainLevel);
+        $effect=($mainLevel>0 && $main && isset($main['effect']))?(float)$main['effect']:100;
+        $duration=max(1,(int)round(((float)$request['time']*($effect/100))/$speed)); $now=time();
+
+        query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?",
+            array($request['wood'],$request['clay'],$request['iron'],$request['crop'],$wid));
+        query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?",array($type,$wid,$location));
+        query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUES (?,?,?,?,?,?,?,?)",
+            array($wid,$location,$type,$now+$duration,$now,$queueType,1,$duration));
+        return true;
+    }
+
+    private function getOwnerForVillage($wid){
+        global $engine;
+        return query("SELECT u.* FROM `{$engine->server->prefix}user` u INNER JOIN `{$engine->server->prefix}village` v ON v.owner=u.uid WHERE v.wid=? LIMIT 1",array((int)$wid))->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getTreasuryTransformations() {
