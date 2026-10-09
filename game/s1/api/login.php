@@ -2,16 +2,19 @@
 
 $ignoreLoad = true;
 include_once('../engine/engine.php');
-if ($_GET['token'] == md5($_GET['msid'])) {
+$token = isset($_GET['token']) ? (string)$_GET['token'] : '';
+$msid = isset($_GET['msid']) ? (string)$_GET['msid'] : '';
+if ($token !== '' && $msid !== '' && hash_equals(md5($msid), $token)) {
     $id = 0;
     $mellon = $engine->database->getmsid($_GET['msid']);
     if ($mellon == false) {
-        header("Location: ".$lobby_url);
+        header("Location: ".$lobby_url, true, 302);
+        exit;
     }
     $_SESSION['mellon_uid'] = $mellon['uid'];
     $_SESSION['mellon_username'] = $mellon['username'];
     $_SESSION['mellon_email'] = $mellon['email'];
-    $_SESSION['mellon_msid'] = $_GET['token'];
+    $_SESSION['mellon_msid'] = $msid;
 
 
     //$id = $engine->account->FPLogin();
@@ -60,4 +63,5 @@ if ($_GET['token'] == md5($_GET['msid'])) {
 }
 
 setcookie('t5SessionKey', (json_encode(array("key" => session_id(), "id" => $uid))), time() + 14400, "/");
-header("Location: ../#msid=" . $_GET['msid']);
+header("Location: ../#msid=" . rawurlencode($msid), true, 302);
+exit;
