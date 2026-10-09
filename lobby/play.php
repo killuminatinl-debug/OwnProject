@@ -24,5 +24,5 @@ if ($msid === '') {
     header('Location: ' . $index_url . 'authentication/login/');
     exit;
 }
-header('Location: ' . rtrim($world['folder'],'/') . '/api/login.php?token=' . rawurlencode(md5($msid)) . '&msid=' . rawurlencode($msid) . '&msname=msid');
+header('Location: ' . rtrim($game_dir, '/') . '/api/login.php?token=' . rawurlencode(md5($msid)) . '&msid=' . rawurlencode($msid) . '&msname=msid', true, 302);
 exit;
