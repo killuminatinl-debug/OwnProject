@@ -41,7 +41,7 @@
             $(function () {
                 setTimeout(function () {
                     if (!window.bridgePresenceCheckSkip && (!window.parent || !window.parent.bridge)) {
-                        window.location.href = 'http://www.kingdoms.com/?msid=<?php echo $_SESSION['mellon_msid'];?>&msname=msid';
+                        window.location.href = '<?php echo rtrim($index_url, '/'); ?>/';
                     }
                 }, 4000);
             });
