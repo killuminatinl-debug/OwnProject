@@ -60,6 +60,9 @@ if ($token !== '' && $msid !== '' && hash_equals(md5($msid), $token)) {
         }
     }
 
+} else {
+    header('Location: ' . $lobby_url, true, 302);
+    exit;
 }
 
 setcookie('t5SessionKey', (json_encode(array("key" => session_id(), "id" => $uid))), time() + 14400, "/");
