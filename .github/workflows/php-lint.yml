@@ -1,0 +1,21 @@
+name: PHP syntax check
+on:
+  push:
+    branches: [master, xampp-repair]
+  pull_request:
+    branches: [master]
+jobs:
+  php-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Lint PHP files
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -type f -name '*.php' -not -path './.git/*' -print0 | while IFS= read -r -d '' file; do
+            php -l "$file"
+          done
