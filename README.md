@@ -344,16 +344,25 @@ If you **like** this project, please give **star**.<br>
 
 # OwnProject PHP 7.4 build
 
-This fork keeps the original Travian Kingdoms 0.66.8 frontend/backend as the base and adds a normal PHP-hosting installation path.
+This branch keeps the original Travian Kingdoms 0.66.8 interface and PHP game code. It is a repair effort, not a claim that every original feature is complete.
 
-## Quick install
-1. Put the repository in XAMPP htdocs or on normal PHP hosting.
-2. Open /install.php.
-3. Enter MySQL/MariaDB credentials and choose the world/admin settings.
-4. The installer imports travian5.sql, clears the game-world tables, generates a fresh map and creates a protected admin login.
-5. Open / for the lobby.
+## XAMPP setup
 
-## Hosting mode
-The old project required a permanent PHP process plus Node.js services. The new web mode exposes a timestamp engine at game/s1/api/tick.php and calls it from the game page. Buildings, research, troops, movements, resources and other timestamp-based processes therefore catch up when players use the game, without cronjobs or a permanent Node.js process.
+1. Copy the repository contents into `C:\\xampp\\htdocs\\` (so `install.php` is at `C:\\xampp\\htdocs\\install.php`).
+2. Start Apache and MySQL from XAMPP.
+3. Open `http://localhost/install.php`.
+4. Enter MySQL credentials and create the owner login. Use a password of at least 8 characters.
+5. After installation, sign in with the owner username/email and password you entered.
 
-The original archived project was explicitly unfinished and documented Node.js/service requirements; this repository is being converted incrementally rather than replacing the existing game UI with a generic rewrite.
+The installer imports `travian5.sql`, clears the listed game tables, updates the world start time and writes `config.php`. It must be able to write files in the project folder. Back up any existing database before reinstalling; the installer clears game data in the selected database.
+
+## Runtime and hosting limits
+
+- The game tick endpoint processes timestamp-based work (building completions, resource production, research, training and movements) when the game page calls it. It does not require cron, but processing is request-driven and will not run continuously while nobody visits the game.
+- The original project uses Node.js services for lobby/game events and chat. The `start-all.bat` helper launches these services using the PHP and Node executables available on your PATH. Shared hosting that does not permit long-running processes cannot provide the full original realtime multiplayer behavior.
+- This codebase was abandoned upstream and has unfinished features. The installer creates an owner login, not a separate administrator role: the original `global_user` schema has no role/permission column.
+- This branch has not yet passed a complete end-to-end game test. Do not treat installation success as proof that all gameplay systems work.
+
+## Startup helper
+
+Install Node.js and the dependencies in both `server` and `server_lobby` with `npm install`, then run `start-all.bat` from the repository root. Ensure the XAMPP PHP directory is on PATH for the PHP CLI service.
