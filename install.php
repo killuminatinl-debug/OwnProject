@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql=file_get_contents($sqlFile);
         if ($sql===false || trim($sql)==='') throw new RuntimeException('Could not read travian5.sql.');
 
-        $pdo->exec($sql);
+        foreach (preg_split('/;\\s*(?:\\r?\\n|$)/', $sql) as $statement) {\n            if (trim($statement) !== '') {\n                $pdo->exec($statement);\n            }\n        }
 
         // Keep the static world/map/data but start the actual game empty.
         $dynamic=array(
