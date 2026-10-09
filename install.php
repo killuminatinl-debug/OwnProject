@@ -11,8 +11,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $host=trim(isset($_POST['host']) ? $_POST['host'] : '127.0.0.1');
         $user=trim(isset($_POST['user']) ? $_POST['user'] : 'root');
         $pass=(string)(isset($_POST['pass']) ? $_POST['pass'] : '');
+        $ownerName=trim(isset($_POST['owner_name']) ? $_POST['owner_name'] : '');
+        $ownerEmail=trim(isset($_POST['owner_email']) ? $_POST['owner_email'] : '');
+        $ownerPassword=(string)(isset($_POST['owner_password']) ? $_POST['owner_password'] : '');
         $name=preg_replace('/[^A-Za-z0-9_]/','',isset($_POST['name']) ? $_POST['name'] : 'travian_kingdoms');
         if ($name==='') throw new RuntimeException('Invalid database name.');
+        if (!preg_match('/^[A-Za-z0-9_-]{3,24}$/', $ownerName)) throw new RuntimeException('Owner username must be 3-24 characters (letters, numbers, underscore or hyphen).');
+        if (!filter_var($ownerEmail, FILTER_VALIDATE_EMAIL)) throw new RuntimeException('Enter a valid owner email address.');
+        if (strlen($ownerPassword) < 8) throw new RuntimeException('Owner password must contain at least 8 characters.');
 
         $pdo=new PDO('mysql:host='.$host.';charset=utf8mb4',$user,$pass,array(
             PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
@@ -41,6 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach($dynamic as $table){
             try { $pdo->exec('TRUNCATE TABLE `'.$table.'`'); } catch(Throwable $ignore) {}
         }
+
+        // Create the owner's login account. This schema has no separate admin-role column.
+        $ownerInsert=$pdo->prepare('INSERT INTO `global_user` (`username`,`email`,`password`,`timed`,`prestige`,`level`) VALUES (?,?,?,?,?,?)');
+        $ownerInsert->execute(array($ownerName,$ownerEmail,base64_encode($ownerPassword),time(),0,0));
 
         $now=time();
         $pdo->exec('UPDATE `global_server_data` SET `start`='.(int)$now.',`maintenance`=0,`recommended`=1 WHERE `sid`=1');
@@ -78,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body><div class="box">
 <h1>Travian Kingdoms</h1><h2>Server installer</h2>
 <?php if($done): ?>
-<div class="ok"><b>Installation completed.</b><br><br>Database schema, world data and server configuration are ready.<br><br><a href="/"><button>Open game</button></a></div>
+<div class="ok"><b>Installation completed.</b><br><br>Database schema, world data, server configuration and the owner login are ready.<br><br>Sign in with the owner username and password you entered.<br><br><a href="/"><button>Open game</button></a></div>
 <?php else: ?>
 <?php if($error): ?><div class="err"><b>Installation failed:</b><br><?php echo htmlspecialchars($error,ENT_QUOTES,'UTF-8'); ?></div><?php endif; ?>
 <form method="post">
@@ -86,6 +96,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <label>MySQL user</label><input name="user" value="<?php echo htmlspecialchars(isset($_POST['user'])?$_POST['user']:'root',ENT_QUOTES,'UTF-8'); ?>">
 <label>MySQL password</label><input type="password" name="pass" value="">
 <label>Database</label><input name="name" value="<?php echo htmlspecialchars(isset($_POST['name'])?$_POST['name']:'travian_kingdoms',ENT_QUOTES,'UTF-8'); ?>">
+<hr><h3>Owner login</h3>
+<label>Username (3–24 characters)</label><input name="owner_name" required minlength="3" maxlength="24" value="<?php echo htmlspecialchars(isset($_POST['owner_name'])?$_POST['owner_name']:'admin',ENT_QUOTES,'UTF-8'); ?>">
+<label>Email</label><input type="email" name="owner_email" required value="<?php echo htmlspecialchars(isset($_POST['owner_email'])?$_POST['owner_email']:'admin@localhost.test',ENT_QUOTES,'UTF-8'); ?>">
+<label>Password (minimum 8 characters)</label><input type="password" name="owner_password" required minlength="8" autocomplete="new-password">
 <button type="submit">Install</button>
 </form>
 <p>PHP 7.4 + MySQL/MariaDB/XAMPP compatible. No Node process is required for the basic game loop.</p>
