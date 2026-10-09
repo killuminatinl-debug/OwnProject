@@ -41,7 +41,7 @@ class Server {
             "worldCapacity" => 0,
             "recommended" => (int) $world['recommended'],
             "blacklisted" => 0,
-            "baseUrl" => "/" . trim(str_replace(array("http://", "https://"), "", (string)($world['folder'] ?? "")), "/") . "/",
+            "baseUrl" => rtrim($game_dir, '/') . '/',
             "daysSinceStart" => round((time() - $world['start']) / 86400),
             "speedGame" => (int)$world['speed_world'],
             "speedTroops" => (int)$world['speed_unit'],
