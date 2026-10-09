@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $now=time();
-        $pdo->exec('UPDATE `global_server_data` SET `start`='.(int)$now.',`maintenance`=0,`recommended`=1 WHERE `sid`=1');
+        $pdo->exec('UPDATE `global_server_data` SET `start`='.(int)$now.',`maintenance`=0,`recommended`=1,`folder`=\'/game/s1/\' WHERE `sid`=1');
 
         $config="<?php\n".
             "ini_set('display_errors','0');\n".
