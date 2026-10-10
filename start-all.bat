@@ -43,11 +43,11 @@ if not exist "server2\server.php" (
 )
 
 echo Starting game socket service on port 8081...
-start "Travian game socket" cmd /k "cd /d "%~dp0server" ^&^& node app2.js"
+start "Travian game socket" /D "%~dp0server" cmd /k node app2.js
 echo Starting lobby socket service on port 8082...
-start "Travian lobby socket" cmd /k "cd /d "%~dp0server_lobby" ^&^& node app.js"
+start "Travian lobby socket" /D "%~dp0server_lobby" cmd /k node app.js
 echo Starting PHP automatic game loop...
-start "Travian automatic game loop" cmd /k "cd /d "%~dp0" ^&^& "%PHP_EXE%" server2/server.php"
+start "Travian automatic game loop" /D "%~dp0" cmd /k "%PHP_EXE%" server2/server.php
 echo.
 echo Services were launched. Keep all three service windows open while testing.
 echo If a window reports a database error, check install.php credentials and server-config.json.
