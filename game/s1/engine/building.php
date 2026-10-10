@@ -452,17 +452,33 @@ class Building {
         global $engine;
         $location=(int)$location; $type=(int)$type; $wid=(int)$wid;
         if($wid<=0) $wid=(int)$engine->village->select;
-        if($location<1 || $wid<=0) return false;
+        if($location<1 || $location>40 || $wid<=0) return false;
 
         $owner=$this->getOwnerForVillage($wid);
         if(!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) return false;
         $field=query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1",array($wid,$location))->fetch(PDO::FETCH_ASSOC);
         if(!$field) return false;
 
-        if($location===32) $type=16;
-        elseif($location===33) $type=30+(int)$owner['tribe'];
-        elseif($type<=0) $type=(int)$field['type'];
-        if($type<=0) return false;
+        if($location===32) {
+            $type=16;
+        } elseif($location===33) {
+            $type=30+(int)$owner['tribe'];
+        } elseif($type<=0) {
+            $type=(int)$field['type'];
+        }
+        if($type<1 || $type>45) return false;
+
+        // Resource plots can only upgrade their own resource type. Building
+        // plots cannot be used to create resource fields, the Rally Point, or
+        // another tribe's wall; those special buildings have dedicated slots.
+        if($location<=18) {
+            if($type>4 || (int)$field['type']!==$type) return false;
+        } else {
+            if($type<=4) return false;
+            if($type===16 && $location!==32) return false;
+            if(in_array($type,array(31,32,33),true) && $location!==33) return false;
+            if($location===33 && $type!==30+(int)$owner['tribe']) return false;
+        }
 
         // Do not allow a second build/demolition to be queued on a location
         // that already has an active construction or demolition, including rubble.
