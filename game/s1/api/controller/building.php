@@ -47,22 +47,30 @@ if ($data['action'] == "getBuildingList") {
         "time" => round(microtime(true) * 1000),
     ));
 } elseif ($data['action'] == "cancel") {
-    $q = $engine->building->getSingleQueue($data['params']['eventId']);
-    $engine->building->cancelBuild($data['params']['eventId']);
-    echo json_encode(array(
-        "cache" => array(
-            $engine->building->getBuilding(array(
-                'wid' => $q['wid'],
-                'location' => $q['location'],
-            )),
-            $engine->building->getBuildings($data['params']['villageId']),
-            $engine->village->get($data['params']['villageId']),
-            $engine->building->getQueue($data['params']['villageId'])
-        ),
-        "response" => array(),
-        "serialNo" => $engine->session->serialNo(),
-        "time" => round(microtime(true) * 1000),
-    ));
+    $eventId = isset($data['params']['eventId']) ? (int)$data['params']['eventId'] : 0;
+    $q = $engine->building->getSingleQueue($eventId);
+    $ok = $q && $engine->building->cancelBuild($eventId);
+    if (!$ok) {
+        echo json_encode(array(
+            "cache" => array(),
+            "response" => array("error" => "BUILD_CANCEL_FAILED"),
+            "serialNo" => $engine->session->serialNo(),
+            "time" => round(microtime(true) * 1000),
+        ));
+    } else {
+        $wid = (int)$q['wid'];
+        echo json_encode(array(
+            "cache" => array(
+                $engine->building->getBuilding(array('wid' => $wid, 'location' => $q['location'])),
+                $engine->building->getBuildings($wid),
+                $engine->village->get($wid),
+                $engine->building->getQueue($wid)
+            ),
+            "response" => array(),
+            "serialNo" => $engine->session->serialNo(),
+            "time" => round(microtime(true) * 1000),
+        ));
+    }
 } elseif ($data['action'] == "destroy") {
     $engine->building->destroy($data['params']);
     echo json_encode(array(
