@@ -203,7 +203,22 @@ class Hero {
             $aid = $engine->account->getById($id, 'avatar');
         }
 
-        $avt = query("SELECT * FROM `global_avatar` WHERE `id`=?", array($aid))->fetch();
+        $avt = query("SELECT * FROM `global_avatar` WHERE `id`=?", array($aid))->fetch(PDO::FETCH_ASSOC);
+
+        // Older local registrations inserted only the email, leaving hairColor=0.
+        // The 0.66 client has no colour object for that index and crashes while
+        // building HeroFace. Repair the row when it is first requested.
+        if ($avt && (int)$avt['hairColor'] === 0) {
+            query("UPDATE `global_avatar` SET `hairColor`=1 WHERE `id`=?", array($aid));
+            $avt['hairColor'] = 1;
+        }
+
+        if (!$avt) {
+            $avt = array(
+                'gender' => 0, 'hairColor' => 1, 'beard' => 0, 'ear' => 0,
+                'eye' => 0, 'eyebrow' => 0, 'hair' => 0, 'mouth' => 0, 'nose' => 0
+            );
+        }
 
         $r = array(
             'name' => 'HeroFace:' . $id,
