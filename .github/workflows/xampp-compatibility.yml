@@ -19,6 +19,8 @@ jobs:
           extensions: pdo_mysql
       - name: Check installer syntax
         run: php -l install.php
+      - name: Check registration syntax
+        run: php -l registration/index.php
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
