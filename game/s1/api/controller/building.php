@@ -23,14 +23,23 @@ if ($data['action'] == "getBuildingList") {
         "time" => round(microtime(true) * 1000),
     ));
 } elseif ($data['action'] == "useMasterBuilder") {
-    isset($data['params']['count']) ? $count = $data['params']['count'] : $count = 1;
-    for($i=0;$i<$count;$i++){
-        $entryId = $engine->building->MasterBuild($data['params']['locationId'], $data['params']['buildingType'], $data['params']['villageId']);
-    }
-    if (isset($data['params']['reserveResources'])) {
-        if ($data['params']['reserveResources'] == true) {
-            $engine->building->reserveResources($entryId);
+    $count = isset($data['params']['count']) ? (int)$data['params']['count'] : 1;
+    $count = max(1, min(10, $count));
+    $entryId = false;
+    $ok = true;
+    for ($i = 0; $i < $count; $i++) {
+        $entryId = $engine->building->MasterBuild(
+            $data['params']['locationId'],
+            $data['params']['buildingType'],
+            $data['params']['villageId']
+        );
+        if (!$entryId) {
+            $ok = false;
+            break;
         }
+    }
+    if ($ok && $entryId && !empty($data['params']['reserveResources'])) {
+        $ok = (bool)$engine->building->reserveResources($entryId);
     }
     echo json_encode(array(
         "cache" => array(
@@ -42,7 +51,7 @@ if ($data['action'] == "getBuildingList") {
             $engine->village->get($data['params']['villageId']),
             $engine->building->getQueue($data['params']['villageId'])
         ),
-        "response" => array(),
+        "response" => $ok ? array() : array("error" => "MASTER_BUILD_FAILED"),
         "serialNo" => $engine->session->serialNo(),
         "time" => round(microtime(true) * 1000),
     ));
@@ -72,12 +81,16 @@ if ($data['action'] == "getBuildingList") {
         ));
     }
 } elseif ($data['action'] == "destroy") {
-    $engine->building->destroy($data['params']);
+    $ok = $engine->building->destroy($data['params']);
     echo json_encode(array(
-        "cache" => array(
-            $engine->building->getQueue($data['params']['villageId'])
-        ),
-        "response" => array(),
+        "cache" => $ok ? array(
+            $engine->building->getQueue($data['params']['villageId']),
+            $engine->building->getBuilding(array(
+                'wid' => $data['params']['villageId'],
+                'location' => $data['params']['locationId'],
+            ))
+        ) : array(),
+        "response" => $ok ? array() : array("error" => "DEMOLITION_NOT_STARTED"),
         "serialNo" => $engine->session->serialNo(),
         "time" => round(microtime(true) * 1000),
     ));
