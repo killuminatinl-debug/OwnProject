@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // The two Node.js socket services must use the same database as PHP.
         $serverConfig = array('host'=>$host, 'user'=>$user, 'password'=>$pass, 'database'=>$name);
         $serverConfigJson = json_encode($serverConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        if ($serverConfigJson===false || file_put_contents(__DIR__.'/server-config.json', $serverConfigJson."\\n")===false) {
+        if ($serverConfigJson===false || file_put_contents(__DIR__.'/server-config.json', $serverConfigJson."\n")===false) {
             throw new RuntimeException('Could not write server-config.json. Check folder permissions.');
         }
 
