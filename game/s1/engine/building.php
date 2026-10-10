@@ -338,7 +338,7 @@ class Building {
             //$inqueue_paid = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `paid`=?;", [$bq['wid'], 1])->rowCount();
             //query("UPDATE `{$engine->server->prefix}building` SET `sort`=?,`paid`=? WHERE `id`=?", [$inqueue_paid + 1, 1, $bid]);
 
-            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`sort`,`type`,`queue`,`paid`,`duration`,`cost`,`timestamp`) VALUE (?,?,?,?,?,?,?,?,?);", array($wid, $location, $inqueue_paid + 1, $type, $queuetype, 1, $duration, "[]", 0));
+            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`sort`,`type`,`start`,`duration`,`timestamp`,`queue`,`paid`,`cost`,`level`) VALUES (?,?,?,?,?,?,?,?,?,?,?)", array($wid, $location, $inqueue_paid + 1, $type, time(), $duration, 0, $queuetype, 1, json_encode($request), $level));
         } else {
             //Only add to queue
             $request['time'] = round(($request['time'] * ($this->BuildingEffect(15, $this->getTypeLevel($wid, 15)) / 100)) / $engine->server->speed_world);
@@ -347,7 +347,7 @@ class Building {
             query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?", array($type, $wid, $location));
             // Get queue to sort new task
             $inqueue = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `wid`=?;", [$wid])->rowCount();
-            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`sort`,`type`,`queue`,`paid`,`duration`,`cost`,`timestamp`) VALUE (?,?,?,?,?,?,?,?,?);", array($wid, $location, $inqueue + 1, $type, $queuetype, 0, $duration, $cost, 0));
+            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`sort`,`type`,`start`,`duration`,`timestamp`,`queue`,`paid`,`cost`,`level`) VALUES (?,?,?,?,?,?,?,?,?,?,?)", array($wid, $location, $inqueue + 1, $type, time(), $duration, 0, $queuetype, 0, $cost, $level));
         }
         return $engine->sql->lastInsertId();
     }
@@ -375,8 +375,8 @@ class Building {
         if((int)$field['rubble']===1 && !in_array($type,array(31,32,33),true)){
             $d=BuildingData::get($type,0); if(!$d) return false;
             $now=time(); $duration=max(1,(int)round(((float)$d['time'])/max(0.0001,(float)$engine->server->speed_world)));
-            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUES (?,?,?,?,?,?,?,?)",
-                array($wid,$location,$type,$now+$duration,$now,5,1,$duration));
+            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`sort`,`type`,`start`,`duration`,`timestamp`,`queue`,`paid`,`cost`,`level`) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                array($wid,$location,0,$type,$now,$duration,$now+$duration,5,1,'[]',(int)$field['level']));
             return true;
         }
 
@@ -406,8 +406,8 @@ class Building {
         query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?",
             array($request['wood'],$request['clay'],$request['iron'],$request['crop'],$wid));
         query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?",array($type,$wid,$location));
-        query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`,`cost`) VALUES (?,?,?,?,?,?,?,?,?)",
-            array($wid,$location,$type,$now+$duration,$now,$queueType,1,$duration,json_encode($request)));
+        query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`sort`,`type`,`start`,`duration`,`timestamp`,`queue`,`paid`,`cost`,`level`) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            array($wid,$location,0,$type,$now,$duration,$now+$duration,$queueType,1,json_encode($request),$level));
         return true;
     }
 
@@ -511,7 +511,7 @@ class Building {
         $duration = ($uppertime['time'] / 2) / $engine->server->speed_world;
         $time = $start + $duration;
 
-        query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`level`,`queue`,`paid`,`duration`) VALUE (?,?,?,?,?,?,?,?,?);", array($wid, $location, $type, $time, $start, $level, 5, 0, $duration));
+        query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`sort`,`type`,`start`,`duration`,`timestamp`,`queue`,`paid`,`cost`,`level`) VALUES (?,?,?,?,?,?,?,?,?,?,?)", array($wid, $location, 0, $type, $start, $duration, $time, 5, 0, '[]', $level));
     }
 
     public function reserveResources($bid) {
