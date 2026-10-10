@@ -259,7 +259,18 @@ class Building {
         }
 
         if ((int)$b['paid'] === 1 && (int)$b['queue'] !== 5) {
-            $request = BuildingData::get((int)$b['type'], (int)$f['level'] + 1);
+            // Refund the exact cost paid when the queue entry was created.
+            // Older queue rows may have no usable cost JSON, so retain a legacy fallback.
+            $request = null;
+            if (isset($b['cost']) && is_string($b['cost']) && $b['cost'] !== '') {
+                $storedCost = json_decode($b['cost'], true);
+                if (is_array($storedCost) && isset($storedCost['wood'], $storedCost['clay'], $storedCost['iron'], $storedCost['crop'])) {
+                    $request = $storedCost;
+                }
+            }
+            if ($request === null) {
+                $request = BuildingData::get((int)$b['type'], (int)$f['level'] + 1);
+            }
             if ($request) {
                 if (((int)$f['level'] <= 1) && (int)$b['location'] > 18 && (int)$b['location'] != 41) {
                     query("UPDATE `{$engine->server->prefix}field` SET `type`=0 WHERE `wid`=? AND `location`=?", [$b['wid'], $b['location']]);
@@ -387,8 +398,8 @@ class Building {
         query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?",
             array($request['wood'],$request['clay'],$request['iron'],$request['crop'],$wid));
         query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?",array($type,$wid,$location));
-        query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`) VALUES (?,?,?,?,?,?,?,?)",
-            array($wid,$location,$type,$now+$duration,$now,$queueType,1,$duration));
+        query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`type`,`timestamp`,`start`,`queue`,`paid`,`duration`,`cost`) VALUES (?,?,?,?,?,?,?,?,?)",
+            array($wid,$location,$type,$now+$duration,$now,$queueType,1,$duration,json_encode($request)));
         return true;
     }
 
