@@ -28,3 +28,36 @@ jobs:
         run: node --check server/app2.js
       - name: Check lobby socket service syntax
         run: node --check server_lobby/app.js
+
+  database-smoke:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: travian5_new
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up PHP 7.4 with PDO MySQL
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: pdo_mysql
+      - name: Import the shipped game schema
+        run: mysql --host=127.0.0.1 --user=root --password=root travian5_new < travian5.sql
+      - name: Verify build queue database operations
+        env:
+          DB_HOST: 127.0.0.1
+          DB_NAME: travian5_new
+          DB_USER: root
+          DB_PASS: root
+        run: php tests/database_smoke.php
