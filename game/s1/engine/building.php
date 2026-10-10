@@ -759,10 +759,8 @@ class Building {
         $artEffGrt = 0;
         $village = $engine->village->get($wid, false);
 
-        $twall = 32;
-        if ($engine->session->data->tribe <= 3) {
-            $twall = $engine->session->data->tribe + 30;
-        }
+        $tribe = (int)$engine->session->data->tribe;
+        $twall = ($tribe === 1) ? 31 : (($tribe === 2) ? 32 : 33);
 
         $woodcutter = $this->getTypeLevel($wid, 1);
         $claypit = $this->getTypeLevel($wid, 2);
@@ -1119,7 +1117,7 @@ class Building {
             $b = $this->makeDetail(0, $wid, $id, 20, 0, array(
                 'requiredBuildings' => array(
                     array(
-                        'buildingType' => 15,
+                        'buildingType' => 13,
                         'currentLevel' => $blacksmith,
                         'requiredLevel' => 3,
                         'valid' => ($blacksmith >= 3)
@@ -1138,7 +1136,7 @@ class Building {
             }
         }
         if ($hasWW != 40 && $treasury == 0 && !$this->inQueue($wid, 27) && $mainbuilding >= 10 && $id != 32 && $id != 33) {
-            $buildable[count($buildable)] = $this->makeDetail(0, $wid, $id, 25, 0, array(
+            $buildable[count($buildable)] = $this->makeDetail(0, $wid, $id, 27, 0, array(
                 'requiredBuildings' => array(
                     array(
                         'buildingType' => 15,
@@ -1237,7 +1235,7 @@ class Building {
             }
         }
         if ($tournamentsquare == 0 && !$this->inQueue($wid, 14) && $id != 32 && $id != 33) {
-            $b = $this->makeDetail(0, $wid, $id, 6, 0, array(
+            $b = $this->makeDetail(0, $wid, $id, 14, 0, array(
                 'requiredBuildings' => array(
                     array(
                         'buildingType' => 16,
@@ -1306,7 +1304,7 @@ class Building {
             $b = $this->makeDetail(0, $wid, $id, 28, 0, array(
                 'requiredBuildings' => array(
                     array(
-                        'buildingType' => 15,
+                        'buildingType' => 17,
                         'currentLevel' => $market,
                         'requiredLevel' => 20,
                         'valid' => ($market >= 20)
@@ -1347,16 +1345,16 @@ class Building {
             }
         }
         if ($engine->session->data->tribe == 2 && !$this->inQueue($wid, 35) && $brewery == 0 && $id != 32 && $id != 33) {
-            $b = $this->makeDetail(0, $wid, $id, 28, 0, array(
+            $b = $this->makeDetail(0, $wid, $id, 35, 0, array(
                 'requiredBuildings' => array(
                     array(
-                        'buildingType' => 11,
+                        'buildingType' => 16,
                         'currentLevel' => $rallypoint,
-                        'requiredLevel' => 20,
-                        'valid' => ($rallypoint >= 20)
+                        'requiredLevel' => 10,
+                        'valid' => ($rallypoint >= 10)
                     ),
                     array(
-                        'buildingType' => 16,
+                        'buildingType' => 11,
                         'currentLevel' => $granary,
                         'requiredLevel' => 20,
                         'valid' => ($granary >= 20)
@@ -1398,7 +1396,7 @@ class Building {
                         'valid' => ($barrack >= 20)
                     ),
                 )), true, 1);
-            if ($barrack >= 3) {
+            if ($barrack >= 20) {
                 $buildable[count($buildable)] = $b;
             } else {
                 $notBuildable[count($notBuildable)] = $b;
@@ -1414,7 +1412,7 @@ class Building {
                         'valid' => ($stable >= 20)
                     ),
                 )), true, 1);
-            if ($stable >= 3) {
+            if ($stable >= 20) {
                 $buildable[count($buildable)] = $b;
             } else {
                 $notBuildable[count($notBuildable)] = $b;
