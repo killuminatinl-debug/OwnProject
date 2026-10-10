@@ -16,7 +16,10 @@ if ($_GET['token'] == md5($_GET['msid'])) {
 
     //$id = $engine->account->FPLogin();
     if (query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `email`=?;", array($_SESSION['mellon_email']))->rowCount() == 0) {
-        query("INSERT INTO `global_avatar` (`email`) VALUES (?);", array($_SESSION['mellon_email']));
+        // The client expects a real hair-colour entry; a zero-filled avatar
+        // causes HeroFace.updateViewModel() to dereference an undefined colour.
+        query("INSERT INTO `global_avatar` (`email`,`gender`,`hairColor`,`beard`,`ear`,`eye`,`eyebrow`,`hair`,`mouth`,`nose`) VALUES (?,?,?,?,?,?,?,?,?,?)",
+            array($_SESSION['mellon_email'], 0, 1, 0, 0, 0, 0, 0, 0, 0));
         $aid = $engine->sql->lastInsertId();
         $_SESSION[$engine->server->prefix . 'avatar'] = $aid;
 
@@ -42,6 +45,13 @@ if ($_GET['token'] == md5($_GET['msid'])) {
         if (empty($u['username'])) query("UPDATE `" . $engine->server->prefix . "user` SET `username`=? WHERE `uid`=?", array($_SESSION['mellon_username'], $u['uid']));
         $_SESSION[$engine->server->prefix . 'tutorial'] = (int)$u['tutorial'];
     }
+    // Repair legacy avatar rows created with the old email-only INSERT.
+    // Hair-colour index 0 has no matching colour object in the 0.66 client.
+    $avatarId = isset($_SESSION[$engine->server->prefix . 'avatar']) ? (int)$_SESSION[$engine->server->prefix . 'avatar'] : 0;
+    if ($avatarId > 0) {
+        query("UPDATE `global_avatar` SET `hairColor`=1 WHERE `id`=? AND `hairColor`=0", array($avatarId));
+    }
+
     // Self-heal accounts created by older/local versions: always enter s1 with a real tribe and village.
     $current=query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=? LIMIT 1",array($uid))->fetch(PDO::FETCH_ASSOC);
     $hasVillage=(int)query("SELECT COUNT(*) FROM `" . $engine->server->prefix . "village` WHERE `owner`=?",array($uid))->fetchColumn();
