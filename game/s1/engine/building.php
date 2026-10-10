@@ -353,6 +353,27 @@ class Building {
             return false;
         }
 
+        // Enforce the same slot/type boundaries even when the API is called
+        // directly rather than through the game's build-list UI.
+        if ($location <= 18) {
+            if ($type > 4 || (int)$field['type'] !== $type) {
+                return false;
+            }
+        } else {
+            if ($type <= 4 || ($type === 16 && $location !== 32) ||
+                (in_array($type, array(31, 32, 33), true) && $location !== 33)) {
+                return false;
+            }
+            $tribe = (int)$owner['tribe'];
+            $wallType = ($tribe === 1) ? 31 : (($tribe === 2) ? 32 : 33);
+            if ($location === 33 && $type !== $wallType) {
+                return false;
+            }
+            if ((int)$field['type'] > 0 && (int)$field['type'] !== $type) {
+                return false;
+            }
+        }
+
         // A Master Builder task may follow other Master Builder levels, but it
         // must not overlap a regular build or demolition on the same location.
         $conflict = (int)query(
