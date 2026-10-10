@@ -31,6 +31,19 @@ class Session {
         if (isset($_SESSION[$engine->server->prefix . 'uid'])) {
             if ($_SESSION[$engine->server->prefix . 'uid'] != "") {
                 $u = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?;", array($_SESSION[$engine->server->prefix . 'uid']))->fetch(PDO::FETCH_ASSOC);
+                if (!$u || !isset($u['uid'])) {
+                    unset(
+                        $_SESSION[$engine->server->prefix . 'uid'],
+                        $_SESSION[$engine->server->prefix . 'username'],
+                        $_SESSION[$engine->server->prefix . 'avatar'],
+                        $_SESSION[$engine->server->prefix . 'gold'],
+                        $_SESSION[$engine->server->prefix . 'silver'],
+                        $_SESSION[$engine->server->prefix . 'tribe'],
+                        $_SESSION[$engine->server->prefix . 'tutorial']
+                    );
+                    $this->data = null;
+                    return false;
+                }
                 $this->data = (object) $u;
                 $_SESSION[$engine->server->prefix . 'uid'] = $u['uid'];
                 $_SESSION[$engine->server->prefix . 'username'] = $u['username'];
