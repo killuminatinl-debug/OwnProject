@@ -862,7 +862,7 @@ class Building {
             }
             $buildable[count($buildable)] = $this->makeDetail(0, $wid, $id, 11, 0, $option, true, 1);
         }
-        if ($wall == 0 && !$this->inQueue($wid, 32)) {
+        if ($wall == 0 && !$this->inQueue($wid, $twall)) {
             if ($engine->session->data->tribe == 1 && $id != 32) {
                 $buildable[count($buildable)] = $this->makeDetail(0, $wid, $id, 31, 0, array('requiredBuildings' => []), true, 1);
             }
