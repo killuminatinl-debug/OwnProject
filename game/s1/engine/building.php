@@ -368,6 +368,10 @@ class Building {
         elseif($type<=0) $type=(int)$field['type'];
         if($type<=0) return false;
 
+        // Do not allow a second build/demolition to be queued on a location
+        // that already has an active construction or demolition, including rubble.
+        if((int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=? AND `queue` IN (1,2,5)",array($wid,$location))->fetchColumn()>0) return false;
+
         if((int)$field['rubble']===1 && !in_array($type,array(31,32,33),true)){
             $d=BuildingData::get($type,0); if(!$d) return false;
             $now=time(); $duration=max(1,(int)round(((float)$d['time'])/max(0.0001,(float)$engine->server->speed_world)));
