@@ -49,10 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "ini_set('display_errors','0');\n".
             "ini_set('log_errors','1');\n".
             "error_reporting(E_ALL);\n\n".
-            "define('SQL_HOST',".var_export(\$host,true).");\n".
-            "define('SQL_USER',".var_export(\$user,true).");\n".
-            "define('SQL_PASS',".var_export(\$pass,true).");\n".
-            "define('SQL_DATB',".var_export(\$name,true).");\n".
+            "define('SQL_HOST',".var_export($host,true).");\n".
+            "define('SQL_USER',".var_export($user,true).");\n".
+            "define('SQL_PASS',".var_export($pass,true).");\n".
+            "define('SQL_DATB',".var_export($name,true).");\n".
             "define('LANGUAGE','en');\n".
             "define('APP_BASE','');\n".
             "\$index_url='/';\n\$mellon_url='/mellon/';\n\$cdn_url='/cdn/';\n\$lobby_url='/lobby/';\n\$game_dir='/game/s1/';\n".
