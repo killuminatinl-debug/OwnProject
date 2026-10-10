@@ -132,16 +132,22 @@ class Village {
             $uid = $_SESSION[$engine->server->prefix . 'uid'];
         }
 
-        $data = query("SELECT * FROM `" . $engine->server->prefix . "village` WHERE `owner`=?;", array($uid))->fetchAll();
+        $data = query("SELECT * FROM `" . $engine->server->prefix . "village` WHERE `owner`=? ORDER BY `wid` ASC;", array($uid))->fetchAll(PDO::FETCH_ASSOC);
 
-        if (!isset($_COOKIE['village'])) {
-            if (count($data) > 0) {
-                setcookie("village", $data[0]['wid'], 0, "/");
-                $_COOKIE['village'] = $data[0]['wid'];
-            } else {
-                setcookie("village", 0, 0, "/");
-                $_COOKIE['village'] = 0;
+        // A browser may still have the village cookie from a different account.
+        // Keep the selected village only if it belongs to the currently logged-in player.
+        $selected = isset($_COOKIE['village']) ? (int)$_COOKIE['village'] : 0;
+        $validSelected = false;
+        foreach ($data as $ownedVillage) {
+            if ((int)$ownedVillage['wid'] === $selected) {
+                $validSelected = true;
+                break;
             }
+        }
+        if (!$validSelected) {
+            $selected = count($data) > 0 ? (int)$data[0]['wid'] : 0;
+            setcookie('village', (string)$selected, 0, '/');
+            $_COOKIE['village'] = $selected;
         }
 
         $this->data = $data;
