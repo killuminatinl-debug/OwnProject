@@ -65,6 +65,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "function db(){if($GLOBALS['db'] instanceof PDO)return $GLOBALS['db'];$GLOBALS['db']=new PDO('mysql:host='.SQL_HOST.';dbname='.SQL_DATB.';charset=utf8mb4',SQL_USER,SQL_PASS,array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,PDO::ATTR_EMULATE_PREPARES=>false));return $GLOBALS['db'];}\n";
         if (file_put_contents(__DIR__.'/config.php',$config)===false) throw new RuntimeException('Could not write config.php. Check folder permissions.');
 
+        // The two Node.js socket services must use the same database as PHP.
+        $serverConfig = array('host'=>$host, 'user'=>$user, 'password'=>$pass, 'database'=>$name);
+        $serverConfigJson = json_encode($serverConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        if ($serverConfigJson===false || file_put_contents(__DIR__.'/server-config.json', $serverConfigJson."\\n")===false) {
+            throw new RuntimeException('Could not write server-config.json. Check folder permissions.');
+        }
+
         $done=true;
     } catch(Throwable $e) {
         $error=$e->getMessage();
