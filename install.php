@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body><div class="box">
 <h1>Travian Kingdoms</h1><h2>Server installer</h2>
 <?php if($done): ?>
-<div class="ok"><b>Installation completed.</b><br><br>Database schema, world data and server configuration are ready.<br><br><a href="/"><button>Open game</button></a></div>
+<div class="ok"><b>Database installation completed.</b><br><br>Database schema, world data, PHP configuration and shared Node.js database settings were written.<br><br><b>Important:</b> on local Windows/XAMPP, install Node.js LTS, then start <code>start-all.bat</code> and keep its service windows open. Only then test the game. The installer does not mean every game feature has been verified.<br><br><a href="/"><button>Open game</button></a></div>
 <?php else: ?>
 <?php if($error): ?><div class="err"><b>Installation failed:</b><br><?php echo htmlspecialchars($error,ENT_QUOTES,'UTF-8'); ?></div><?php endif; ?>
 <form method="post">
@@ -95,6 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <label>Database</label><input name="name" value="<?php echo htmlspecialchars(isset($_POST['name'])?$_POST['name']:'travian_kingdoms',ENT_QUOTES,'UTF-8'); ?>">
 <button type="submit">Install</button>
 </form>
-<p>PHP 7.4 + MySQL/MariaDB/XAMPP compatible. No Node process is required for the basic game loop.</p>
+<p>Designed for PHP 7.4 + MySQL/MariaDB/XAMPP. This original game also uses persistent Node.js socket services and a PHP background loop. Run <code>start-all.bat</code> after installation on Windows. Most ordinary shared hosting plans block persistent processes; use a VPS or hosting plan that explicitly supports them.</p>
 <?php endif; ?>
 </div></body></html>
