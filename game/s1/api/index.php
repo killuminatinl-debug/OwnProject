@@ -3,11 +3,9 @@ include_once dirname(__FILE__) . '/../engine/engine.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-try {
-    $engine->auto->work();
-} catch (Throwable $e) {
-    error_log('[OwnProject] auto catch-up failed: '.$e->getMessage().' in '.$e->getFile().':'.$e->getLine());
-}
+// engine.php already runs the request-driven world tick during normal API
+// requests. Do not run Auto::work() a second time here: duplicate processing
+// can race building/training/movement completion when requests overlap.
 
 $request_body=file_get_contents('php://input');
 $data=json_decode($request_body,true);
@@ -41,8 +39,18 @@ try {
     }
 } catch (Throwable $e) {
     error_log('[OwnProject] API '.$controller.'/'.$action.' failed: '.$e->getMessage().' in '.$e->getFile().':'.$e->getLine());
+    // Keep the API response valid JSON even if session serial generation itself
+    // fails while handling the original exception.
+    $serialNo = 0;
+    try {
+        if (isset($engine) && isset($engine->session)) {
+            $serialNo = (int)$engine->session->serialNo();
+        }
+    } catch (Throwable $serialError) {
+        error_log('[OwnProject] Could not generate error-response serial: '.$serialError->getMessage());
+    }
     echo json_encode(array(
-        'serialNo'=>isset($engine)?$engine->session->serialNo():0,
+        'serialNo'=>$serialNo,
         'response'=>array('error'=>'SERVER_ERROR'),
         'cache'=>array(),
         'time'=>round(microtime(true)*1000)
