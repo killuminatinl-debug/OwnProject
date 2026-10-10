@@ -282,7 +282,11 @@ class Building {
         }
 
         query("DELETE FROM `{$engine->server->prefix}building` WHERE `id`=?", [$id]);
-        query("UPDATE `{$engine->server->prefix}building` SET `sort`=`sort`-1 WHERE `wid`=? AND `sort`>?", [$b['wid'], $b['sort']]);
+        // Only master-builder entries use the explicit sort order. Do not shift
+        // ordinary construction/demolition rows when cancelling them.
+        if ((int)$b['queue'] === 4) {
+            query("UPDATE `{$engine->server->prefix}building` SET `sort`=`sort`-1 WHERE `wid`=? AND `queue`=4 AND `sort`>?", [(int)$b['wid'], (int)$b['sort']]);
+        }
         return true;
     }
 
