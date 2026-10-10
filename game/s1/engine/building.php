@@ -330,7 +330,8 @@ class Building {
         if ($location === 32) {
             $type = 16;
         } elseif ($location === 33) {
-            $type = 30 + (int)$owner['tribe'];
+            $tribe = (int)$owner['tribe'];
+            $type = ($tribe === 1) ? 31 : (($tribe === 2) ? 32 : 33);
         } elseif ($type <= 0) {
             $type = (int)$field['type'];
         }
@@ -462,7 +463,8 @@ class Building {
         if($location===32) {
             $type=16;
         } elseif($location===33) {
-            $type=30+(int)$owner['tribe'];
+            $tribe=(int)$owner['tribe'];
+            $type=($tribe===1)?31:(($tribe===2)?32:33);
         } elseif($type<=0) {
             $type=(int)$field['type'];
         }
@@ -477,7 +479,9 @@ class Building {
             if($type<=4) return false;
             if($type===16 && $location!==32) return false;
             if(in_array($type,array(31,32,33),true) && $location!==33) return false;
-            if($location===33 && $type!==30+(int)$owner['tribe']) return false;
+            $tribe=(int)$owner['tribe'];
+            $wallType=($tribe===1)?31:(($tribe===2)?32:33);
+            if($location===33 && $type!==$wallType) return false;
         }
 
         // Do not allow a second build/demolition to be queued on a location
