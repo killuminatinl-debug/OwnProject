@@ -1,1 +1,4 @@
 /nbproject/private/
+
+# Generated locally by install.php; contains database credentials
+/server-config.json
