@@ -364,7 +364,7 @@ class Building {
         $level=(int)$field['level']+1;
         $request=BuildingData::get($type,$level); if(!$request) return false;
         $max=$this->getMax($wid,$type); if($max && $level>$max) return false;
-        if((int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=?",array($wid,$location))->fetchColumn()>0) return false;
+        if((int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=? AND `queue` IN (1,2,5)",array($wid,$location))->fetchColumn()>0) return false;
 
         $queueType=($location<=18)?2:1;
         $normal=(int)query("SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `queue` IN (1,2)",array($wid))->fetchColumn();
