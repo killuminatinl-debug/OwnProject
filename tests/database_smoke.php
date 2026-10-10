@@ -25,7 +25,7 @@ foreach ($required as $column) {
     }
 }
 
-$wid = 'ci_' . substr(hash('sha256', uniqid('', true)), 0, 20);
+$wid = 'ci' . substr(hash('sha256', uniqid('', true)), 0, 8); // s1_building.wid is varchar(10)
 try {
     $insert = $pdo->prepare(
         "INSERT INTO s1_building
