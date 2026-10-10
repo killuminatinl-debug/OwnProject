@@ -1,0 +1,33 @@
+name: PHP 7.4 syntax check
+
+on:
+  push:
+    branches:
+      - master
+      - repair/install-safety-2026-10
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  php-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: none
+          coverage: none
+
+      - name: Lint PHP source files
+        shell: bash
+        run: |
+          set -o pipefail
+          find . -type f -name '*.php' \
+            -not -path './.git/*' \
+            -not -path './mellon_old/*' \
+            -not -path './nbproject/*' \
+            -print0 | xargs -0 -r -n1 php -l
