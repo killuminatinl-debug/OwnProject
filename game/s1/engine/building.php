@@ -241,25 +241,38 @@ class Building {
 
     public function cancelBuild($id) {
         global $engine;
-        $b = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `id`=?", [$id])->fetch(PDO::FETCH_ASSOC);
-        $f = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", [$b['wid'], $b['location']])->fetch(PDO::FETCH_ASSOC);
-        if ($b['paid'] == 1) {
-            $request = BuildingData::get($b['type'], $f['level'] + 1);
-            $request['wood'] *= 1;
-            $request['clay'] *= 1;
-            $request['iron'] *= 1;
-            $request['crop'] *= 1;
-            if (($f['level'] == 1 || $f['level'] == 0) && $b['location'] > 18 && $location != 41) {
-                query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?", array(0, $b['wid'], $b['location']));
-            }
-            query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`+?,`clay`=`clay`+?,`iron`=`iron`+?,`crop`=`crop`+? WHERE `wid`=?", array($request['wood'], $request['clay'], $request['iron'], $request['crop'], $b['wid']));
-        }
-        query("UPDATE `{$engine->server->prefix}building` SET `sort`=`sort`-1 WHERE `wid`=? AND `sort`>=?", [$b['wid'], $b['sort']]);
-        if (query("DELETE FROM `{$engine->server->prefix}building` WHERE `id`=?", array($id))) {
-            return true;
-        } else {
+        $id = (int)$id;
+        $b = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `id`=? LIMIT 1", [$id])->fetch(PDO::FETCH_ASSOC);
+        if (!$b || !isset($engine->session->data->uid)) {
             return false;
         }
+
+        // Only the owner of this village may cancel its queue entry.
+        $owner = $this->getOwnerForVillage((int)$b['wid']);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
+            return false;
+        }
+
+        $f = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1", [$b['wid'], $b['location']])->fetch(PDO::FETCH_ASSOC);
+        if (!$f) {
+            return false;
+        }
+
+        if ((int)$b['paid'] === 1) {
+            $request = BuildingData::get((int)$b['type'], (int)$f['level'] + 1);
+            if ($request) {
+                if (((int)$f['level'] <= 1) && (int)$b['location'] > 18 && (int)$b['location'] != 41) {
+                    query("UPDATE `{$engine->server->prefix}field` SET `type`=0 WHERE `wid`=? AND `location`=?", [$b['wid'], $b['location']]);
+                }
+                query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`+?,`clay`=`clay`+?,`iron`=`iron`+?,`crop`=`crop`+? WHERE `wid`=?", [
+                    $request['wood'], $request['clay'], $request['iron'], $request['crop'], $b['wid']
+                ]);
+            }
+        }
+
+        query("DELETE FROM `{$engine->server->prefix}building` WHERE `id`=?", [$id]);
+        query("UPDATE `{$engine->server->prefix}building` SET `sort`=`sort`-1 WHERE `wid`=? AND `sort`>?", [$b['wid'], $b['sort']]);
+        return true;
     }
 
     public function shiftMasterBuild($wid, $from, $to) {
