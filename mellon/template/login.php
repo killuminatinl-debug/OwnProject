@@ -93,7 +93,7 @@
                 </div>
                 <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                 <div class="login-extra-create-account right">
-                    New player?        <a href="<?php echo $base; ?>/registration/index/applicationDomain/www.kingdoms.com/applicationPath/%2Fcom%2F/applicationInGame/0/applicationId/travian-ks/applicationCountryId/en/applicationInstanceId/portal-en/applicationLanguageId/en_US/applicationCookieEnabled/1?msid=<?php echo $_SESSION['mellon_msid']; ?>&msname=msid">
+                    New player?        <a href="<?php echo $base; ?>/registration/index/">
                         Sign up        </a>
                 </div>
             </div>
