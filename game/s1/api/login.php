@@ -1,12 +1,23 @@
 <?php
 
+// Reject malformed login callbacks before bootstrapping the game engine.
+if (!isset($_GET['msid'], $_GET['token']) ||
+    !is_string($_GET['msid']) || !is_string($_GET['token']) ||
+    $_GET['msid'] === '' ||
+    !hash_equals(md5($_GET['msid']), $_GET['token'])) {
+    header('Location: /lobby/');
+    exit;
+}
+
 $ignoreLoad = true;
-include_once('../engine/engine.php');
-if ($_GET['token'] == md5($_GET['msid'])) {
+require_once dirname(__FILE__) . '/../engine/engine.php';
+{
+
     $id = 0;
     $mellon = $engine->database->getmsid($_GET['msid']);
     if ($mellon == false) {
-        header("Location: ".$lobby_url);
+        header("Location: " . $lobby_url);
+        exit;
     }
     $_SESSION['mellon_uid'] = $mellon['uid'];
     $_SESSION['mellon_username'] = $mellon['username'];
@@ -57,6 +68,11 @@ if ($_GET['token'] == md5($_GET['msid'])) {
         }
     }
 
+}
+
+if (!isset($uid) || (int)$uid < 1) {
+    header("Location: " . $lobby_url);
+    exit;
 }
 
 setcookie('t5SessionKey', (json_encode(array("key" => session_id(), "id" => $uid))), time() + 14400, "/");
