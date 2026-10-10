@@ -55,19 +55,38 @@ class Account
             return false;
         }
 
-        $username = substr(
+        $email = strtolower(trim((string)$email));
+        $baseUsername = substr(
             preg_replace('/[^A-Za-z0-9_-]/', '', explode('@', $email)[0]),
             0,
             20
         );
 
-        if ($username === '') {
-            $username = 'Player' . random_int(1000, 9999);
+        if ($baseUsername === '') {
+            $baseUsername = 'Player';
+        }
+
+        // Email prefixes are not guaranteed to be unique; avoid ambiguous logins.
+        $username = $baseUsername;
+        $suffix = 1;
+        while (query(
+            "SELECT 1 FROM global_user WHERE username=? LIMIT 1",
+            array($username)
+        )->fetchColumn()) {
+            $suffixText = (string)$suffix++;
+            $username = substr($baseUsername, 0, 20 - strlen($suffixText)) . $suffixText;
+        }
+
+        // New accounts use a one-way password hash. Login() still accepts the
+        // legacy base64 format for existing accounts and verifies hashes too.
+        $passwordHash = password_hash((string)$password, PASSWORD_DEFAULT);
+        if ($passwordHash === false) {
+            return false;
         }
 
         query(
             "INSERT INTO global_user (username,email,password,timed,prestige,level) VALUES (?,?,?,?,?,?)",
-            array($username, $email, base64_encode($password), time(), 0, 0)
+            array($username, $email, $passwordHash, time(), 0, 0)
         );
 
         return $this->Login($email, $password);
