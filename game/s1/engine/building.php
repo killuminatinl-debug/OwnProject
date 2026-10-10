@@ -258,7 +258,7 @@ class Building {
             return false;
         }
 
-        if ((int)$b['paid'] === 1) {
+        if ((int)$b['paid'] === 1 && (int)$b['queue'] !== 5) {
             $request = BuildingData::get((int)$b['type'], (int)$f['level'] + 1);
             if ($request) {
                 if (((int)$f['level'] <= 1) && (int)$b['location'] > 18 && (int)$b['location'] != 41) {
