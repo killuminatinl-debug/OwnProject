@@ -10,6 +10,8 @@ error_reporting(E_ALL);
 
 $done = false;
 $error = '';
+$pdo = null;
+$safeToClean = false;
 $defaults = array(
     'host' => isset($_POST['host']) ? trim((string)$_POST['host']) : '127.0.0.1',
     'user' => isset($_POST['user']) ? trim((string)$_POST['user']) : 'root',
@@ -56,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'of maak eerst een back-up en verwijder de oude database handmatig als je echt opnieuw wilt beginnen.'
             );
         }
+        // Cleanup is permitted only after we proved the selected database was empty.
+        $safeToClean = true;
 
         $sqlFile = __DIR__ . '/travian5.sql';
         if (!is_file($sqlFile) || !is_readable($sqlFile)) {
@@ -161,9 +165,23 @@ CONFIG;
         }
 
         $done = true;
+        $safeToClean = false;
     } catch (Throwable $e) {
         error_log('[OwnProject installer] ' . $e->getMessage());
         $error = $e->getMessage();
+        if ($safeToClean && $pdo instanceof PDO) {
+            try {
+                $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+                $tables = $pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_NUM);
+                foreach ($tables as $table) {
+                    $tableName = str_replace('`', '``', (string)$table[0]);
+                    $pdo->exec('DROP TABLE IF EXISTS `' . $tableName . '`');
+                }
+                $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
+            } catch (Throwable $cleanupError) {
+                error_log('[OwnProject installer cleanup] ' . $cleanupError->getMessage());
+            }
+        }
     }
 }
 ?>
