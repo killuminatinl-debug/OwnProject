@@ -124,7 +124,7 @@
     <body class="mellon-dialog c-registration-index ltr">
         <div class="container">
 
-            <form action="<?php echo $base; ?>/registration/index/applicationDomain/www.kingdoms.com&#x2F;applicationPath&#x2F;&#x25;2Fcom&#x25;2F&#x2F;applicationInGame&#x2F;0&#x2F;applicationId&#x2F;travian-ks&#x2F;applicationCountryId&#x2F;en&#x2F;applicationInstanceId&#x2F;portal-en&#x2F;applicationLanguageId&#x2F;en_US&#x2F;applicationCookieEnabled&#x2F;1&#x3F;msid&#x3D;<?php echo rawurlencode($_SESSION['mellon_msid'] ?? ''); ?>&amp;msname&#x3D;msid" method="POST" name="account" class="form-horizontal&#x20;tk-sign-process" id="account"><fieldset class="social-login">
+            <form action="<?php echo $base; ?>/registration/index/" method="POST" name="account" class="form-horizontal&#x20;tk-sign-process" id="account"><fieldset class="social-login">
                     <legend>Sign up</legend>
                 </fieldset><div class="form-group form-group-type-text">
                     <label>or</label>
