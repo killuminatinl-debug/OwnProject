@@ -7,7 +7,7 @@
  * Copy Rigth © Phumin Chanthalert.
  */
 @session_start();
-define('SERVER_TAG', 'server1');
+if (!defined('SERVER_TAG')) { define('SERVER_TAG', 'server1'); }
 date_default_timezone_set('Asia/Bangkok');
 include_once(dirname(__FILE__) . "/../../../config.php");
 include_once(dirname(__FILE__) . "/building.php");
@@ -86,7 +86,7 @@ $engine->sql->exec("SET character_set_client=utf8");
 $engine->sql->exec("SET character_set_connection=utf8");
 $engine->sql->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $engine->server = (object) $engine->database->getServer();
-define('TB_PREFIX', $engine->server->tag);
+if (!defined('TB_PREFIX')) { define('TB_PREFIX', $engine->server->tag); }
 
 if (!isset($ignoreLoad)) {
     $engine->session->checkLogin();
