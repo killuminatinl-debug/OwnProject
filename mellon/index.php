@@ -26,17 +26,11 @@ if ($page->getURI(0) == "authentication") {
         include_once dirname(__FILE__) . '/template/forgot1.php';
     }
 } elseif ($page->getURI(0) == "registration") {
+    // Keep the legacy Mellon URL working, but send all registration traffic to
+    // the local PHP 7.4-compatible form, which validates input and CSRF tokens.
     if ($page->getURI(1) == "index") {
-        if ($_POST) {
-            $term = isset($_POST['termsAccepted']) ? true : false;
-            if ($engine->account->Signup($_POST['email'], isset($_POST['password']['password']) ? $_POST['password']['password'] : '', false, $term)) {
-                header("Location: " . $game_dir . "api/login.php?token=" . rawurlencode(md5($_SESSION['mellon_msid'])) . "&msid=" . rawurlencode($_SESSION['mellon_msid']));
-            } else {
-                include_once dirname(__FILE__) . '/template/login.php';
-            }
-        } else {
-            include_once dirname(__FILE__) . '/template/register.php';
-        }
+        header("Location: " . $index_url . "registration/index/", true, 302);
+        exit;
     }
 } elseif ($page->getURI(0) == "account") {
     if ($page->getURI(1) == "welcome") {
