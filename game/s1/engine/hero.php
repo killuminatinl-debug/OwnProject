@@ -95,7 +95,7 @@ class Hero {
                 'resourceChestsUsedToday' => $hero['use_reschest'],
                 'cropChestsUsedToday' => $hero['use_cropchest'],
                 'artworkUsedToday' => $hero['use_artwork'],
-                'isMoving' => ($status == 0 || $status == 5 || $status == 6 || $status == 7 || $status == 8) ? true : false,
+                'isMoving' => in_array((int)$status, array(1, 2, 3, 4, 5, 6), true),
                 'adventurePoints' => $hero['advPoint'] - $hero['useAdvPoint'],
                 'adventurePointTime' => $hero['advNext'],
                 'xp' => $hero['xp'],
@@ -276,21 +276,40 @@ class Hero {
     public function checkLevelUp($uid, $send = true, $dead = false) {
         global $engine, $_hero_levels;
 
-        $hero = query("SELECT * FROM `{$engine->server->prefix}hero` WHERE `owner`=?;", [$uid])->fetch(PDO::FETCH_ASSOC);
-        (!$hero) ? $hero = ['level' => 0, 'xp' => 0] : false;
-        $nextXpLevel = $_hero_levels[$hero['level']];
-        if ($hero['xp'] >= $nextXpLevel) {
-            $levelup = 0;
-            do {
-                $levelup++;
-                $nextXpLevel = $_hero_levels[$hero['level'] + $levelup];
-            } while ($hero['xp'] >= $nextXpLevel);
-
-            $new_level = $hero['level'] + $levelup;
-            $point = $levelup * 4;
-            query("UPDATE `{$engine->server->prefix}hero` SET `level`=?,`levelUp`=?,`point`=`point`+?,`health`=? WHERE `owner`=?;", [$new_level, $levelup, $point, ($dead) ? 0 : 100, $uid]);
-            ($send) ? $engine->auto->emitCache($uid, $this->get($uid)) : '';
+        $hero = query("SELECT * FROM `{$engine->server->prefix}hero` WHERE `owner`=? LIMIT 1;", [$uid])->fetch(PDO::FETCH_ASSOC);
+        if (!$hero) {
+            return false;
         }
+
+        $currentLevel = max(0, (int)$hero['level']);
+        $xp = max(0, (float)$hero['xp']);
+
+        // At the top of the configured level table there is no next threshold.
+        // Guard that case so a high-level hero cannot loop on an undefined XP value.
+        if (!isset($_hero_levels[$currentLevel])) {
+            return false;
+        }
+
+        $newLevel = $currentLevel;
+        while (isset($_hero_levels[$newLevel]) && $xp >= (float)$_hero_levels[$newLevel]) {
+            $newLevel++;
+        }
+
+        $levelUp = $newLevel - $currentLevel;
+        if ($levelUp < 1) {
+            return false;
+        }
+
+        $points = $levelUp * 4;
+        query(
+            "UPDATE `{$engine->server->prefix}hero` SET `level`=?,`levelUp`=?,`point`=`point`+?,`health`=? WHERE `owner`=?;",
+            [$newLevel, $levelUp, $points, ($dead ? 0 : 100), $uid]
+        );
+
+        if ($send) {
+            $engine->auto->emitCache($uid, $this->get($uid));
+        }
+        return true;
     }
 
     public function randomReward($hero, $long = false) {
