@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Voor dit e-mailadres bestaat al een account. Log in of gebruik een ander e-mailadres.';
             } elseif ($engine->account->Signup($email, $password, $newsletter, $terms)) {
                 unset($_SESSION['registration_csrf']);
-                header('Location: /lobby/', true, 303);
+                header('Location: ' . $game_dir . 'api/login.php?token=' . rawurlencode(md5($_SESSION['mellon_msid'])) . '&msid=' . rawurlencode($_SESSION['mellon_msid']), true, 303);
                 exit;
             } else {
                 $error = 'Het account kon niet worden aangemaakt. Controleer je gegevens en probeer opnieuw.';
