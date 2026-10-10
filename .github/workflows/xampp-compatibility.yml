@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - repair/phoomin-travian-kingdom-xampp
+      - rebuild/kingdoms-compatible-engine
   workflow_dispatch:
 
 jobs:
