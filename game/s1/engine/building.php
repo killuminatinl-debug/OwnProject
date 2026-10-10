@@ -301,54 +301,150 @@ class Building {
 
     public function MasterBuild($location, $type = 0, $wid = 0) {
         global $engine;
-        if ($wid == 0) {
-            $wid = $engine->village->select;
+
+        $location = (int)$location;
+        $type = (int)$type;
+        $wid = (int)$wid;
+        if ($wid <= 0) {
+            $wid = (int)$engine->village->select;
         }
-        $field = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", array($wid, $location))->fetch(PDO::FETCH_ASSOC);
-        if ($type == 0) {
-            $type = $field['type'];
+        if ($location < 1 || $location > 40 || $wid <= 0 ||
+            !isset($engine->session->data->uid)) {
+            return false;
         }
-        if ($location == 32) {
+
+        // Never allow a client to enqueue work in another player's village.
+        $owner = $this->getOwnerForVillage($wid);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
+            return false;
+        }
+
+        $field = query(
+            "SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1",
+            array($wid, $location)
+        )->fetch(PDO::FETCH_ASSOC);
+        if (!$field) {
+            return false;
+        }
+
+        if ($location === 32) {
             $type = 16;
-        } elseif ($location == 33) {
-            $type = 30 + $engine->session->data->tribe;
+        } elseif ($location === 33) {
+            $type = 30 + (int)$owner['tribe'];
+        } elseif ($type <= 0) {
+            $type = (int)$field['type'];
         }
-        if ($type == 16) {
+        if ($type <= 0) {
+            return false;
+        }
+
+        // Keep special building slots tied to their correct location.
+        if ($type === 16) {
             $location = 32;
-        } elseif ($type == 30 + $engine->session->data->tribe) {
+        } elseif ($type === 30 + (int)$owner['tribe']) {
             $location = 33;
         }
-        $level = $field['level'] + 1;
-        $intask_same = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `location`=?;", array($wid, $location))->rowCount();
-        $level = $level + $intask_same;
-        $queuetype = 4;
+        $field = query(
+            "SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1",
+            array($wid, $location)
+        )->fetch(PDO::FETCH_ASSOC);
+        if (!$field) {
+            return false;
+        }
+
+        // A Master Builder task may follow other Master Builder levels, but it
+        // must not overlap a regular build or demolition on the same location.
+        $conflict = (int)query(
+            "SELECT COUNT(*) FROM `{$engine->server->prefix}building`
+             WHERE `wid`=? AND `location`=? AND `queue` IN (1,2,5)",
+            array($wid, $location)
+        )->fetchColumn();
+        if ($conflict > 0 || (int)$field['rubble'] === 1) {
+            return false;
+        }
+
+        $queuedLevels = (int)query(
+            "SELECT COUNT(*) FROM `{$engine->server->prefix}building`
+             WHERE `wid`=? AND `location`=? AND `queue`=4",
+            array($wid, $location)
+        )->fetchColumn();
+        $level = (int)$field['level'] + $queuedLevels + 1;
+        $max = $this->getMax($wid, $type);
+        if ($max && $level > $max) {
+            return false;
+        }
 
         $request = BuildingData::get($type, $level);
-        if (($engine->village->current['wood'] - $request['wood'] >= 0) && ($engine->village->current['clay'] - $request['clay'] >= 0) && ($engine->village->current['iron'] - $request['iron'] >= 0) && ($engine->village->current['crop'] - $request['crop'] >= 0)) {
-            //Paid cost construction
-            $request['time'] = round(($request['time'] * ($this->BuildingEffect(15, $this->getTypeLevel($wid, 15)) / 100)) / $engine->server->speed_world);
-            $duration = $request['time'];
-            query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?", array($request['wood'], $request['clay'], $request['iron'], $request['crop'], $wid));
-            query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?", array($type, $wid, $location));
-            // Get queue to sort new task
-            $inqueue_paid = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `paid`=?;", [$wid, 1])->rowCount();
-            query("UPDATE `{$engine->server->prefix}building` SET `sort`=`sort`+1 WHERE `wid`=? AND `paid`=?", [$wid, 0]);
-            // Resort task queue
-            //query("UPDATE `{$engine->server->prefix}building` SET `sort`=`sort`+1 WHERE `wid`=? AND `sort`<? AND `paid`=?", [$bq['wid'], $bq['sort'], 0]);
-            //$inqueue_paid = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `paid`=?;", [$bq['wid'], 1])->rowCount();
-            //query("UPDATE `{$engine->server->prefix}building` SET `sort`=?,`paid`=? WHERE `id`=?", [$inqueue_paid + 1, 1, $bid]);
-
-            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`sort`,`type`,`start`,`duration`,`timestamp`,`queue`,`paid`,`cost`,`level`) VALUES (?,?,?,?,?,?,?,?,?,?,?)", array($wid, $location, $inqueue_paid + 1, $type, time(), $duration, 0, $queuetype, 1, json_encode($request), $level));
-        } else {
-            //Only add to queue
-            $request['time'] = round(($request['time'] * ($this->BuildingEffect(15, $this->getTypeLevel($wid, 15)) / 100)) / $engine->server->speed_world);
-            $duration = $request['time'];
-            $cost = json_encode($request);
-            query("UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?", array($type, $wid, $location));
-            // Get queue to sort new task
-            $inqueue = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `wid`=?;", [$wid])->rowCount();
-            query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`sort`,`type`,`start`,`duration`,`timestamp`,`queue`,`paid`,`cost`,`level`) VALUES (?,?,?,?,?,?,?,?,?,?,?)", array($wid, $location, $inqueue + 1, $type, time(), $duration, 0, $queuetype, 0, $cost, $level));
+        if (!is_array($request) ||
+            !isset($request['wood'], $request['clay'], $request['iron'], $request['crop'], $request['time'])) {
+            return false;
         }
+
+        $engine->auto->procRes($wid);
+        $village = query(
+            "SELECT * FROM `{$engine->server->prefix}village` WHERE `wid`=? LIMIT 1",
+            array($wid)
+        )->fetch(PDO::FETCH_ASSOC);
+        if (!$village) {
+            return false;
+        }
+
+        $paid = ((float)$village['wood'] >= (float)$request['wood'] &&
+                 (float)$village['clay'] >= (float)$request['clay'] &&
+                 (float)$village['iron'] >= (float)$request['iron'] &&
+                 (float)$village['crop'] >= (float)$request['crop']);
+
+        $speed = max(0.0001, (float)$engine->server->speed_world);
+        $effect = (float)$this->BuildingEffect(15, $this->getTypeLevel($wid, 15));
+        if ($effect <= 0) {
+            $effect = 100;
+        }
+        $request['time'] = max(1, (int)round(((float)$request['time'] * ($effect / 100)) / $speed));
+        $duration = (int)$request['time'];
+
+        $inqueuePaid = (int)query(
+            "SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `paid`=1",
+            array($wid)
+        )->fetchColumn();
+
+        if ($paid) {
+            query(
+                "UPDATE `{$engine->server->prefix}village`
+                 SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-?
+                 WHERE `wid`=?",
+                array($request['wood'], $request['clay'], $request['iron'], $request['crop'], $wid)
+            );
+            query(
+                "UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?",
+                array($type, $wid, $location)
+            );
+            query(
+                "UPDATE `{$engine->server->prefix}building` SET `sort`=`sort`+1 WHERE `wid`=? AND `paid`=0",
+                array($wid)
+            );
+            $result = query(
+                "INSERT INTO `{$engine->server->prefix}building`
+                 (`wid`,`location`,`sort`,`type`,`start`,`duration`,`timestamp`,`queue`,`paid`,`cost`,`level`)
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                array($wid, $location, $inqueuePaid + 1, $type, time(), $duration, 0, 4, 1, json_encode($request), $level)
+            );
+        } else {
+            query(
+                "UPDATE `{$engine->server->prefix}field` SET `type`=? WHERE `wid`=? AND `location`=?",
+                array($type, $wid, $location)
+            );
+            $sort = (int)query(
+                "SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=?",
+                array($wid)
+            )->fetchColumn() + 1;
+            $result = query(
+                "INSERT INTO `{$engine->server->prefix}building`
+                 (`wid`,`location`,`sort`,`type`,`start`,`duration`,`timestamp`,`queue`,`paid`,`cost`,`level`)
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                array($wid, $location, $sort, $type, time(), $duration, 0, 4, 0, json_encode($request), $level)
+            );
+        }
+
         return $engine->sql->lastInsertId();
     }
 
@@ -501,17 +597,56 @@ class Building {
 
     public function destroy($params) {
         global $engine;
-        $wid = $params['villageId'];
-        $location = $params['locationId'];
-        $field = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?;", array($wid, $location))->fetch(PDO::FETCH_ASSOC);
-        $type = $field['type'];
-        $level = $field['level'];
-        $uppertime = BuildingData::get($type, $level);
-        $start = time();
-        $duration = ($uppertime['time'] / 2) / $engine->server->speed_world;
-        $time = $start + $duration;
 
-        query("INSERT INTO `{$engine->server->prefix}building` (`wid`,`location`,`sort`,`type`,`start`,`duration`,`timestamp`,`queue`,`paid`,`cost`,`level`) VALUES (?,?,?,?,?,?,?,?,?,?,?)", array($wid, $location, 0, $type, $start, $duration, $time, 5, 0, '[]', $level));
+        $wid = isset($params['villageId']) ? (int)$params['villageId'] : 0;
+        $location = isset($params['locationId']) ? (int)$params['locationId'] : 0;
+        if ($wid <= 0 || $location < 1 || $location > 40 ||
+            !isset($engine->session->data->uid)) {
+            return false;
+        }
+
+        $owner = $this->getOwnerForVillage($wid);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
+            return false;
+        }
+
+        $field = query(
+            "SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=? LIMIT 1",
+            array($wid, $location)
+        )->fetch(PDO::FETCH_ASSOC);
+        if (!$field || (int)$field['level'] < 1 || (int)$field['type'] < 1 ||
+            (int)$field['rubble'] === 1) {
+            return false;
+        }
+
+        $pending = (int)query(
+            "SELECT COUNT(*) FROM `{$engine->server->prefix}building`
+             WHERE `wid`=? AND `location`=? AND `queue` IN (1,2,4,5)",
+            array($wid, $location)
+        )->fetchColumn();
+        if ($pending > 0) {
+            return false;
+        }
+
+        $type = (int)$field['type'];
+        $level = (int)$field['level'];
+        $buildingData = BuildingData::get($type, $level);
+        if (!is_array($buildingData) || !isset($buildingData['time'])) {
+            return false;
+        }
+
+        $start = time();
+        $duration = max(1, (int)round(((float)$buildingData['time'] / 2) /
+            max(0.0001, (float)$engine->server->speed_world)));
+        $timestamp = $start + $duration;
+
+        query(
+            "INSERT INTO `{$engine->server->prefix}building`
+             (`wid`,`location`,`sort`,`type`,`start`,`duration`,`timestamp`,`queue`,`paid`,`cost`,`level`)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            array($wid, $location, 0, $type, $start, $duration, $timestamp, 5, 0, '[]', $level)
+        );
+        return true;
     }
 
     public function reserveResources($bid) {
