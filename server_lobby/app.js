@@ -18,11 +18,25 @@ config = {
     debug: true,
 }
 
+var path = require('path');
+var fs = require('fs');
+var serverConfigPath = path.join(__dirname, '..', 'server-config.json');
+var serverConfig = {};
+try {
+    if (fs.existsSync(serverConfigPath)) {
+        serverConfig = JSON.parse(fs.readFileSync(serverConfigPath, 'utf8'));
+    }
+} catch (configError) {
+    console.error('Could not read server-config.json:', configError.message);
+}
 var sql = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'travian5_new'
+    host: process.env.TRAVIAN_DB_HOST || serverConfig.host || '127.0.0.1',
+    user: process.env.TRAVIAN_DB_USER || serverConfig.user || 'root',
+    password: process.env.TRAVIAN_DB_PASS || serverConfig.password || '',
+    database: process.env.TRAVIAN_DB_NAME || serverConfig.database || 'travian_kingdoms'
+});
+sql.on('error', function (err) {
+    console.error('Travian database connection error:', err.message);
 });
 setTimeout(function () {
     sql.ping();
