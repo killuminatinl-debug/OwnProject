@@ -661,13 +661,18 @@ class Building {
             "SELECT * FROM `{$engine->server->prefix}building` WHERE `id`=? LIMIT 1",
             array($bid)
         )->fetch(PDO::FETCH_ASSOC);
-        if (!$bq || (int)$bq['queue'] !== 4 || (int)$bq['paid'] !== 0) {
+        if (!$bq || (int)$bq['queue'] !== 4) {
             return false;
         }
 
         $owner = $this->getOwnerForVillage((int)$bq['wid']);
         if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
             return false;
+        }
+        // A paid entry is already reserved; treating it as success avoids a
+        // false API failure when clients send reserveResources redundantly.
+        if ((int)$bq['paid'] === 1) {
+            return true;
         }
 
         $request = BuildingData::get((int)$bq['type'], (int)$bq['level']);
