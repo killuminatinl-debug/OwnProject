@@ -652,20 +652,57 @@ class Building {
     public function reserveResources($bid) {
         global $engine;
 
-        $bq = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `id`=?", array($bid))->fetch(PDO::FETCH_ASSOC);
-        $f = query("SELECT * FROM `{$engine->server->prefix}field` WHERE `wid`=? AND `location`=?", array($bq['wid'], $bq['location']))->fetch(PDO::FETCH_ASSOC);
-
-        $request = BuildingData::get($bq['type'], $bq['level']);
-        $engine->auto->procRes($bq['wid']);
-
-        $v = $engine->village->getById($bq['wid']);
-        if ($v['wood'] >= $request['wood'] && $v['clay'] >= $request['clay'] && $v['iron'] >= $request['iron'] && $v['crop'] >= $request['crop']) {
-            query("UPDATE `{$engine->server->prefix}village` SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-? WHERE `wid`=?", [$request['wood'], $request['clay'], $request['iron'], $request['crop'], $bq['wid']]);
-            // Resort task queue
-            query("UPDATE `{$engine->server->prefix}building` SET `sort`=`sort`+1 WHERE `wid`=? AND `sort`<? AND `paid`=?", [$bq['wid'], $bq['sort'], 0]);
-            $inqueue_paid = query("SELECT * FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `paid`=?;", [$bq['wid'], 1])->rowCount();
-            query("UPDATE `{$engine->server->prefix}building` SET `sort`=?,`paid`=? WHERE `id`=?", [$inqueue_paid + 1, 1, $bid]);
+        $bid = (int)$bid;
+        if ($bid <= 0 || !isset($engine->session->data->uid)) {
+            return false;
         }
+
+        $bq = query(
+            "SELECT * FROM `{$engine->server->prefix}building` WHERE `id`=? LIMIT 1",
+            array($bid)
+        )->fetch(PDO::FETCH_ASSOC);
+        if (!$bq || (int)$bq['queue'] !== 4 || (int)$bq['paid'] !== 0) {
+            return false;
+        }
+
+        $owner = $this->getOwnerForVillage((int)$bq['wid']);
+        if (!$owner || (int)$owner['uid'] !== (int)$engine->session->data->uid) {
+            return false;
+        }
+
+        $request = BuildingData::get((int)$bq['type'], (int)$bq['level']);
+        if (!is_array($request) ||
+            !isset($request['wood'], $request['clay'], $request['iron'], $request['crop'])) {
+            return false;
+        }
+
+        $engine->auto->procRes((int)$bq['wid']);
+        $v = $engine->village->getById((int)$bq['wid']);
+        if (!$v || $v['wood'] < $request['wood'] || $v['clay'] < $request['clay'] ||
+            $v['iron'] < $request['iron'] || $v['crop'] < $request['crop']) {
+            return false;
+        }
+
+        query(
+            "UPDATE `{$engine->server->prefix}village`
+             SET `wood`=`wood`-?,`clay`=`clay`-?,`iron`=`iron`-?,`crop`=`crop`-?
+             WHERE `wid`=?",
+            array($request['wood'], $request['clay'], $request['iron'], $request['crop'], $bq['wid'])
+        );
+        query(
+            "UPDATE `{$engine->server->prefix}building`
+             SET `sort`=`sort`+1 WHERE `wid`=? AND `sort`<? AND `paid`=0",
+            array($bq['wid'], $bq['sort'])
+        );
+        $inqueuePaid = (int)query(
+            "SELECT COUNT(*) FROM `{$engine->server->prefix}building` WHERE `wid`=? AND `paid`=1",
+            array($bq['wid'])
+        )->fetchColumn();
+        query(
+            "UPDATE `{$engine->server->prefix}building` SET `sort`=?,`paid`=1, `cost`=? WHERE `id`=?",
+            array($inqueuePaid + 1, json_encode($request), $bid)
+        );
+        return true;
     }
 
     public function getBuildable($wid, $id) {
