@@ -1,0 +1,29 @@
+name: Travian Kingdom compatibility checks
+
+on:
+  push:
+    branches:
+      - repair/phoomin-travian-kingdom-xampp
+  workflow_dispatch:
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: pdo_mysql
+      - name: Check installer syntax
+        run: php -l install.php
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+      - name: Check game socket service syntax
+        run: node --check server/app2.js
+      - name: Check lobby socket service syntax
+        run: node --check server_lobby/app.js
