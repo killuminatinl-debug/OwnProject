@@ -35,8 +35,17 @@ class Village {
     public function get($id, $head = true) {
         global $engine;
         $v = query("SELECT * FROM `" . $engine->server->prefix . "village` WHERE `wid`=?", array($id))->fetch(PDO::FETCH_ASSOC);
+        if (!$v || !isset($v['owner'])) {
+            return null;
+        }
         $p = query("SELECT * FROM `" . $engine->server->prefix . "user` WHERE `uid`=?", array($v['owner']))->fetch(PDO::FETCH_ASSOC);
-        $k = query("SELECT * FROM `" . $engine->server->prefix . "kingdom` WHERE `id`=?", array($p['kingdom']))->fetch(PDO::FETCH_ASSOC);
+        if (!$p || !isset($p['uid'])) {
+            return null;
+        }
+        $k = query("SELECT * FROM `" . $engine->server->prefix . "kingdom` WHERE `id`=?", array(isset($p['kingdom']) ? $p['kingdom'] : 0))->fetch(PDO::FETCH_ASSOC);
+        if (!$k) {
+            $k = array('id' => 0, 'king' => 0);
+        }
 
         $r = array(
             'name' => 'Village:' . $id,
